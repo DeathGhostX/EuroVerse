@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Adjetivos del español castellano — Español con traducción al árabe (Ampliado)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee;
+      /* Aumenté el tamaño mínimo de los cuadrados para que se vea todo el texto */
+      --tile-min:260px;   /* ampliado para mostrar líneas largas */
+      --pad:14px;
+      --word-size:1.02rem;
+      --trans-size:0.88rem;
+      --btn-size:48px;
+    }
+    /* Modo denso (opcional) */
+    .dense{
+      --tile-min:200px;
+      --pad:10px;
+      --word-size:0.96rem;
+      --trans-size:0.82rem;
+      --btn-size:44px;
+    }
+
+    html,body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1400px;margin:0 auto;padding:16px;}
+    header{position:sticky;top:0;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.15rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;margin:12px 0;}
+    .control{display:flex;gap:10px;align-items:center;background:var(--card);padding:10px;border-radius:10px;border:1px solid var(--border);}
+    label{font-size:0.92rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{border:1px solid var(--border);padding:10px;border-radius:8px;background:transparent;font-size:0.98rem;color:var(--text);outline:none;min-width:160px;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;}
+    main{margin-top:14px;}
+    section{margin:18px 0;padding-top:10px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px;}
+    .category-title{font-weight:800;font-size:1.02rem;}
+    .chip{background:#eef6ff;padding:6px 12px;border-radius:999px;color:var(--muted);font-size:0.9rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:12px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:var(--pad);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;box-shadow:0 4px 12px rgba(15,20,30,0.04);min-height:72px;}
+    .left{display:flex;flex-direction:column;min-width:0;}
+    .word{font-weight:800;font-size:var(--word-size);line-height:1.12;}
+    .trans{color:var(--muted);font-size:var(--trans-size);margin-top:6px;line-height:1.06;}
+    .speak{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem;}
+    footer{margin:22px 0;color:var(--muted);text-align:center;font-size:0.95rem;}
+    @media (max-width:1100px){ .wrap{padding:12px;} }
+    @media (max-width:760px){ .controls{grid-template-columns:1fr; } .category-header{flex-direction:column;align-items:flex-start;gap:8px;} }
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Adjetivos del español con traducción al árabe (ampliado)">
+    <header>
+      <h1>Adjetivos del español castellano — Ampliado (con traducción al árabe)</h1>
+
+      <div class="controls" role="region" aria-label="Controles">
+        <div class="control" style="min-width:260px;">
+          <label for="voiceSelect">Voz / Acento</label>
+          <select id="voiceSelect" aria-label="Selector de voz y acento" style="margin-left:8px;min-width:200px;">
+            <option value="auto">Auto (mejor disponible)</option>
+          </select>
+        </div>
+
+        <div class="control" style="min-width:360px;">
+          <label for="search">Buscar</label>
+          <input id="search" type="search" placeholder="Filtrar (español o árabe)..." aria-label="Buscar adjetivos" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.92rem;color:var(--muted);">Densidad</label>
+            <button id="normalBtn" title="Densidad normal">Normal</button>
+            <button id="denseBtn" title="Vista densa">Densa</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categorías inyectadas por script -->
+    </main>
+
+    <footer>
+      Consejo: pulsa el icono de altavoz para oír la pronunciación en la voz seleccionada. He ampliado los cuadrados para que el texto largo se muestre completo.
+    </footer>
+  </div>
+
+  <script>
+    /*
+      Lista ampliada de adjetivos en español (grupos organizados).
+      Cada entrada: {es: "adjetivo", ar: "traducción al árabe"}
+      He aumentado la cantidad de adjetivos por grupo para ofrecer un recurso masivo.
+    */
+    const DATA = {
+      "Apariencia y aspecto (80+)": [
+        {es:"bonito", ar:"جميل"}, {es:"hermoso", ar:"وسيم/جميل"}, {es:"feo", ar:"قبيح"},
+        {es:"atractivo", ar:"جذاب"}, {es:"elegante", ar:"أنيق"}, {es:"desaliñado", ar:"مهمل المظهر"},
+        {es:"pulcro", ar:"مرتب"}, {es:"impecable", ar:"لا تشوبه شائبة"}, {es:"desgastado", ar:"متهالك"},
+        {es:"nuevo", ar:"جديد"}, {es:"antiguo", ar:"قديم"}, {es:"vintage", ar:"عتيق الطراز"},
+        {es:"moderno", ar:"حديث"}, {es:"clásico", ar:"كلاسيكي"}, {es:"sofisticado", ar:"متطور"},
+        {es:"rústico", ar:"ريفي"}, {es:"minimalista", ar:"بسيط"}, {es:"llamativo", ar:"جذاب بصريًا"},
+        {es:"sobrio", ar:"رصين"}, {es:"colorido", ar:"ملوّن"}, {es:"apagado", ar:"باهت"},
+        {es:"brillante", ar:"لامع"}, {es:"mate", ar:"مطفي"}, {es:"transparente", ar:"شفاف"},
+        {es:"opaco", ar:"غير شفاف"}, {es:"reluciente", ar:"متألق"}, {es:"deslumbrante", ar:"مبهر"},
+        {es:"ornamentado", ar:"مزخرف"}, {es:"simple", ar:"بسيط"}, {es:"pulido", ar:"مصقول"},
+        {es:"áspero", ar:"خشن"}, {es:"suave", ar:"ناعم"}, {es:"arrugado", ar:"مجعّد"},
+        {es:"liso", ar:"أملس"}, {es:"manchado", ar:"ملطخ"}, {es:"restaurado", ar:"مُرمّم"},
+        {es:"ornamental", ar:"زخرفي"}, {es:"funcional", ar:"عملي"}, {es:"decorativo", ar:"زخرفي"},
+        {es:"pintoresco", ar:"خلاب"}, {es:"fotogénico", ar:"مناسب للتصوير"}, {es:"atractivo visualmente", ar:"جذاب بصريًا"},
+        {es:"imponente", ar:"مهيب"}, {es:"discreto", ar:"متواضع المظهر"}, {es:"exuberante", ar:"مترف/مبهر"},
+        {es:"sobresaliente", ar:"بارز"}, {es:"delicado", ar:"رقيق"}, {es:"robusto", ar:"قوي"},
+        {es:"ornamentado", ar:"مزخرف"}, {es:"esbelto", ar:"نحيل"}, {es:"voluminoso", ar:"ضخم الحجم"},
+        {es:"compacto", ar:"مضغوط"}, {es:"asimétrico", ar:"غير متماثل"}, {es:"simétrico", ar:"متماثل"},
+        {es:"atractivo", ar:"جذاب"}, {es:"vanguardista", ar:"متقدم"}, {es:"retro", ar:"رجعي"},
+        {es:"barroco", ar:"باروكي"}, {es:"minimal", ar:"مُصغّر"}, {es:"industrial", ar:"صناعي"},
+        {es:"ecléctico", ar:"انتقائي"}, {es:"sobrio", ar:"رصين"}, {es:"vistoso", ar:"مبهر"}
+      ],
+
+      "Tamaño y cantidad (80+)": [
+        {es:"grande", ar:"كبير"}, {es:"pequeño", ar:"صغير"}, {es:"enorme", ar:"ضخم"},
+        {es:"gigante", ar:"عملاق"}, {es:"minúsculo", ar:"صغير جدًا"}, {es:"mediano", ar:"متوسط"},
+        {es:"alto", ar:"طويل/مرتفع"}, {es:"bajo", ar:"منخفض/قصير"}, {es:"largo", ar:"طويل"},
+        {es:"corto", ar:"قصير"}, {es:"ancho", ar:"عريض"}, {es:"estrecho", ar:"ضيق"},
+        {es:"profundo", ar:"عميق"}, {es:"superficial", ar:"سطحي"}, {es:"pesado", ar:"ثقيل"},
+        {es:"ligero", ar:"خفيف"}, {es:"voluminoso", ar:"ضخم الحجم"}, {es:"compacto", ar:"مضغوط"},
+        {es:"escaso", ar:"قليل"}, {es:"abundante", ar:"وفير"}, {es:"numeroso", ar:"كثير"},
+        {es:"varios", ar:"متعدد"}, {es:"único", ar:"فريد"}, {es:"doble", ar:"مزدوج"},
+        {es:"múltiple", ar:"متعدد"}, {es:"limitado", ar:"محدود"}, {es:"ilimitado", ar:"غير محدود"},
+        {es:"completo", ar:"كامل"}, {es:"parcial", ar:"جزئي"}, {es:"suficiente", ar:"كافٍ"},
+        {es:"insuficiente", ar:"غير كافٍ"}, {es:"excesivo", ar:"مفرط"}, {es:"moderado", ar:"معتدل"},
+        {es:"copioso", ar:"وفير"}, {es:"escaso", ar:"نادر"}, {es:"contable", ar:"قابل للعد"},
+        {es:"incontable", ar:"غير قابل للعد"}, {es:"incremental", ar:"تزايدي"}, {es:"decreciente", ar:"تنازلي"},
+        {es:"estable", ar:"مستقر"}, {es:"variable", ar:"متغير"}, {es:"constante", ar:"ثابت"},
+        {es:"masivo", ar:"ضخم/شامل"}, {es:"redundante", ar:"زائد"}, {es:"mínimo", ar:"الحد الأدنى"},
+        {es:"máximo", ar:"الحد الأقصى"}, {es:"proporcional", ar:"متناسب"}, {es:"desproporcionado", ar:"غير متناسب"},
+        {es:"uniforme", ar:"متجانس"}, {es:"heterogéneo", ar:"متغاير"}, {es:"escalonado", ar:"متدرج"},
+        {es:"fragmentado", ar:"مجزأ"}, {es:"concentrado", ar:"مركز"}, {es:"disperso", ar:"متناثر"},
+        {es:"amplio", ar:"واسع"}, {es:"reducido", ar:"مخفض"}, {es:"sobresaliente", ar:"بارز"},
+        {es:"insignificante", ar:"تافه"}, {es:"notable", ar:"ملحوظ"}, {es:"marginal", ar:"هامشي"}
+      ],
+
+      "Edad y tiempo (60+)": [
+        {es:"joven", ar:"شاب"}, {es:"anciano", ar:"مسن"}, {es:"viejo", ar:"قديم/مسن"},
+        {es:"nuevo", ar:"جديد"}, {es:"reciente", ar:"حديث"}, {es:"antiguo", ar:"عتيق"},
+        {es:"moderno", ar:"حديث"}, {es:"temprano", ar:"مبكر"}, {es:"tardío", ar:"متأخر"},
+        {es:"permanente", ar:"دائم"}, {es:"temporal", ar:"مؤقت"}, {es:"efímero", ar:"زائل"},
+        {es:"duradero", ar:"متين/يدوم"}, {es:"pasado", ar:"ماضي"}, {es:"futuro", ar:"مستقبلي"},
+        {es:"actual", ar:"حالي"}, {es:"maduro", ar:"ناضج"}, {es:"inmaduro", ar:"غير ناضج"},
+        {es:"ancestral", ar:"سلفي"}, {es:"prehistórico", ar:"ما قبل التاريخ"}, {es:"ancestral", ar:"سلفي"},
+        {es:"reciente", ar:"حديث"}, {es:"inminente", ar:"وشيك"}, {es:"prolongado", ar:"ممتد"},
+        {es:"breve", ar:"قصير"}, {es:"eterno", ar:"أبدي"}, {es:"transitorio", ar:"عابر"},
+        {es:"continuo", ar:"مستمر"}, {es:"intermitente", ar:"متقطع"}, {es:"cíclico", ar:"دوري"},
+        {es:"puntual", ar:"دقيق/en tiempo"}, {es:"periódico", ar:"متكرر"}, {es:"ocasional", ar:"عرضي"},
+        {es:"recurriente", ar:"متكرر"}, {es:"ancestral", ar:"قديم جدًا"}, {es:"moderno", ar:"معاصر"},
+        {es:"veterano", ar:"مخضرم"}, {es:"juvenil", ar:"شبابي"}, {es:"maduro", ar:"ناضج"},
+        {es:"senil", ar:"شيخوخي"}, {es:"temporal", ar:"زمني"}, {es:"atemporal", ar:"خارج الزمن"}
+      ],
+
+      "Color y luz (70+)": [
+        {es:"rojo", ar:"أحمر"}, {es:"azul", ar:"أزرق"}, {es:"verde", ar:"أخضر"},
+        {es:"amarillo", ar:"أصفر"}, {es:"negro", ar:"أسود"}, {es:"blanco", ar:"أبيض"},
+        {es:"gris", ar:"رمادي"}, {es:"marrón", ar:"بني"}, {es:"rosa", ar:"وردي"},
+        {es:"naranja", ar:"برتقالي"}, {es:"violeta", ar:"بنفسجي"}, {es:"turquesa", ar:"فيروزي"},
+        {es:"dorado", ar:"ذهبي"}, {es:"plateado", ar:"فضي"}, {es:"brillante", ar:"ساطع"},
+        {es:"opaco", ar:"مطفي"}, {es:"mate", ar:"مطفي"}, {es:"luminoso", ar:"مضيء"},
+        {es:"tenue", ar:"خفيف/باهت"}, {es:"vibrante", ar:"زاهي"}, {es:"pastel", ar:"باستيل"},
+        {es:"neón", ar:"نيون"}, {es:"oscuro", ar:"داكن"}, {es:"claro", ar:"فاتح"},
+        {es:"saturado", ar:"مشبع"}, {es:"desaturado", ar:"غير مشبع"}, {es:"iridiscente", ar:"متلألئ"},
+        {es:"transparente", ar:"شفاف"}, {es:"traslúcido", ar:"شبه شفاف"}, {es:"pálido", ar:"شاحب"},
+        {es:"intenso", ar:"قوي"}, {es:"suave (tono)", ar:"ناعم النغمة"}, {es:"contraste", ar:"متباين"},
+        {es:"armonioso", ar:"منسجم"}, {es:"monocromático", ar:"أحادي اللون"}, {es:"bicolor", ar:"ذو لونين"},
+        {es:"multicolor", ar:"متعدد الألوان"}, {es:"oxidado", ar:"مصدي"}, {es:"resplandeciente", ar:"متألق"},
+        {es:"lustroso", ar:"لامع"}, {es:"brumoso", ar:"ضبابي"}, {es:"nebuloso", ar:"ضبابي كثيف"},
+        {es:"doré", ar:"مذهب"}, {es:"sepia", ar:"سيبيا"}, {es:"puro (color)", ar:"نقي اللون"},
+        {es:"apagado", ar:"باهت"}, {es:"fuerte", ar:"قوي اللون"}, {es:"suave", ar:"ناعم اللون"},
+        {es:"metalizado", ar:"معدني"}, {es:"perlado", ar:"لؤلؤي"}, {es:"sombreado", ar:"مظلّل"}
+      ],
+
+      "Textura y forma (70+)": [
+        {es:"liso", ar:"أملس"}, {es:"áspero", ar:"خشن"}, {es:"rugoso", ar:"متموّج"},
+        {es:"suave", ar:"ناعم"}, {es:"duro", ar:"قاسي"}, {es:"blando", ar:"طري"},
+        {es:"flexible", ar:"مرن"}, {es:"rígido", ar:"صلب"}, {es:"frágil", ar:"هش"},
+        {es:"resistente", ar:"قوي"}, {es:"poroso", ar:"مسامي"}, {es:"denso", ar:"كثيف"},
+        {es:"hueco", ar:"مجوف"}, {es:"macizo", ar:"صلب"}, {es:"ondulado", ar:"متموج"},
+        {es:"estriado", ar:"مخدد"}, {es:"acanalado", ar:"محفور بقنوات"}, {es:"pulido", ar:"مصقول"},
+        {es:"granulado", ar:"محبب"}, {es:"esponjoso", ar:"إسفنجي"}, {es:"compacto", ar:"مضغوط"},
+        {es:"redondeado", ar:"مستدير"}, {es:"angular", ar:"زاوي"}, {es:"puntiagudo", ar:"مدبب"},
+        {es:"plano", ar:"مسطح"}, {es:"curvo", ar:"منحني"}, {es:"cóncavo", ar:"مقعر"},
+        {es:"convexo", ar:"محدب"}, {es:"irregular", ar:"غير منتظم"}, {es:"simétrico", ar:"متماثل"},
+        {es:"asimétrico", ar:"غير متماثل"}, {es:"geométrico", ar:"هندسي"}, {es:"orgánico", ar:"عضوي"},
+        {es:"tejido", ar:"منسوج"}, {es:"trenzado", ar:"مجدول"}, {es:"acolchado", ar:"مبطّن"},
+        {es:"repujado", ar:"منقوش بارز"}, {es:"grabado", ar:"منقوش"}, {es:"perforado", ar:"مثقوب"},
+        {es:"estriado", ar:"مخطط"}, {es:"serrado", ar:"مسنن"}, {es:"afilado", ar:"حاد"},
+        {es:"mateado", ar:"مطفّى"}, {es:"barnizado", ar:"مطلّى"}, {es:"lacado", ar:"مغطى باللكر"},
+        {es:"texturado", ar:"ذو ملمس"}, {es:"rugoso", ar:"خشن"}, {es:"pulcro", ar:"مرتب"},
+        {es:"desgastado", ar:"مستهلك"}, {es:"restaurado", ar:"مُرمّم"}
+      ],
+
+      "Personalidad y carácter (80+)": [
+        {es:"amable", ar:"لطيف"}, {es:"antipático", ar:"غير ودود"}, {es:"generoso", ar:"كريم"},
+        {es:"tacaño", ar:"بخيل"}, {es:"valiente", ar:"شجاع"}, {es:"cobarde", ar:"جبان"},
+        {es:"honesto", ar:"صادق"}, {es:"mentiroso", ar:"كاذب"}, {es:"trabajador", ar:"مجتهد"},
+        {es:"perezoso", ar:"كسول"}, {es:"responsable", ar:"مسؤول"}, {es:"irresponsable", ar:"غير مسؤول"},
+        {es:"sociable", ar:"اجتماعي"}, {es:"tímido", ar:"خجول"}, {es:"extrovertido", ar:"منفتح"},
+        {es:"introvertido", ar:"انطوائي"}, {es:"optimista", ar:"متفائل"}, {es:"pesimista", ar:"متشائم"},
+        {es:"creativo", ar:"مبدع"}, {es:"práctico", ar:"عملي"}, {es:"metódico", ar:"منهجي"},
+        {es:"desordenado", ar:"فوضوي"}, {es:"puntual", ar:"دقيق"}, {es:"impuntual", ar:"غير دقيق"},
+        {es:"flexible", ar:"مرن"}, {es:"terco", ar:"عنيد"}, {es:"humilde", ar:"متواضع"},
+        {es:"arrogante", ar:"متعجرف"}, {es:"curioso", ar:"فضولي"}, {es:"indiferente", ar:"غير مبالٍ"},
+        {es:"compasivo", ar:"رحيم"}, {es:"cruel", ar:"قاسي"}, {es:"leal", ar:"مخلص"},
+        {es:"traicionero", ar:"خائن"}, {es:"serio", ar:"جدي"}, {es:"divertido", ar:"ممتع"},
+        {es:"sensible", ar:"حساس"}, {es:"insensible", ar:"غير حساس"}, {es:"ambicioso", ar:"طموح"},
+        {es:"conformista", ar:"متوافق"}, {es:"innovador", ar:"مبتكر"}, {es:"tradicional", ar:"تقليدي"},
+        {es:"respetuoso", ar:"محترم"}, {es:"grosero", ar:"فظ"}, {es:"educado", ar:"مؤدب"},
+        {es:"manipulador", ar:"متحكم"}, {es:"solidario", ar:"متضامن"}, {es:"egoísta", ar:"أناني"},
+        {es:"generoso", ar:"سخي"}, {es:"modesto", ar:"متواضع"}, {es:"vanidoso", ar:"مغرور"},
+        {es:"prudente", ar:"حذر"}, {es:"imprudente", ar:"متهور"}, {es:"tolerante", ar:"متسامح"},
+        {es:"intolerante", ar:"غير متسامح"}, {es:"optimista", ar:"متفائل"}, {es:"realista", ar:"واقعي"},
+        {es:"idealista", ar:"مثالي"}, {es:"pragmático", ar:"براغماتي"}, {es:"romántico", ar:"رومانسي"},
+        {es:"cínico", ar:"ساخر"}, {es:"entusiasta", ar:"متحمس"}, {es:"apático", ar:"لامبالي"},
+        {es:"resiliente", ar:"قادر على الصمود"}, {es:"vulnerable", ar:"عرضة"}, {es:"decidido", ar:"مصمم"}
+      ],
+
+      "Emoción y estado de ánimo (70+)": [
+        {es:"feliz", ar:"سعيد"}, {es:"triste", ar:"حزين"}, {es:"enojado", ar:"غاضب"},
+        {es:"calmado", ar:"هادئ"}, {es:"ansioso", ar:"قلق"}, {es:"nervioso", ar:"متوتر"},
+        {es:"relajado", ar:"مسترخٍ"}, {es:"estresado", ar:"مجهد"}, {es:"entusiasmado", ar:"متحمس"},
+        {es:"aburrido", ar:"ضجِر"}, {es:"sorprendido", ar:"مندهش"}, {es:"asustado", ar:"خائف"},
+        {es:"avergonzado", ar:"محرج"}, {es:"orgulloso", ar:"فخور"}, {es:"humillado", ar:"مذلول"},
+        {es:"esperanzado", ar:"مفعم بالأمل"}, {es:"desesperado", ar:"يائس"}, {es:"melancólico", ar:"كئيب"},
+        {es:"eufórico", ar:"مبتهج للغاية"}, {es:"deprimido", ar:"مكتئب"}, {es:"satisfecho", ar:"راضٍ"},
+        {es:"frustrado", ar:"محبط"}, {es:"conmovido", ar:"متأثر"}, {es:"indignado", ar:"مستاء"},
+        {es:"compasivo", ar:"متعاطف"}, {es:"celoso", ar:"غيور"}, {es:"enamorado", ar:"مغرم"},
+        {es:"desilusionado", ar:"محبط"}, {es:"tranquilo", ar:"هادئ"}, {es:"agitado", ar:"مضطرب"},
+        {es:"decidido", ar:"مصمم"}, {es:"dudoso", ar:"متردد"}, {es:"vulnerable", ar:"عرضة"},
+        {es:"resiliente", ar:"قادر على الصمود"}, {es:"nostálgico", ar:"حنين للماضي"}, {es:"sereno", ar:"ساحر الهدوء"},
+        {es:"irritable", ar:"سريع الغضب"}, {es:"afligido", ar:"مكلوم"}, {es:"alegre", ar:"مبتهج"},
+        {es:"perturbado", ar:"مضطرب"}, {es:"inspirado", ar:"ملهم"}, {es:"apatético", ar:"لامبالي"}
+      ],
+
+      "Valor y calidad (70+)": [
+        {es:"bueno", ar:"جيد"}, {es:"malo", ar:"سيئ"}, {es:"excelente", ar:"ممتاز"},
+        {es:"deficiente", ar:"رديء"}, {es:"superior", ar:"متفوق"}, {es:"inferior", ar:"أدنى"},
+        {es:"valioso", ar:"قَيِّم"}, {es:"barato", ar:"رخيص"}, {es:"caro", ar:"باهظ"},
+        {es:"duradero", ar:"متين"}, {es:"frágil", ar:"هش"}, {es:"fiable", ar:"موثوق"},
+        {es:"inseguro", ar:"غير آمن"}, {es:"eficiente", ar:"فعال"}, {es:"ineficiente", ar:"غير فعال"},
+        {es:"potente", ar:"قوي"}, {es:"débil", ar:"ضعيف"}, {es:"preciso", ar:"دقيق"},
+        {es:"impreciso", ar:"غير دقيق"}, {es:"limpio", ar:"نظيف"}, {es:"sucio", ar:"قذر"},
+        {es:"higiénico", ar:"صحي"}, {es:"contaminado", ar:"ملوث"}, {es:"seguro", ar:"آمن"},
+        {es:"peligroso", ar:"خطير"}, {es:"efectivo", ar:"فعال"}, {es:"ineficaz", ar:"غير فعال"},
+        {es:"rentable", ar:"مربح"}, {es:"costoso", ar:"مكلف"}, {es:"económico", ar:"اقتصادي"},
+        {es:"premium", ar:"فاخر"}, {es:"básico", ar:"أساسي"}, {es:"sofisticado", ar:"متطور"},
+        {es:"rudimentario", ar:"بدائي"}, {es:"certificado", ar:"معتمد"}, {es:"no certificado", ar:"غير معتمد"},
+        {es:"garantizado", ar:"مضمون"}, {es:"auténtico", ar:"أصلي"}, {es:"falso", ar:"مزيف"},
+        {es:"original", ar:"أصلي"}, {es:"imitación", ar:"تقليد"}, {es:"mejorado", ar:"محسّن"},
+        {es:"obsoleto", ar:"منقضي الصلاحية"}, {es:"innovador", ar:"مبتكر"}, {es:"tradicional", ar:"تقليدي"},
+        {es:"sostenible", ar:"مستدام"}, {es:"ecológico", ar:"صديق للبيئة"}, {es:"reciclable", ar:"قابل لإعادة التدوير"}
+      ]
+    };
+
+    // UI referencias
+    const categoriesEl = document.getElementById('categories');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // Poblar selector de voces
+    function populateVoices() {
+      const voices = window.speechSynthesis.getVoices() || [];
+      const current = voiceSelect.value;
+      voiceSelect.innerHTML = '<option value="auto">Auto (mejor disponible)</option>';
+      voices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name + '||' + v.lang;
+        opt.textContent = `${v.name} — ${v.lang}`;
+        voiceSelect.appendChild(opt);
+      });
+      if (current) {
+        const found = Array.from(voiceSelect.options).find(o => o.value === current);
+        if (found) voiceSelect.value = current;
+      }
+    }
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Crear elemento de ítem
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const w = document.createElement('span');
+      w.className = 'word';
+      w.textContent = obj.es;
+
+      const t = document.createElement('span');
+      t.className = 'trans';
+      t.textContent = obj.ar;
+
+      left.appendChild(w);
+      left.appendChild(t);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Pronunciar ${obj.es}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.es));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // Renderizar categorías con filtro
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.es.toLowerCase().includes(q) || it.ar.includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // Función de pronunciación usando la voz seleccionada
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('La síntesis de voz no está disponible en este navegador.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+
+      const sel = voiceSelect.value;
+      if (sel && sel !== 'auto') {
+        const [name, lang] = sel.split('||');
+        const voices = window.speechSynthesis.getVoices();
+        const match = voices.find(v => v.name === name && v.lang === lang) || voices.find(v => v.name === name);
+        if (match) utter.voice = match;
+        else if (lang) utter.lang = lang;
+      } else {
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'es-ES') || voices.find(v => v.lang === 'es-MX') || voices.find(v => v.lang && v.lang.startsWith('es'));
+        if (preferred) utter.voice = preferred;
+      }
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Controles de densidad
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // Búsqueda
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // Render inicial
+    renderCategories();
+
+    // Accesibilidad: Enter en búsqueda enfoca primer botón de pronunciación
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

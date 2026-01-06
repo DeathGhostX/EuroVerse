@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>A1 Longer Sentences — English with Arabic</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f7fafc; --card:#ffffff; --text:#0f172a; --muted:#475569;
+      --accent:#2563eb; --accent-light:#e6f0ff; --border:#e2e8f0;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg); color:var(--text); line-height:1.45;
+    }
+    .wrap{max-width:1100px; margin:28px auto; padding:20px;}
+    header{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:18px;}
+    h1{margin:0 0 6px 0; font-size:1.4rem;}
+    p.lead{margin:0; color:var(--muted); font-size:0.95rem;}
+    .controls{display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;}
+    select,input[type="range"],button{font-size:0.95rem}
+    select,button{padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer;}
+    button.primary{background:var(--accent); color:#fff; border:none;}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;}
+    .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:12px;}
+    .item{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:12px; border-radius:10px; background:#fff; border:1px solid var(--border);}
+    .left{max-width:74%}
+    .sentence{font-weight:700; font-size:1.02rem; color:var(--text);}
+    .type{font-size:0.85rem; color:var(--muted); margin-top:6px;}
+    .translation{font-size:0.95rem; color:#0b5ed7; margin-top:8px; direction:rtl; text-align:right; font-weight:600;}
+    .speak{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; background:var(--accent-light); color:var(--accent); border:1px solid var(--border); cursor:pointer; font-weight:700;}
+    .speak:active{transform:scale(.99)}
+    .icon{width:18px;height:18px;display:inline-block}
+    .footer{font-size:0.9rem;color:var(--muted); margin-top:8px}
+    @media (prefers-color-scheme:dark){
+      :root{--bg:#071025; --card:#071428; --text:#e6eef8; --muted:#9fb0c9; --accent:#60a5fa; --accent-light:#07243f; --border:#123047}
+      select,button{background:var(--card); color:var(--text); border-color:var(--border)}
+      .item{background:var(--card)}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>A1 Longer Sentences — English with Arabic</h1>
+      <p class="lead">50+ longer but simple sentences (affirmative, questions, commands, exclamations). Click the speaker to hear each sentence; Arabic translation is below.</p>
+
+      <div class="controls" aria-hidden="false">
+        <label for="voiceSelect">Voice</label>
+        <select id="voiceSelect" aria-label="Select voice"></select>
+
+        <label for="rateRange">Speed</label>
+        <input id="rateRange" type="range" min="0.6" max="1.4" step="0.1" value="1" aria-label="Speech rate" />
+        <span id="rateValue">1.0×</span>
+
+        <button id="testVoice" class="primary" type="button">Test voice</button>
+      </div>
+    </header>
+
+    <section class="card" aria-labelledby="listTitle">
+      <h2 id="listTitle" style="margin:0 0 8px 0">Longer A1 Sentences with Arabic Translations</h2>
+      <p class="footer">Sentences are intentionally longer (6–14 words) while remaining simple and suitable for A1 learners.</p>
+
+      <div id="wordGrid" class="grid" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <script>
+    // 55 longer A1 sentences with Arabic translations
+    const SENTENCES = [
+      { text: "Hello, my name is Sarah and I am from Casablanca.", type: "Affirmative", ar: "مرحباً، اسمي سارة وأنا من الدار البيضاء." },
+      { text: "Good morning everyone, I hope you slept well last night.", type: "Affirmative", ar: "صباح الخير جميعاً، آمل أن تكونوا قد نمتم جيداً الليلة الماضية." },
+      { text: "I usually drink a cup of coffee before I go to work.", type: "Affirmative", ar: "عادةً أشرب فنجان قهوة قبل أن أذهب إلى العمل." },
+      { text: "She studies English every day to improve her speaking skills.", type: "Affirmative", ar: "هي تدرس الإنجليزية كل يوم لتحسين مهاراتها في التحدث." },
+      { text: "We often walk to the park when the weather is nice.", type: "Affirmative", ar: "نحن غالباً نمشي إلى الحديقة عندما يكون الطقس جميلاً." },
+      { text: "They have three cats and one small dog at home.", type: "Affirmative", ar: "لديهم ثلاث قطط وكلب صغير واحد في المنزل." },
+      { text: "It is important to drink water during the hot summer days.", type: "Affirmative", ar: "من المهم شرب الماء خلال أيام الصيف الحارة." },
+      { text: "I like to read a short story before I go to bed.", type: "Affirmative", ar: "أحب قراءة قصة قصيرة قبل أن أذهب إلى النوم." },
+      { text: "He works in a big office near the city center every day.", type: "Affirmative", ar: "هو يعمل في مكتب كبير بالقرب من وسط المدينة كل يوم." },
+      { text: "My sister cooks delicious food for the whole family on Sundays.", type: "Affirmative", ar: "أختي تطبخ طعاماً لذيذاً لكل العائلة أيام الأحد." },
+
+      { text: "What is your full name and how do you spell it?", type: "Question", ar: "ما اسمك الكامل وكيف تهجئه؟" },
+      { text: "Where did you buy that beautiful blue shirt yesterday?", type: "Question", ar: "أين اشتريت تلك القميص الأزرق الجميل بالأمس؟" },
+      { text: "How do you get to school from your house every morning?", type: "Question", ar: "كيف تذهب إلى المدرسة من منزلك كل صباح؟" },
+      { text: "Do you like to watch movies at home or at the cinema?", type: "Question", ar: "هل تحب مشاهدة الأفلام في المنزل أم في السينما؟" },
+      { text: "Can you tell me the time and the name of this street?", type: "Question", ar: "هل يمكنك أن تخبرني بالوقت واسم هذا الشارع؟" },
+      { text: "Is your brother coming to the party on Saturday evening?", type: "Question", ar: "هل سيأتي أخوك إلى الحفلة مساء السبت؟" },
+      { text: "Are you ready to start the lesson now with the whole class?", type: "Question", ar: "هل أنتم مستعدون لبدء الدرس الآن مع الصف بأكمله؟" },
+      { text: "What would you like to eat for lunch today at the restaurant?", type: "Question", ar: "ماذا تود أن تأكل على الغداء اليوم في المطعم؟" },
+      { text: "How much does this bag cost and can I pay by card?", type: "Question", ar: "كم ثمن هذه الحقيبة وهل يمكنني الدفع بالبطاقة؟" },
+      { text: "Where can I find a pharmacy that is open after six o'clock?", type: "Question", ar: "أين أجد صيدلية مفتوحة بعد الساعة السادسة؟" },
+
+      { text: "Please sit down and open your book to page twenty.", type: "Imperative", ar: "من فضلك اجلس وافتح كتابك على الصفحة العشرين." },
+      { text: "Close the window because the wind is blowing strongly today.", type: "Imperative", ar: "أغلق النافذة لأن الريح تهب بقوة اليوم." },
+      { text: "Turn off your phone during the lesson to avoid any noise.", type: "Imperative", ar: "أطفئ هاتفك أثناء الدرس لتجنب أي ضوضاء." },
+      { text: "Listen to the teacher and repeat the sentence after each pause.", type: "Imperative", ar: "استمع إلى المعلم وكرر الجملة بعد كل توقف." },
+      { text: "Please help your friend carry the heavy bag to the car.", type: "Imperative", ar: "من فضلك ساعد صديقك في حمل الحقيبة الثقيلة إلى السيارة." },
+      { text: "Don't forget to bring your homework to class on Monday morning.", type: "Imperative", ar: "لا تنسَ إحضار واجبك إلى الصف صباح الاثنين." },
+      { text: "Come with me to the market and choose some fresh vegetables.", type: "Imperative", ar: "تعال معي إلى السوق واختر بعض الخضروات الطازجة." },
+      { text: "Please speak slowly so that everyone can understand your answer.", type: "Imperative", ar: "من فضلك تحدث ببطء حتى يتمكن الجميع من فهم إجابتك." },
+      { text: "Write your full name clearly at the top of the page.", type: "Imperative", ar: "اكتب اسمك الكامل بوضوح في أعلى الصفحة." },
+      { text: "Wait here for a few minutes until I come back to you.", type: "Imperative", ar: "انتظر هنا لبضع دقائق حتى أعود إليك." },
+
+      { text: "What a wonderful surprise to see you after such a long time!", type: "Exclamative", ar: "يا له من مفاجأة رائعة أن أراك بعد وقت طويل!" },
+      { text: "How beautiful the garden looks with all the flowers in bloom!", type: "Exclamative", ar: "كم يبدو الحديقة جميلة مع كل الأزهار المتفتحة!" },
+      { text: "That's amazing, you finished the project earlier than I expected!", type: "Exclamative", ar: "هذا مذهل، لقد أنهيت المشروع قبل أن أتوقع!" },
+      { text: "Oh no, I forgot my keys inside the locked car again!", type: "Exclamative", ar: "يا للأسف، نسيت مفاتيحي داخل السيارة المغلقة مرة أخرى!" },
+      { text: "What a lovely idea to celebrate with a picnic by the river!", type: "Exclamative", ar: "يا له من فكرة جميلة أن نحتفل بنزهة بجانب النهر!" },
+
+      { text: "I do not like cold weather, so I wear a warm coat every day.", type: "Negative", ar: "لا أحب الطقس البارد، لذلك أرتدي معطفاً دافئاً كل يوم." },
+      { text: "She is not feeling well today and she will stay at home.", type: "Negative", ar: "هي لا تشعر بخير اليوم وستبقى في المنزل." },
+      { text: "He does not have enough money to buy the new phone now.", type: "Negative", ar: "ليس لديه ما يكفي من المال لشراء الهاتف الجديد الآن." },
+      { text: "We are not going to the beach because it is raining heavily.", type: "Negative", ar: "لن نذهب إلى الشاطئ لأنه تمطر بغزارة." },
+      { text: "They do not understand the instructions, so please explain again.", type: "Negative", ar: "هم لا يفهمون التعليمات، لذا من فضلك اشرح مرة أخرى." },
+
+      { text: "Yes, I would like some tea with a little sugar, please.", type: "Response", ar: "نعم، أود بعض الشاي مع قليل من السكر، من فضلك." },
+      { text: "No, thank you, I am not hungry after the big meal.", type: "Response", ar: "لا، شكراً، لست جائعاً بعد الوجبة الكبيرة." },
+      { text: "Maybe we can meet next week if you are free on Tuesday.", type: "Response", ar: "ربما يمكننا اللقاء الأسبوع القادم إذا كنت متفرغاً يوم الثلاثاء." },
+      { text: "I am fine, thank you for asking, and you are welcome.", type: "Response", ar: "أنا بخير، شكراً لسؤالك، وعلى الرحب والسعة." },
+      { text: "That's okay, we can try again tomorrow when you feel better.", type: "Response", ar: "لا بأس، يمكننا المحاولة مرة أخرى غداً عندما تشعر بتحسن." },
+
+      { text: "Every morning I wake up early and go for a short walk.", type: "Routine", ar: "كل صباح أستيقظ مبكراً وأذهب في نزهة قصيرة." },
+      { text: "She usually takes the bus to work and reads a book on the way.", type: "Routine", ar: "هي عادةً تأخذ الحافلة إلى العمل وتقرأ كتاباً في الطريق." },
+      { text: "He eats breakfast with his family before leaving the house each day.", type: "Routine", ar: "هو يتناول الإفطار مع عائلته قبل مغادرة المنزل كل يوم." },
+      { text: "We study English together twice a week at the community center.", type: "Routine", ar: "نحن ندرس الإنجليزية معاً مرتين في الأسبوع في المركز المجتمعي." },
+      { text: "They play football in the park every Saturday afternoon with friends.", type: "Routine", ar: "هم يلعبون كرة القدم في الحديقة كل يوم سبت بعد الظهر مع الأصدقاء." },
+
+      { text: "I will call you tomorrow morning when I arrive at the airport.", type: "Future", ar: "سأتصل بك صباح الغد عندما أصل إلى المطار." },
+      { text: "We will visit my grandparents next month if they are feeling well.", type: "Future", ar: "سنزور أجدادي الشهر القادم إذا كانوا بصحة جيدة." },
+
+      { text: "I can help you carry the boxes if they are too heavy for you.", type: "Modal", ar: "أستطيع مساعدتك في حمل الصناديق إذا كانت ثقيلة جداً بالنسبة لك." },
+      { text: "You should drink more water during the day to stay healthy.", type: "Modal", ar: "يجب أن تشرب المزيد من الماء خلال اليوم لتحافظ على صحتك." },
+      { text: "May I open the window because the room is very warm today?", type: "Modal Question", ar: "هل لي أن أفتح النافذة لأن الغرفة حارة جداً اليوم؟" },
+
+      { text: "Nice to meet you, I have heard many good things about your work.", type: "Social", ar: "تشرفت بمقابلتك، لقد سمعت أشياء جيدة كثيرة عن عملك." },
+      { text: "Have a nice day and please call me if you need any help.", type: "Social", ar: "أتمنى لك يوماً سعيداً ومن فضلك اتصل بي إذا احتجت أي مساعدة." },
+      { text: "Good luck with your exam tomorrow, I know you will do well.", type: "Social", ar: "حظاً سعيداً في امتحانك غداً، أعلم أنك ستؤدي جيداً." },
+
+      { text: "Turn left at the big tree and then walk straight for two blocks.", type: "Direction", ar: "انعطف يساراً عند الشجرة الكبيرة ثم امضِ مباشرةً لمسافتين من المباني." },
+      { text: "Go straight ahead until you see the red building on your right.", type: "Direction", ar: "امضِ مباشرةً حتى ترى المبنى الأحمر على يمينك." },
+
+      { text: "I need a doctor because I have a high fever and a bad cough.", type: "Emergency", ar: "أحتاج إلى طبيب لأن لدي حمى عالية وسعال شديد." },
+      { text: "Call an ambulance quickly, the person on the floor is not breathing.", type: "Emergency", ar: "اتصل بالإسعاف بسرعة، الشخص على الأرض لا يتنفس." }
+    ];
+
+    // DOM refs
+    const grid = document.getElementById('wordGrid');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const rateRange = document.getElementById('rateRange');
+    const rateValue = document.getElementById('rateValue');
+    const testVoiceBtn = document.getElementById('testVoice');
+
+    // Render grid
+    function renderGrid(){
+      grid.innerHTML = '';
+      SENTENCES.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `
+          <div class="left">
+            <div class="sentence">${escapeHtml(item.text)}</div>
+            <div class="type">${escapeHtml(item.type)}</div>
+            <div class="translation" lang="ar">${escapeHtml(item.ar)}</div>
+          </div>
+          <div>
+            <button class="speak" data-text="${escapeAttr(item.text)}" aria-label="Play pronunciation for ${escapeAttr(item.text)}">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-3.5-4.37v8.74A4.5 4.5 0 0 0 16.5 12z"/>
+              </svg>
+              Speak
+            </button>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+    }
+
+    // Escaping helpers
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
+
+    // Speech synthesis
+    let voices = [];
+    function loadVoices(){
+      voices = (speechSynthesis.getVoices && speechSynthesis.getVoices()) || [];
+      voiceSelect.innerHTML = '';
+      const en = voices.filter(v => /en(-|_)?/i.test(v.lang));
+      const list = en.length ? en : voices;
+      if(list.length){
+        list.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          opt.textContent = `${v.name} — ${v.lang}`;
+          voiceSelect.appendChild(opt);
+        });
+        const preferred = list.find(v => /en-US|en_GB|Google US English|Microsoft|Samantha|Daniel/i.test(v.name));
+        if(preferred) voiceSelect.value = preferred.name;
+      } else {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'No voices available';
+        voiceSelect.appendChild(opt);
+      }
+    }
+
+    function getSelectedVoice(){
+      const name = voiceSelect.value;
+      return voices.find(v => v.name === name) || null;
+    }
+
+    function speakText(text){
+      if(!('speechSynthesis' in window)){
+        alert('Speech Synthesis not supported in this browser.');
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(text);
+      const v = getSelectedVoice();
+      if(v) u.voice = v;
+      u.lang = (u.voice && u.voice.lang) ? u.voice.lang : 'en-US';
+      u.rate = parseFloat(rateRange.value) || 1.0;
+      u.pitch = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+
+    // Event delegation
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.speak');
+      if(!btn) return;
+      const text = btn.getAttribute('data-text');
+      speakText(text);
+    });
+
+    // Rate control
+    rateRange.addEventListener('input', () => {
+      rateValue.textContent = `${parseFloat(rateRange.value).toFixed(1)}×`;
+    });
+
+    // Test voice
+    testVoiceBtn.addEventListener('click', () => {
+      speakText('This is a voice test. Listen and repeat the sentence slowly.');
+    });
+
+    // Initialize
+    renderGrid();
+    loadVoices();
+    if (typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  </script>
+</body>
+</html>

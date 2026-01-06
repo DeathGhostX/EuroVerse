@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Urban Components Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg:#f7f7f9; --card:#fff; --text:#111; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(0,0,0,0.06); --chip:#eef6ff;
+      --tile-min:160px; --tile-padding:10px; --word-size:0.98rem; --trans-size:0.86rem; --btn-size:44px;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#0b0d10; --card:#0f1317; --text:#e6eef8; --muted:#9aa6b2; --accent:#4ea1ff;
+        --accent-contrast:#07101a; --border:#1f2429; --shadow:0 2px 8px rgba(0,0,0,0.45); --chip:#12202b;
+      }
+    }
+
+    /* Dense mode variables */
+    .dense {
+      --tile-min:120px;
+      --tile-padding:8px;
+      --word-size:0.92rem;
+      --trans-size:0.78rem;
+      --btn-size:36px;
+    }
+
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:0 0 8px;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:0.95rem;outline:none;}
+    main{margin-top:12px;}
+    .category{margin:12px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:var(--chip);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--tile-padding);display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;box-shadow:var(--shadow);min-height:48px;}
+    .word{font-size:var(--word-size);font-weight:600;line-height:1.15;}
+    .translation{font-size:var(--trans-size);color:var(--muted);margin-top:4px;display:block;line-height:1.1;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px 12px;border-radius:999px;font-size:0.9rem;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow);}
+    .speak-btn:active{transform:translateY(1px);filter:brightness(0.96);}
+    .footer{margin:14px 0 30px;color:var(--muted);text-align:center;font-size:0.92rem;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .grid{gap:6px;} .item{padding:6px;} .word{font-size:0.98rem;} .speak-btn{padding:8px 10px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap" role="application" aria-label="Urban components vocabulary with Arabic translations and pronunciation">
+    <header>
+      <h1>Urban Components Vocabulary — Foundations, Utilities, Services & Buildings (English + Arabic)</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter terms (English or Arabic)..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);white-space:nowrap;">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <div class="footer">
+      Tip: Pronunciations use your device's speech synthesis voices. If a voice is missing, try switching the accent or device.
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // DATA: Urban components grouped with Arabic translations
+    // Categories: Foundations, Structural Elements, Utilities (Water, Sewage, Gas, Electricity, Telecom),
+    // Roads & Bridges, Public Buildings, Residential Buildings, Commercial & Industrial, Waste & Stormwater,
+    // Urban Furniture & Landscaping, Safety & Fire, Transport Infrastructure, Construction Equipment & Materials
+    // =========================
+    const DATA = {
+      "Foundations & Substructure": [
+        {en:"foundation", ar:"أساس"},
+        {en:"pile foundation", ar:"أساس على ركائز"},
+        {en:"spread footing", ar:"قاعدة ممتدة"},
+        {en:"raft foundation", ar:"أساس طوف"},
+        {en:"mat foundation", ar:"أساس مصفح"},
+        {en:"pile cap", ar:"غطاء الركيزة"},
+        {en:"grade beam", ar:"عارضة أساس"},
+        {en:"basement", ar:"قبو"},
+        {en:"subgrade", ar:"طبقة تحتية للتربة"},
+        {en:"soil stabilization", ar:"تثبيت التربة"},
+        {en:"retaining wall", ar:"جدار استنادي"},
+        {en:"ground improvement", ar:"تحسين التربة"},
+        {en:"drilled shaft", ar:"ركيزة مثقوبة"},
+        {en:"caisson", ar:"قاعية/قاعدة غاطسة"},
+        {en:"pile driver", ar:"مطرقة دق الركائز"},
+        {en:"sheet piling", ar:"دعامات صفائحية"},
+        {en:"underpinning", ar:"تعزيز الأساسات"},
+        {en:"soil bearing capacity", ar:"قدرة تحمل التربة"},
+        {en:"sump pit", ar:"حفرة تجميع المياه"},
+        {en:"drainage blanket", ar:"بطانية تصريف"}
+      ],
+
+      "Structural Elements": [
+        {en:"column", ar:"عمود"},
+        {en:"beam", ar:"عارضة"},
+        {en:"slab", ar:"لوح (بلاطة)"},
+        {en:"girder", ar:"عارضة رئيسية"},
+        {en:"truss", ar:"هياكل مثلثية (تراس)"},
+        {en:"brace", ar:"دعامة"},
+        {en:"lintel", ar:"عتبة (عَتَب)"},
+        {en:"shear wall", ar:"جدار قص"},
+        {en:"core wall", ar:"جدار مركزي (نواة)"},
+        {en:"floor system", ar:"نظام الأرضية"},
+        {en:"roof structure", ar:"هيكل السقف"},
+        {en:"foundation wall", ar:"جدار الأساس"},
+        {en:"staircase", ar:"سلم داخلي"},
+        {en:"mezzanine", ar:"ميزانين / طابق نصفي"},
+        {en:"cantilever", ar:"عارضة متدلية"},
+        {en:"expansion joint", ar:"وصلة تمدد"},
+        {en:"bearing pad", ar:"لوح تحمل"},
+        {en:"connection plate", ar:"لوح توصيل"},
+        {en:"composite slab", ar:"لوح مركب"},
+        {en:"precast panel", ar:"لوح مسبق الصب"}
+      ],
+
+      "Water Supply & Distribution": [
+        {en:"water main", ar:"خط مياه رئيسي"},
+        {en:"distribution pipe", ar:"أنبوب توزيع"},
+        {en:"service connection", ar:"وصلة خدمة"},
+        {en:"hydrant", ar:"صنبور إطفاء (هيدرنت)"},
+        {en:"valve", ar:"صمام"},
+        {en:"meter", ar:"عداد"},
+        {en:"water tower", ar:"برج مياه"},
+        {en:"pump station", ar:"محطة ضخ"},
+        {en:"pressure zone", ar:"منطقة ضغط"},
+        {en:"storage reservoir", ar:"خزان تخزين"},
+        {en:"treatment plant", ar:"محطة معالجة المياه"},
+        {en:"pipe joint", ar:"وصلة أنبوب"},
+        {en:"backflow preventer", ar:"مانع ارتداد المياه"},
+        {en:"service lateral", ar:"خط خدمة جانبي"},
+        {en:"air valve", ar:"صمام هواء"},
+        {en:"blowoff", ar:"مخرج تفريغ"},
+        {en:"water main break", ar:"انقطاع خط المياه"},
+        {en:"hydrant valve", ar:"صمام الهيدرنت"},
+        {en:"pressure reducing valve", ar:"صمام تخفيض الضغط"},
+        {en:"water quality sensor", ar:"مستشعر جودة المياه"}
+      ],
+
+      "Sewerage & Stormwater": [
+        {en:"sanitary sewer", ar:"مجرى صرف صحي"},
+        {en:"storm sewer", ar:"مجرى مياه الأمطار"},
+        {en:"combined sewer", ar:"مجرى مشترك"},
+        {en:"manhole", ar:"فتحة تفتيش"},
+        {en:"sewer main", ar:"خط صرف رئيسي"},
+        {en:"lateral sewer", ar:"خط صرف جانبي"},
+        {en:"lift station", ar:"محطة رفع الصرف"},
+        {en:"septic tank", ar:"خزان صرف صحي"},
+        {en:"treatment plant", ar:"محطة معالجة الصرف"},
+        {en:"outfall", ar:"مخرج تصريف"},
+        {en:"stormwater pond", ar:"بركة تصريف مياه الأمطار"},
+        {en:"detention basin", ar:"حوض احتجاز المياه"},
+        {en:"infiltration trench", ar:"خندق تسرب"},
+        {en:"permeable pavement", ar:"رصيف نافذ للمياه"},
+        {en:"culvert", ar:"مجرى تحت الطريق"},
+        {en:"drainage channel", ar:"قناة تصريف"},
+        {en:"catch basin", ar:"حوض تجميع"},
+        {en:"silt trap", ar:"مصيدة الطمي"},
+        {en:"storm drain", ar:"مصرف مياه الأمطار"},
+        {en:"combined sewer overflow", ar:"فيضان المجاري المشتركة"}
+      ],
+
+      "Gas & Fuel Distribution": [
+        {en:"gas main", ar:"خط غاز رئيسي"},
+        {en:"service line", ar:"خط خدمة"},
+        {en:"meter", ar:"عداد الغاز"},
+        {en:"regulator", ar:"منظم الضغط"},
+        {en:"valve station", ar:"محطة صمامات"},
+        {en:"pressure reducing station", ar:"محطة خفض الضغط"},
+        {en:"gas holder", ar:"خزان غاز"},
+        {en:"pipeline", ar:"خط أنابيب"},
+        {en:"gas leak detection", ar:"كشف تسرب الغاز"},
+        {en:"gas riser", ar:"صاعد الغاز"},
+        {en:"gas shutoff", ar:"صمام إغلاق الغاز"},
+        {en:"fuel depot", ar:"مستودع وقود"},
+        {en:"LNG terminal", ar:"محطة غاز طبيعي مسال"},
+        {en:"gas regulator kiosk", ar:"كشك منظم الغاز"},
+        {en:"meter box", ar:"صندوق العداد"}
+      ],
+
+      "Electricity & Power": [
+        {en:"substation", ar:"محطة تحويل كهرباء"},
+        {en:"transformer", ar:"محول كهربائي"},
+        {en:"distribution line", ar:"خط توزيع كهرباء"},
+        {en:"transmission line", ar:"خط نقل كهرباء"},
+        {en:"feeder", ar:"مغذي كهربائي"},
+        {en:"switchgear", ar:"معدات تبديل كهربائية"},
+        {en:"circuit breaker", ar:"قاطع دائرة"},
+        {en:"utility pole", ar:"عمود كهرباء"},
+        {en:"underground duct bank", ar:"قناة كابلات تحت الأرض"},
+        {en:"service connection", ar:"وصلة خدمة كهربائية"},
+        {en:"meter", ar:"عداد كهرباء"},
+        {en:"smart meter", ar:"عداد ذكي"},
+        {en:"backup generator", ar:"مولد احتياطي"},
+        {en:"microgrid", ar:"شبكة كهرباء محلية"},
+        {en:"solar array", ar:"صفوف ألواح شمسية"},
+        {en:"battery storage", ar:"تخزين بطاريات"},
+        {en:"power plant", ar:"محطة توليد كهرباء"},
+        {en:"switching station", ar:"محطة تبديل"},
+        {en:"earthing/grounding", ar:"تأريض"},
+        {en:"overhead line", ar:"خط علوي"}
+      ],
+
+      "Telecommunications & Data": [
+        {en:"telecom duct", ar:"قناة اتصالات"},
+        {en:"fiber optic cable", ar:"كابل ألياف بصرية"},
+        {en:"manhole (telecom)", ar:"فتحة تفتيش اتصالات"},
+        {en:"junction box", ar:"صندوق وصلات"},
+        {en:"cell tower", ar:"برج خلية (خلوي)"},
+        {en:"base station", ar:"محطة أساسية"},
+        {en:"data center", ar:"مركز بيانات"},
+        {en:"POI (point of interconnect)", ar:"نقطة التوصيل"},
+        {en:"exchange", ar:"مركز تبادل الاتصالات"},
+        {en:"backhaul", ar:"وصلة خلفية"},
+        {en:"DSLAM", ar:"مجمّع خط المشترك الرقمي"},
+        {en:"ONT", ar:"وحدة الشبكة البصرية (ONT)"},
+        {en:"fiber splice", ar:"وصل الألياف"},
+        {en:"network cabinet", ar:"خزانة الشبكة"},
+        {en:"street cabinet", ar:"خزانة الشارع"},
+        {en:"wifi hotspot", ar:"نقطة اتصال واي فاي"},
+        {en:"antenna", ar:"هوائي"},
+        {en:"satellite dish", ar:"طبق فضائي"},
+        {en:"microwave link", ar:"وصلة ميكروويف"},
+        {en:"telecom pole", ar:"عمود اتصالات"}
+      ],
+
+      "Roads, Bridges & Pavements": [
+        {en:"roadway", ar:"طريق"},
+        {en:"carriageway", ar:"حارة مرور"},
+        {en:"lane", ar:"مسار"},
+        {en:"pavement", ar:"رصيف/طريق معبد"},
+        {en:"sidewalk", ar:"رصيف المشاة"},
+        {en:"curb", ar:"حافة الرصيف"},
+        {en:"gutter", ar:"مزاريب الطريق"},
+        {en:"median", ar:"فاصل مركزي"},
+        {en:"roundabout", ar:"دوار"},
+        {en:"intersection", ar:"تقاطع"},
+        {en:"traffic signal", ar:"إشارة مرور"},
+        {en:"crosswalk", ar:"ممر مشاة"},
+        {en:"bridge", ar:"جسر"},
+        {en:"viaduct", ar:"جسر علوي/قنطرة"},
+        {en:"overpass", ar:"جسر علوي"},
+        {en:"underpass", ar:"نفق تحت الطريق"},
+        {en:"culvert", ar:"مجرى تحت الطريق"},
+        {en:"pavement marking", ar:"علامات الطريق"},
+        {en:"guardrail", ar:"حاجز أمان"},
+        {en:"expansion joint (bridge)", ar:"وصلة تمدد (جسر)"}
+      ],
+
+      "Public Buildings & Facilities": [
+        {en:"city hall", ar:"مبنى البلدية"},
+        {en:"courthouse", ar:"محكمة"},
+        {en:"library", ar:"مكتبة"},
+        {en:"school", ar:"مدرسة"},
+        {en:"hospital", ar:"مستشفى"},
+        {en:"police station", ar:"مركز شرطة"},
+        {en:"fire station", ar:"محطة إطفاء"},
+        {en:"community center", ar:"مركز مجتمعي"},
+        {en:"post office", ar:"مكتب بريد"},
+        {en:"market", ar:"سوق"},
+        {en:"stadium", ar:"استاد"},
+        {en:"museum", ar:"متحف"},
+        {en:"theater", ar:"مسرح"},
+        {en:"train station", ar:"محطة قطار"},
+        {en:"bus terminal", ar:"محطة حافلات"},
+        {en:"airport terminal", ar:"صالة المطار"},
+        {en:"waste transfer station", ar:"محطة نقل النفايات"},
+        {en:"water treatment plant", ar:"محطة معالجة المياه"},
+        {en:"power substation", ar:"محطة تحويل كهرباء"},
+        {en:"sewage treatment plant", ar:"محطة معالجة الصرف الصحي"}
+      ],
+
+      "Residential Buildings": [
+        {en:"single-family house", ar:"منزل لعائلة واحدة"},
+        {en:"duplex", ar:"منزل مزدوج"},
+        {en:"townhouse", ar:"منزل متلاصق"},
+        {en:"apartment building", ar:"مبنى شقق"},
+        {en:"condominium", ar:"شقة تمليك"},
+        {en:"high-rise residential", ar:"مبنى سكني عالي"},
+        {en:"low-rise residential", ar:"مبنى سكني منخفض"},
+        {en:"row house", ar:"منزل صفّي"},
+        {en:"bungalow", ar:"بنغل"},
+        {en:"villa", ar:"فيلا"},
+        {en:"housing estate", ar:"مجمع سكني"},
+        {en:"social housing", ar:"سكن اجتماعي"},
+        {en:"mixed-use building", ar:"مبنى متعدد الاستخدامات"},
+        {en:"residential block", ar:"كتلة سكنية"},
+        {en:"garden apartment", ar:"شقة بحديقة"}
+      ],
+
+      "Commercial & Industrial Buildings": [
+        {en:"office building", ar:"مبنى مكاتب"},
+        {en:"retail store", ar:"متجر تجزئة"},
+        {en:"shopping mall", ar:"مركز تسوق"},
+        {en:"warehouse", ar:"مستودع"},
+        {en:"factory", ar:"مصنع"},
+        {en:"industrial park", ar:"منطقة صناعية"},
+        {en:"distribution center", ar:"مركز توزيع"},
+        {en:"cold storage", ar:"مخزن تبريد"},
+        {en:"workshop", ar:"ورشة عمل"},
+        {en:"laboratory", ar:"مختبر"},
+        {en:"data center", ar:"مركز بيانات"},
+        {en:"hotel", ar:"فندق"},
+        {en:"restaurant", ar:"مطعم"},
+        {en:"garage (commercial)", ar:"مرأب تجاري"},
+        {en:"service station", ar:"محطة خدمة/وقود"},
+        {en:"showroom", ar:"قاعة عرض"},
+        {en:"industrial shed", ar:"قبة صناعية"},
+        {en:"manufacturing plant", ar:"مصنع تصنيع"},
+        {en:"assembly line", ar:"خط تجميع"},
+        {en:"cold chain facility", ar:"منشأة سلسلة التبريد"}
+      ],
+
+      "Waste Management & Recycling": [
+        {en:"landfill", ar:"مكب نفايات"},
+        {en:"transfer station", ar:"محطة نقل النفايات"},
+        {en:"recycling center", ar:"مركز إعادة التدوير"},
+        {en:"composting facility", ar:"منشأة التسميد"},
+        {en:"waste bin", ar:"حاوية نفايات"},
+        {en:"recycling bin", ar:"حاوية إعادة التدوير"},
+        {en:"hazardous waste", ar:"نفايات خطرة"},
+        {en:"waste collection route", ar:"مسار جمع النفايات"},
+        {en:"incinerator", ar:"محارق"},
+        {en:"bulky waste pickup", ar:"جمع النفايات الكبيرة"},
+        {en:"organic waste", ar:"نفايات عضوية"},
+        {en:"e-waste", ar:"نفايات إلكترونية"},
+        {en:"waste compactor", ar:"ضاغط نفايات"},
+        {en:"transfer trailer", ar:"مقطورة نقل النفايات"},
+        {en:"sorting line", ar:"خط فرز"}
+      ],
+
+      "Green Infrastructure & Landscaping": [
+        {en:"park", ar:"حديقة"},
+        {en:"urban forest", ar:"غابة حضرية"},
+        {en:"green roof", ar:"سقف أخضر"},
+        {en:"rain garden", ar:"حديقة تصريف مياه الأمطار"},
+        {en:"bioswale", ar:"قناة نباتية لتصريف المياه"},
+        {en:"street tree", ar:"شجرة شارع"},
+        {en:"planter", ar:"حوض نبات"},
+        {en:"green corridor", ar:"ممر أخضر"},
+        {en:"community garden", ar:"حديقة مجتمعية"},
+        {en:"playground", ar:"ملعب أطفال"},
+        {en:"urban plaza", ar:"ساحة حضرية"},
+        {en:"permeable pavement", ar:"رصيف نافذ"},
+        {en:"wetland", ar:"أراضي رطبة"},
+        {en:"bioswale inlet", ar:"مدخل قناة نباتية"},
+        {en:"stormwater tree pit", ar:"حفرة شجرة لتصريف المياه"}
+      ],
+
+      "Urban Furniture & Amenities": [
+        {en:"bench", ar:"مقعد"},
+        {en:"streetlight", ar:"عمود إنارة"},
+        {en:"trash bin", ar:"حاوية قمامة"},
+        {en:"recycling bin", ar:"حاوية إعادة التدوير"},
+        {en:"bike rack", ar:"حامل دراجات"},
+        {en:"bus shelter", ar:"مأوى حافلات"},
+        {en:"kiosk", ar:"كشك"},
+        {en:"public toilet", ar:"مرحاض عام"},
+        {en:"drinking fountain", ar:"نافورة مياه للشرب"},
+        {en:"bollard", ar:"عمود مروري"},
+        {en:"wayfinding sign", ar:"لوحة إرشادية"},
+        {en:"planter box", ar:"صندوق نباتات"},
+        {en:"public art", ar:"فن عام"},
+        {en:"bike share station", ar:"محطة مشاركة الدراجات"},
+        {en:"charging station (EV)", ar:"محطة شحن سيارات كهربائية"}
+      ],
+
+      "Safety, Fire & Emergency": [
+        {en:"fire hydrant", ar:"صنبور إطفاء"},
+        {en:"fire alarm", ar:"إنذار حريق"},
+        {en:"fire lane", ar:"ممر إطفاء"},
+        {en:"emergency exit", ar:"مخرج طوارئ"},
+        {en:"assembly point", ar:"نقطة تجمع"},
+        {en:"first aid station", ar:"محطة إسعافات أولية"},
+        {en:"defibrillator (AED)", ar:"جهاز مزيل الرجفان"},
+        {en:"fire suppression system", ar:"نظام إخماد الحريق"},
+        {en:"sprinkler system", ar:"نظام رشاشات"},
+        {en:"fire pump", ar:"مضخة حريق"},
+        {en:"emergency generator", ar:"مولد طوارئ"},
+        {en:"evacuation route", ar:"مسار إخلاء"},
+        {en:"emergency lighting", ar:"إضاءة طوارئ"},
+        {en:"hazard sign", ar:"علامة خطر"},
+        {en:"rescue access", ar:"وصول الإنقاذ"}
+      ],
+
+      "Transport Infrastructure & Facilities": [
+        {en:"bus stop", ar:"موقف حافلة"},
+        {en:"bus terminal", ar:"محطة حافلات"},
+        {en:"tram stop", ar:"موقف ترام"},
+        {en:"light rail", ar:"سكة خفيفة"},
+        {en:"metro station", ar:"محطة مترو"},
+        {en:"train station", ar:"محطة قطار"},
+        {en:"rail track", ar:"مسار سكة حديد"},
+        {en:"platform", ar:"رصيف محطة"},
+        {en:"park and ride", ar:"موقف وركوب"},
+        {en:"taxi rank", ar:"موقف تاكسي"},
+        {en:"parking lot", ar:"موقف سيارات"},
+        {en:"multilevel car park", ar:"موقف سيارات متعدد الطوابق"},
+        {en:"bike lane", ar:"مسار دراجات"},
+        {en:"pedestrian zone", ar:"منطقة مشاة"},
+        {en:"ferry terminal", ar:"محطة عبّارات"},
+        {en:"harbor", ar:"ميناء"},
+        {en:"airport runway", ar:"مدرج مطار"},
+        {en:"control tower", ar:"برج مراقبة"},
+        {en:"cargo terminal", ar:"محطة شحن"}
+      ],
+
+      "Construction Equipment & Materials": [
+        {en:"crane", ar:"رافعة"},
+        {en:"excavator", ar:"حفارة"},
+        {en:"bulldozer", ar:"بلدوزر"},
+        {en:"concrete mixer", ar:"خلاطة خرسانة"},
+        {en:"dump truck", ar:"شاحنة قلابة"},
+        {en:"scaffolding", ar:"سقالات"},
+        {en:"formwork", ar:"قوالب صب الخرسانة"},
+        {en:"rebar", ar:"حديد تسليح"},
+        {en:"aggregate", ar:"ركام"},
+        {en:"cement", ar:"أسمنت"},
+        {en:"concrete", ar:"خرسانة"},
+        {en:"asphalt", ar:"أسفلت"},
+        {en:"paver", ar:"آلة رصف"},
+        {en:"compactor", ar:"مدحلة/ضاغطة"},
+        {en:"jackhammer", ar:"مطرقة هيدروليكية"},
+        {en:"survey equipment", ar:"معدات مسح"},
+        {en:"safety barrier", ar:"حاجز أمان"},
+        {en:"traffic cone", ar:"مخروط مروري"},
+        {en:"temporary fence", ar:"سياج مؤقت"},
+        {en:"site office", ar:"مكتب موقع"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // speech synthesis
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if (preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // initial render (start in dense mode)
+    appEl.classList.add('dense');
+    renderCategories();
+
+    // ensure voices loaded
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // accessibility: Enter focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak-btn');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

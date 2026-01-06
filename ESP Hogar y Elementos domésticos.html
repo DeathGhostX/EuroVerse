@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Vocabulario del Hogar — Español con traducción al árabe</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --tile-min:140px; --pad:10px; --word-size:0.98rem; --trans-size:0.82rem;
+    }
+    .dense{--tile-min:100px;--pad:8px;--word-size:0.86rem;--trans-size:0.70rem;}
+    html,body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin:10px 0;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:8px;border:1px solid var(--border);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{border:1px solid var(--border);padding:8px;border-radius:6px;background:transparent;font-size:0.95rem;color:var(--text);outline:none;}
+    .density-toggle{display:flex;gap:6px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;}
+    main{margin-top:12px;}
+    section{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:#eef6ff;padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--pad);display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(15,20,30,0.04);min-height:56px;}
+    .left{display:flex;flex-direction:column;min-width:0;}
+    .word{font-weight:700;font-size:var(--word-size);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .trans{color:var(--muted);font-size:var(--trans-size);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .speak{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;}
+    footer{margin:18px 0;color:var(--muted);text-align:center;font-size:0.92rem;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .item{min-height:52px;padding:8px;} .speak{min-width:36px;min-height:36px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Vocabulario del hogar con traducción al árabe">
+    <header>
+      <h1>Vocabulario del Hogar — Habitaciones, funciones y objetos (Español → Árabe)</h1>
+
+      <div class="controls" role="region" aria-label="Controles">
+        <div class="control" style="min-width:220px;">
+          <label for="voiceSelect">Voz / Acento</label>
+          <select id="voiceSelect" aria-label="Selector de voz y acento" style="margin-left:8px;min-width:160px;">
+            <option value="auto">Auto (mejor disponible)</option>
+          </select>
+        </div>
+
+        <div class="control" style="min-width:320px;">
+          <label for="search">Buscar</label>
+          <input id="search" type="search" placeholder="Filtrar (español o árabe)..." aria-label="Buscar vocabulario" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);">Densidad</label>
+            <button id="normalBtn" title="Densidad normal">Normal</button>
+            <button id="denseBtn" title="Vista densa">Densa</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categorías inyectadas por script -->
+    </main>
+
+    <footer>
+      Consejo: las pronunciaciones usan las voces de síntesis de tu dispositivo. Cambia la voz si no suena como esperas.
+    </footer>
+  </div>
+
+  <script>
+    // Datos: listas organizadas por grupos. Cada entrada: {es: "término en español", ar: "traducción al árabe"}
+    const DATA = {
+      "Habitaciones principales y sus funciones": [
+        {es:"salón / sala de estar", ar:"غرفة المعيشة / الصالون"},
+        {es:"comedor", ar:"غرفة الطعام"},
+        {es:"cocina", ar:"مطبخ"},
+        {es:"dormitorio principal", ar:"غرفة النوم الرئيسية"},
+        {es:"dormitorio infantil", ar:"غرفة الأطفال"},
+        {es:"habitación de invitados", ar:"غرفة الضيوف"},
+        {es:"baño principal", ar:"الحمام الرئيسي"},
+        {es:"aseo / medio baño", ar:"مرحاض صغير / حمام ضيوف"},
+        {es:"lavadero / cuarto de lavado", ar:"غرفة الغسيل"},
+        {es:"despensa", ar:"مخزن المؤن"},
+        {es:"oficina / despacho", ar:"مكتب"},
+        {es:"sala de estar informal", ar:"غرفة جلوس غير رسمية"},
+        {es:"sala de televisión", ar:"غرفة التلفاز"},
+        {es:"sótano", ar:"قبو"},
+        {es:"ático", ar:"علية"},
+        {es:"vestíbulo / recibidor", ar:"مدخل / بهو"},
+        {es:"pasillo", ar:"ممر"},
+        {es:"terraza", ar:"تراس"},
+        {es:"balcón", ar:"شرفة"},
+        {es:"patio", ar:"فناء"},
+        {es:"jardín", ar:"حديقة"},
+        {es:"garaje", ar:"مرآب"},
+        {es:"trastero", ar:"مخزن أدوات"},
+        {es:"porche", ar:"شرفة أمامية"},
+        {es:"sala de juegos", ar:"غرفة ألعاب"},
+        {es:"sala de música", ar:"غرفة موسيقى"},
+        {es:"biblioteca", ar:"مكتبة"},
+        {es:"sala de estar formal", ar:"غرفة جلوس رسمية"},
+        {es:"cuarto de plancha", ar:"غرفة الكي"},
+        {es:"cuarto de costura", ar:"غرفة الخياطة"},
+        {es:"sala de manualidades", ar:"غرفة الحرف اليدوية"},
+        {es:"sala de ejercicios", ar:"غرفة تمارين"},
+        {es:"sala de cine en casa", ar:"غرفة سينما منزلية"},
+        {es:"sala de estar exterior", ar:"غرفة جلوس خارجية"},
+        {es:"cuarto de herramientas", ar:"غرفة الأدوات"},
+        {es:"cuarto de calderas / sala de máquinas", ar:"غرفة الغلاية / غرفة الماكينات"},
+        {es:"cuarto de servicio", ar:"غرفة الخدم"},
+        {es:"vestidor / walk-in closet", ar:"غرفة الملابس / خزانة كبيرة"},
+        {es:"cuarto de juegos infantiles", ar:"غرفة ألعاب الأطفال"}
+      ],
+
+      "Componentes y zonas de la cocina (objetos y funciones)": [
+        {es:"encimera", ar:"سطح العمل"},
+        {es:"fregadero", ar:"حوض المطبخ"},
+        {es:"grifo", ar:"صنبور"},
+        {es:"placa de cocina / vitrocerámica", ar:"موقد / سطح طهي"},
+        {es:"horno", ar:"فرن"},
+        {es:"microondas", ar:"ميكروويف"},
+        {es:"campana extractora", ar:"شفاط المطبخ"},
+        {es:"nevera / frigorífico", ar:"ثلاجة"},
+        {es:"congelador", ar:"فريزر"},
+        {es:"lavavajillas", ar:"غسالة صحون"},
+        {es:"despensa", ar:"مخزن المؤن"},
+        {es:"cajones", ar:"أدراج"},
+        {es:"armarios", ar:"خزائن"},
+        {es:"tabla de cortar", ar:"لوح تقطيع"},
+        {es:"cubertero", ar:"صندوق أدوات المائدة"},
+        {es:"tostadora", ar:"محمصة خبز"},
+        {es:"cafetera", ar:"آلة قهوة"},
+        {es:"batidora", ar:"خلاط كهربائي"},
+        {es:"licuadora", ar:"خلاط عصائر"},
+        {es:"olla / cacerola", ar:"قدر / طنجرة"},
+        {es:"sartén", ar:"مقلاة"},
+        {es:"colador", ar:"مصفاة"},
+        {es:"espátula", ar:"مِلعقة مسطحة"},
+        {es:"cuchillo de chef", ar:"سكين الشيف"},
+        {es:"cucharas medidoras", ar:"ملاعق قياس"},
+        {es:"tazas medidoras", ar:"أكواب قياس"},
+        {es:"tabla para servir", ar:"لوح تقديم"},
+        {es:"paños de cocina", ar:"مناديل المطبخ"},
+        {es:"guantes de horno", ar:"قفازات الفرن"},
+        {es:"papel de cocina", ar:"مناديل ورقية"},
+        {es:"recipientes herméticos", ar:"حاويات محكمة الإغلاق"},
+        {es:"tabla de quesos", ar:"لوح جبن"},
+        {es:"sistema de reciclaje", ar:"نظام إعادة التدوير"},
+        {es:"basurero / cubo de basura", ar:"سلة المهملات"},
+        {es:"dispensador de jabón", ar:"موزع صابون"},
+        {es:"filtro de agua", ar:"مرشح ماء"},
+        {es:"isla de cocina", ar:"جزيرة المطبخ"},
+        {es:"barra de desayuno", ar:"بار الإفطار"},
+        {es:"luz de trabajo", ar:"إضاءة العمل"},
+        {es:"estantería abierta", ar:"أرفف مفتوحة"},
+        {es:"soporte para ollas", ar:"حامل الأواني"}
+      ],
+
+      "Mobiliario y objetos del salón / sala de estar": [
+        {es:"sofá", ar:"أريكة"},
+        {es:"sillón", ar:"كرسي بذراعين"},
+        {es:"mesa de centro", ar:"طاولة قهوة"},
+        {es:"mueble de televisión", ar:"خزانة التلفاز"},
+        {es:"televisión", ar:"تلفاز"},
+        {es:"estantería", ar:"رفوف"},
+        {es:"lámpara de pie", ar:"مصباح أرضي"},
+        {es:"alfombra", ar:"سجادة"},
+        {es:"cortinas / estores", ar:"ستائر"},
+        {es:"mesa auxiliar", ar:"طاولة جانبية"},
+        {es:"revistero", ar:"حامل مجلات"},
+        {es:"chimenea", ar:"مدفأة"},
+        {es:"cojines", ar:"وسائد"},
+        {es:"manta / plaid", ar:"بطانية"},
+        {es:"aparador", ar:"خزانة جانبية"},
+        {es:"espejo decorativo", ar:"مرآة زخرفية"},
+        {es:"cuadro / obra de arte", ar:"لوحة فنية"},
+        {es:"macetero", ar:"حامل نباتات"},
+        {es:"sistema de sonido", ar:"نظام صوتي"},
+        {es:"estación de carga", ar:"محطة شحن"},
+        {es:"mesa de juegos", ar:"طاولة ألعاب"},
+        {es:"lámpara de mesa", ar:"مصباح طاولة"},
+        {es:"perchero", ar:"علاقة معاطف"},
+        {es:"cesta de almacenamiento", ar:"سلة تخزين"},
+        {es:"reloj de pared", ar:"ساعة حائط"},
+        {es:"bandeja decorativa", ar:"صينية زخرفية"},
+        {es:"biombo / separador", ar:"فاصل غرفة"},
+        {es:"puff", ar:"بوف (مقعد صغير)"},
+        {es:"porta velas", ar:"حامل شموع"},
+        {es:"estantería multimedia", ar:"رف وسائط متعددة"},
+        {es:"mesa plegable", ar:"طاولة قابلة للطي"},
+        {es:"soporte para plantas", ar:"حامل نباتات"},
+        {es:"caja de almacenamiento", ar:"صندوق تخزين"},
+        {es:"reposapiés", ar:"مسند قدم"},
+        {es:"cortina opaca", ar:"ستارة معتمة"},
+        {es:"cortina translúcida", ar:"ستارة نصف شفافة"},
+        {es:"panel acústico", ar:"لوح عازل للصوت"},
+        {es:"lámpara regulable", ar:"مصباح قابل للتعتيم"}
+      ],
+
+      "Dormitorio: muebles, ropa de cama y accesorios": [
+        {es:"cama", ar:"سرير"},
+        {es:"cabecero", ar:"لوح رأس السرير"},
+        {es:"colchón", ar:"مرتبة"},
+        {es:"almohada", ar:"وسادة"},
+        {es:"sábanas", ar:"ملاءات"},
+        {es:"edredón / nórdico", ar:"لحاف"},
+        {es:"colcha", ar:"غطاء سرير"},
+        {es:"mesita de noche", ar:"طاولة سرير جانبية"},
+        {es:"lámpara de noche", ar:"مصباح ليلي"},
+        {es:"armario / ropero", ar:"خزانة ملابس"},
+        {es:"cómoda", ar:"دولاب أدراج"},
+        {es:"perchero", ar:"علاقة ملابس"},
+        {es:"espejo de cuerpo entero", ar:"مرآة كاملة الطول"},
+        {es:"cortinas", ar:"ستائر"},
+        {es:"persianas", ar:"ستائر رول"},
+        {es:"alfombra", ar:"سجادة"},
+        {es:"caja bajo la cama", ar:"صندوق تحت السرير"},
+        {es:"cubrecolchón", ar:"غطاء مرتبة"},
+        {es:"protector de colchón", ar:"واقي المرتبة"},
+        {es:"colchón viscoelástico", ar:"مرتبة فيسكوالاستيك"},
+        {es:"cama nido", ar:"سرير قابل للسحب"},
+        {es:"cama plegable", ar:"سرير قابل للطي"},
+        {es:"cama infantil", ar:"سرير أطفال"},
+        {es:"cuna", ar:"سرير طفل رضيع"},
+        {es:"móvil de cuna", ar:"موسيقى سرير الطفل"},
+        {es:"cambiador", ar:"طاولة تغيير الطفل"},
+        {es:"luz nocturna", ar:"ضوء ليلي"},
+        {es:"cortina opaca", ar:"ستارة معتمة"},
+        {es:"organizador de armario", ar:"منظم خزانة"},
+        {es:"perchas", ar:"علاقات ملابس"},
+        {es:"caja de zapatos", ar:"صندوق أحذية"},
+        {es:"cesta de ropa sucia", ar:"سلة غسيل"},
+        {es:"humidificador", ar:"مرطب هواء"},
+        {es:"deshumidificador", ar:"مزيل رطوبة"},
+        {es:"difusor de aromas", ar:"موزع عطور"},
+        {es:"cortina decorativa", ar:"ستارة زخرفية"},
+        {es:"colgador de pared", ar:"علاقة حائط"},
+        {es:"cobertor", ar:"غطاء"},
+        {es:"protector de almohada", ar:"واقي الوسادة"}
+      ],
+
+      "Baño: instalaciones, accesorios y productos": [
+        {es:"inodoro", ar:"مرحاض"},
+        {es:"lavabo / lavabo de baño", ar:"حوض غسيل"},
+        {es:"ducha", ar:"دش"},
+        {es:"bañera", ar:"حوض استحمام"},
+        {es:"grifo", ar:"صنبور"},
+        {es:"espejo de baño", ar:"مرآة الحمام"},
+        {es:"mueble de baño", ar:"خزانة الحمام"},
+        {es:"toallero", ar:"منشفة"},
+        {es:"toallas", ar:"مناشف"},
+        {es:"alfombrilla de baño", ar:"حصيرة الحمام"},
+        {es:"cortina de ducha", ar:"ستارة الدش"},
+        {es:"portacepillos", ar:"حامل فرش الأسنان"},
+        {es:"dispensador de jabón", ar:"موزع صابون"},
+        {es:"papel higiénico", ar:"ورق تواليت"},
+        {es:"portarrollos", ar:"حامل ورق التواليت"},
+        {es:"secador de pelo", ar:"مجفف شعر"},
+        {es:"plancha de pelo", ar:"مكواة شعر"},
+        {es:"esponja / lufa", ar:"إسفنجة / لوفا"},
+        {es:"gel de ducha", ar:"جل استحمام"},
+        {es:"champú", ar:"شامبو"},
+        {es:"acondicionador", ar:"بلسم"},
+        {es:"crema hidratante", ar:"كريم مرطب"},
+        {es:"cortaúñas", ar:"قاطع أظافر"},
+        {es:"pinzas", ar:"ملقط"},
+        {es:"cepillo de baño", ar:"فرشاة المرحاض"},
+        {es:"papelera", ar:"سلة مهملات"},
+        {es:"espejo con aumento", ar:"مرآة مكبرة"},
+        {es:"botiquín", ar:"خزانة أدوية"},
+        {es:"termómetro de baño", ar:"مقياس حرارة الحمام"},
+        {es:"calentador de toallas", ar:"مسخن مناشف"},
+        {es:"detergente para baño", ar:"منظف الحمام"},
+        {es:"limpiador de inodoros", ar:"منظف المرحاض"},
+        {es:"ambientador", ar:"معطر جو"},
+        {es:"cortina antimoho", ar:"ستارة مضادة للعفن"},
+        {es:"espejo antivaho", ar:"مرآة مضادة للضباب"},
+        {es:"porta jabones", ar:"صحن صابون"},
+        {es:"organizador de ducha", ar:"منظم الدش"},
+        {es:"alfombra antideslizante", ar:"حصيرة مانعة للانزلاق"},
+        {es:"toallero eléctrico", ar:"منشفة كهربائية"}
+      ],
+
+      "Lavandería y limpieza": [
+        {es:"lavadora", ar:"غسالة"},
+        {es:"secadora", ar:"مجفف"},
+        {es:"tendedero", ar:"نشر الغسيل"},
+        {es:"plancha", ar:"مكواة"},
+        {es:"tabla de planchar", ar:"طاولة الكي"},
+        {es:"detergente", ar:"منظف غسيل"},
+        {es:"suavizante", ar:"منعم أقمشة"},
+        {es:"quitamanchas", ar:"مزيل بقع"},
+        {es:"cubo de la fregona", ar:"دلو ممسحة"},
+        {es:"mopa / fregona", ar:"ممسحة"},
+        {es:"escoba", ar:"مكنسة يدوية"},
+        {es:"recogedor", ar:"مجرود"},
+        {es:"aspiradora", ar:"مكنسة كهربائية"},
+        {es:"cepillo", ar:"فرشاة"},
+        {es:"guantes de limpieza", ar:"قفازات تنظيف"},
+        {es:"paños de microfibra", ar:"أقمشة ميكروفايبر"},
+        {es:"limpiacristales", ar:"منظف زجاج"},
+        {es:"desinfectante", ar:"مطهر"},
+        {es:"ambientador", ar:"معطر جو"},
+        {es:"bolsa de lavandería", ar:"كيس غسيل"},
+        {es:"cesta de ropa", ar:"سلة غسيل"},
+        {es:"perchas", ar:"علاقات"},
+        {es:"pinzas de ropa", ar:"مشابك غسيل"},
+        {es:"plancha de vapor", ar:"مكواة بخار"},
+        {es:"limpiador a vapor", ar:"منظف بالبخار"},
+        {es:"limpiador multiusos", ar:"منظف متعدد الاستخدامات"},
+        {es:"esponja", ar:"إسفنجة"},
+        {es:"cepillo para alfombras", ar:"فرشاة سجاد"},
+        {es:"limpiador de tapicerías", ar:"منظف تنجيد"},
+        {es:"bolsa de aspiradora", ar:"كيس مكنسة"},
+        {es:"funda para plancha", ar:"غطاء مكواة"},
+        {es:"tabla de secado", ar:"لوح تجفيف"},
+        {es:"detergente líquido", ar:"منظف سائل"},
+        {es:"detergente en polvo", ar:"منظف بودرة"},
+        {es:"bolsa de ropa sucia", ar:"كيس الملابس المتسخة"},
+        {es:"limpiador de suelos", ar:"منظف أرضيات"},
+        {es:"limpiador de madera", ar:"منظف خشب"},
+        {es:"limpiador de acero inoxidable", ar:"منظف ستانلس ستيل"},
+        {es:"cepillo para juntas", ar:"فرشاة الفواصل"}
+      ],
+
+      "Electrodomésticos y electrónica del hogar": [
+        {es:"televisión", ar:"تلفاز"},
+        {es:"reproductor de DVD / Blu-ray", ar:"مشغل DVD / Blu-ray"},
+        {es:"sistema de sonido", ar:"نظام صوتي"},
+        {es:"router Wi‑Fi", ar:"راوتر واي فاي"},
+        {es:"ordenador / PC", ar:"حاسوب"},
+        {es:"portátil", ar:"حاسوب محمول"},
+        {es:"tablet", ar:"جهاز لوحي"},
+        {es:"teléfono fijo", ar:"هاتف ثابت"},
+        {es:"teléfono móvil", ar:"هاتف محمول"},
+        {es:"altavoz inteligente", ar:"مكبر صوت ذكي"},
+        {es:"cámara de seguridad", ar:"كاميرا أمنية"},
+        {es:"termóstato inteligente", ar:"منظم حرارة ذكي"},
+        {es:"aspiradora robot", ar:"مكنسة روبوت"},
+        {es:"aire acondicionado", ar:"مكيف هواء"},
+        {es:"calefactor", ar:"مدفأة كهربائية"},
+        {es:"purificador de aire", ar:"منقي هواء"},
+        {es:"humidificador", ar:"مرطب هواء"},
+        {es:"deshumidificador", ar:"مزيل رطوبة"},
+        {es:"microondas", ar:"ميكروويف"},
+        {es:"horno eléctrico", ar:"فرن كهربائي"},
+        {es:"vitrocerámica", ar:"سطح طهي"},
+        {es:"lavavajillas", ar:"غسالة صحون"},
+        {es:"lavadora", ar:"غسالة"},
+        {es:"secadora", ar:"مجفف"},
+        {es:"cámara fotográfica", ar:"كاميرا تصوير"},
+        {es:"impresora", ar:"طابعة"},
+        {es:"scanner", ar:"ماسح ضوئي"},
+        {es:"cargador", ar:"شاحن"},
+        {es:"regleta eléctrica", ar:"موزع كهرباء"},
+        {es:"batería externa", ar:"بطارية خارجية"},
+        {es:"televisor inteligente", ar:"تلفاز ذكي"},
+        {es:"consola de videojuegos", ar:"جهاز ألعاب"},
+        {es:"reproductor de música", ar:"مشغل موسيقى"},
+        {es:"proyector", ar:"جهاز عرض"},
+        {es:"sistema domótico", ar:"نظام المنزل الذكي"},
+        {es:"detector de humo", ar:"كاشف دخان"},
+        {es:"detector de monóxido de carbono", ar:"كاشف أول أكسيد الكربون"},
+        {es:"cámara timbre", ar:"كاميرا جرس الباب"},
+        {es:"cerradura inteligente", ar:"قفل ذكي"}
+      ],
+
+      "Herramientas, mantenimiento y seguridad": [
+        {es:"caja de herramientas", ar:"صندوق أدوات"},
+        {es:"martillo", ar:"مطرقة"},
+        {es:"destornillador", ar:"مفك براغي"},
+        {es:"taladro", ar:"مثقاب كهربائي"},
+        {es:"tornillos", ar:"مسامير"},
+        {es:"clavos", ar:"مسامير (مسمار)"},
+        {es:"llave inglesa", ar:"مفتاح إنجليزي"},
+        {es:"alicates", ar:"كماشة"},
+        {es:"cinta métrica", ar:"شريط قياس"},
+        {es:"nivel", ar:"ميزان مستوى"},
+        {es:"sierra", ar:"منشار"},
+        {es:"lijadora", ar:"آلة صنفرة"},
+        {es:"pintura", ar:"طلاء"},
+        {es:"brochas / rodillos", ar:"فرش / بكرات طلاء"},
+        {es:"escalera", ar:"سلم"},
+        {es:"guantes de trabajo", ar:"قفازات عمل"},
+        {es:"gafas de seguridad", ar:"نظارات واقية"},
+        {es:"extintor", ar:"طفاية حريق"},
+        {es:"botiquín de primeros auxilios", ar:"عدة إسعافات أولية"},
+        {es:"linterna", ar:"مصباح يدوي"},
+        {es:"pilas / baterías", ar:"بطاريات"},
+        {es:"cable eléctrico", ar:"كابل كهربائي"},
+        {es:"enchufe", ar:"قابس كهربائي"},
+        {es:"fusible", ar:"فيش كهربائي / فيوز"},
+        {es:"detector de fugas", ar:"كاشف تسرب"},
+        {es:"cámara de seguridad", ar:"كاميرا أمنية"},
+        {es:"alarma", ar:"إنذار"},
+        {es:"cerradura", ar:"قفل"},
+        {es:"candado", ar:"قفل صغير"},
+        {es:"kit de reparación", ar:"عدة إصلاح"},
+        {es:"sellador / silicona", ar:"سيليكون / مادة سد"},
+        {es:"masilla", ar:"معجون"},
+        {es:"cinta aislante", ar:"شريط عازل"},
+        {es:"cinta adhesiva", ar:"شريط لاصق"},
+        {es:"pegamento", ar:"غراء"},
+        {es:"soplete", ar:"مشعل"},
+        {es:"compresor", ar:"ضاغط هواء"},
+        {es:"manguera", ar:"خرطوم"},
+        {es:"paleta", ar:"مجرفة صغيرة"}
+      ],
+
+      "Almacenamiento, organización y orden": [
+        {es:"armario", ar:"خزانة"},
+        {es:"estantería", ar:"رفوف"},
+        {es:"cajón", ar:"درج"},
+        {es:"caja de almacenamiento", ar:"صندوق تخزين"},
+        {es:"perchero", ar:"علاقة ملابس"},
+        {es:"cesta", ar:"سلة"},
+        {es:"organizador de escritorio", ar:"منظم مكتب"},
+        {es:"organizador de armario", ar:"منظم خزانة"},
+        {es:"colgador de pared", ar:"علاقة حائط"},
+        {es:"bandeja", ar:"صينية"},
+        {es:"separadores", ar:"فواصل تنظيم"},
+        {es:"archivador", ar:"أرشيف ملفات"},
+        {es:"carrito de almacenamiento", ar:"عربة تخزين"},
+        {es:"caja para zapatos", ar:"صندوق أحذية"},
+        {es:"funda para ropa", ar:"غطاء ملابس"},
+        {es:"caja hermética", ar:"حاوية محكمة"},
+        {es:"perchas", ar:"علاقات"},
+        {es:"cajonera", ar:"دولاب أدراج"},
+        {es:"baúl", ar:"صندوق كبير"},
+        {es:"estuche", ar:"حافظة"},
+        {es:"tarro / bote", ar:"جرة"},
+        {es:"porta documentos", ar:"حامل مستندات"},
+        {es:"caja de herramientas", ar:"صندوق أدوات"},
+        {es:"caja de juguetes", ar:"صندوق ألعاب"},
+        {es:"organizador de cables", ar:"منظم كابلات"},
+        {es:"caja plegable", ar:"صندوق قابل للطي"},
+        {es:"cajón bajo la cama", ar:"درج تحت السرير"},
+        {es:"estantería modular", ar:"رفوف معيارية"},
+        {es:"caja etiquetada", ar:"صندوق مع لاصق تسمية"},
+        {es:"soporte para revistas", ar:"حامل مجلات"},
+        {es:"caja de archivo", ar:"صندوق أرشيف"},
+        {es:"organizador de zapatos", ar:"منظم أحذية"},
+        {es:"caja de costura", ar:"صندوق خياطة"},
+        {es:"caja de recuerdos", ar:"صندوق تذكارات"},
+        {es:"caja de documentos", ar:"صندوق مستندات"},
+        {es:"caja impermeable", ar:"صندوق مقاوم للماء"},
+        {es:"caja con tapa", ar:"صندوق بغطاء"},
+        {es:"caja apilable", ar:"صندوق قابل للتكديس"}
+      ]
+    };
+
+    // UI referencias
+    const categoriesEl = document.getElementById('categories');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // Poblar selector de voces
+    function populateVoices() {
+      const voices = window.speechSynthesis.getVoices() || [];
+      const current = voiceSelect.value;
+      voiceSelect.innerHTML = '<option value="auto">Auto (mejor disponible)</option>';
+      voices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name + '||' + v.lang;
+        opt.textContent = `${v.name} — ${v.lang}`;
+        voiceSelect.appendChild(opt);
+      });
+      if (current) {
+        const found = Array.from(voiceSelect.options).find(o => o.value === current);
+        if (found) voiceSelect.value = current;
+      }
+    }
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Crear elemento de ítem
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const w = document.createElement('span');
+      w.className = 'word';
+      w.textContent = obj.es;
+
+      const t = document.createElement('span');
+      t.className = 'trans';
+      t.textContent = obj.ar;
+
+      left.appendChild(w);
+      left.appendChild(t);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Pronunciar ${obj.es}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.es));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // Renderizar categorías con filtro
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.es.toLowerCase().includes(q) || it.ar.includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // Función de pronunciación usando la voz seleccionada
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('La síntesis de voz no está disponible en este navegador.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+
+      const sel = voiceSelect.value;
+      if (sel && sel !== 'auto') {
+        const [name, lang] = sel.split('||');
+        const voices = window.speechSynthesis.getVoices();
+        const match = voices.find(v => v.name === name && v.lang === lang) || voices.find(v => v.name === name);
+        if (match) utter.voice = match;
+        else if (lang) utter.lang = lang;
+      } else {
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'es-ES') || voices.find(v => v.lang === 'es-MX') || voices.find(v => v.lang && v.lang.startsWith('es'));
+        if (preferred) utter.voice = preferred;
+      }
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Controles de densidad
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // Búsqueda
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // Render inicial
+    renderCategories();
+
+    // Accesibilidad: Enter en búsqueda enfoca primer botón de pronunciación
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Barber Shop Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(15,20,30,0.06);
+      --tile-min:150px; --tile-pad:12px; --word-size:1rem; --trans-size:0.86rem; --btn-size:44px;
+    }
+    .dense{
+      --tile-min:110px; --tile-pad:8px; --word-size:0.92rem; --trans-size:0.78rem; --btn-size:36px;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin:8px 0;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{border:1px solid var(--border);padding:8px;border-radius:8px;background:transparent;font-size:0.95rem;color:var(--text);outline:none;}
+    .density-toggle{display:flex;gap:6px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;}
+    main{margin-top:12px;}
+    .category{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:#eef6ff;padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--tile-pad);display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;box-shadow:var(--shadow);min-height:56px;}
+    .word{font-weight:700;font-size:var(--word-size);line-height:1.1;}
+    .translation{display:block;color:var(--muted);font-size:var(--trans-size);margin-top:4px;line-height:1.05;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;font-size:1rem;}
+    footer{margin:18px 0 40px;color:var(--muted);text-align:center;font-size:0.92rem;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .item{min-height:52px;padding:8px;} .speak-btn{min-width:36px;min-height:36px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Barber shop vocabulary">
+    <header>
+      <h1>Barber Shop Vocabulary — English with Arabic translations</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control" style="min-width:180px;">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector" style="margin-left:6px;">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control" style="min-width:320px;">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter English or Arabic..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- Categories injected by script -->
+    </main>
+
+    <footer>
+      Tip: Pronunciations use your device's speech synthesis voices. If a voice is missing, try switching the accent or device.
+    </footer>
+  </div>
+
+  <script>
+    // Comprehensive barber shop vocabulary grouped by category.
+    const DATA = {
+      "Furniture & Stations": [
+        {en:"barber chair", ar:"كرسي الحلاق"},
+        {en:"styling station", ar:"محطة التصفيف"},
+        {en:"mirror", ar:"مرآة"},
+        {en:"waiting bench", ar:"مقعد الانتظار"},
+        {en:"reception desk", ar:"مكتب الاستقبال"},
+        {en:"coat rack", ar:"علاقة المعاطف"},
+        {en:"footrest", ar:"مسند القدم"},
+        {en:"headrest", ar:"مسند الرأس"},
+        {en:"stool", ar:"مقعد صغير"},
+        {en:"shelf unit", ar:"وحدة رفوف"},
+        {en:"product display case", ar:"خزانة عرض المنتجات"},
+        {en:"magazine rack", ar:"حامل مجلات"},
+        {en:"trash bin", ar:"سلة مهملات"},
+        {en:"laundry basket", ar:"سلة غسيل"},
+        {en:"towel warmer cabinet", ar:"خزانة تدفئة المناشف"},
+        {en:"shoe rack", ar:"حامل أحذية"},
+        {en:"cash register", ar:"سجل النقد"},
+        {en:"POS terminal", ar:"جهاز نقاط البيع"},
+        {en:"waiting area table", ar:"طاولة منطقة الانتظار"},
+        {en:"display shelf", ar:"رف عرض"},
+        {en:"accent lighting", ar:"إضاءة تكميلية"},
+        {en:"floor mat", ar:"حصيرة أرضية"},
+        {en:"wall clock", ar:"ساعة حائط"},
+        {en:"plant (decor)", ar:"نبات (زينة)"},
+        {en:"window blinds", ar:"ستائر النوافذ"}
+      ],
+
+      "Cutting & Shaving Tools": [
+        {en:"scissors", ar:"مقص"},
+        {en:"barber shears", ar:"مقص الحلاقة"},
+        {en:"hair clippers", ar:"ماكينة قص الشعر"},
+        {en:"trimmer", ar:"مقص تشذيب"},
+        {en:"straight razor", ar:"موسى مستقيم"},
+        {en:"safety razor", ar:"موسى أمان"},
+        {en:"razor blades", ar:"شفرات الحلاقة"},
+        {en:"razor strop", ar:"حزام شحذ الموسى"},
+        {en:"disposable razor", ar:"موسى للاستعمال مرة واحدة"},
+        {en:"electric shaver", ar:"ماكينة حلاقة كهربائية"},
+        {en:"neck trimmer", ar:"مقص رقبة"},
+        {en:"detail trimmer", ar:"مقص تفصيلي"},
+        {en:"clipper guards", ar:"أغطية ماكينة القص"},
+        {en:"scissor case", ar:"حافظة المقص"},
+        {en:"blade oil", ar:"زيت الشفرات"},
+        {en:"blade cleaner", ar:"منظف الشفرات"},
+        {en:"shaving brush", ar:"فرشاة الحلاقة"},
+        {en:"shaving bowl", ar:"وعاء الحلاقة"},
+        {en:"shaving soap", ar:"صابون الحلاقة"},
+        {en:"aftershave", ar:"مستحضر ما بعد الحلاقة"},
+        {en:"razor holder", ar:"حامل الشفرة"},
+        {en:"strop paste", ar:"معجون الشحذ"},
+        {en:"hone (sharpening stone)", ar:"حجر شحذ"},
+        {en:"clipper blade set", ar:"طقم شفرات الماكينة"},
+        {en:"cordless clippers", ar:"ماكينة قص لاسلكية"}
+      ],
+
+      "Combs, Brushes & Accessories": [
+        {en:"comb", ar:"مشط"},
+        {en:"wide-tooth comb", ar:"مشط ذو أسنان واسعة"},
+        {en:"fine-tooth comb", ar:"مشط ذو أسنان دقيقة"},
+        {en:"barber comb", ar:"مشط الحلاق"},
+        {en:"tail comb", ar:"مشط بذيل"},
+        {en:"brush", ar:"فرشاة"},
+        {en:"neck duster brush", ar:"فرشاة تنظيف الرقبة"},
+        {en:"round brush", ar:"فرشاة دائرية"},
+        {en:"paddle brush", ar:"فرشاة مسطحة"},
+        {en:"vent brush", ar:"فرشاة تهوية"},
+        {en:"beard comb", ar:"مشط اللحية"},
+        {en:"mustache comb", ar:"مشط الشارب"},
+        {en:"barber cape", ar:"رداء الحلاقة"},
+        {en:"neck strip", ar:"شريط رقبة"},
+        {en:"clipper comb", ar:"مشط للماكينة"},
+        {en:"hair clips", ar:"مشابك شعر"},
+        {en:"sectioning clips", ar:"مشابك تقسيم الشعر"},
+        {en:"barber towel", ar:"منشفة الحلاق"},
+        {en:"barber apron", ar:"مئزر الحلاق"},
+        {en:"barber cape clips", ar:"مشابك رداء الحلاقة"},
+        {en:"spray bottle", ar:"زجاجة رش"},
+        {en:"measuring cup (mixing)", ar:"كوب قياس (لخلط)"},
+        {en:"mixing bowl", ar:"وعاء خلط"},
+        {en:"applicator brush", ar:"فرشاة تطبيق المنتج"}
+      ],
+
+      "Electrical & Mechanical Equipment": [
+        {en:"hair dryer", ar:"مجفف شعر"},
+        {en:"diffuser", ar:"موزع هواء"},
+        {en:"hood dryer", ar:"مجفف رأس"},
+        {en:"flat iron", ar:"مكواة فرد الشعر"},
+        {en:"curling iron", ar:"مكواة تجعيد"},
+        {en:"hot towel cabinet", ar:"خزانة المناشف الساخنة"},
+        {en:"sterilizer (UV/heat)", ar:"معقم (أشعة فوق بنفسجية/حراري)"},
+        {en:"barbicide jar", ar:"وعاء مطهر (باربيسايد)"},
+        {en:"electric outlet", ar:"مأخذ كهربائي"},
+        {en:"power strip", ar:"موزع كهرباء"},
+        {en:"vacuum (for hair)", ar:"مكنسة للشعر"},
+        {en:"water heater", ar:"سخان مياه"},
+        {en:"sink", ar:"حوض"},
+        {en:"shampoo bowl", ar:"حوض شامبو"},
+        {en:"plumbing trap", ar:"مصيدة صرف"},
+        {en:"drain", ar:"مصرف"},
+        {en:"fan", ar:"مروحة"},
+        {en:"lighting (task lights)", ar:"إضاءة (إضاءة عمل)"},
+        {en:"LED mirror lights", ar:"إضاءة مرآة LED"},
+        {en:"extension cord", ar:"سلك تمديد"},
+        {en:"battery charger", ar:"شاحن بطارية"},
+        {en:"clipper charging stand", ar:"حامل شحن الماكينة"},
+        {en:"UPS (backup power)", ar:"مزود طاقة احتياطي (UPS)"},
+        {en:"air purifier", ar:"منقّي هواء"}
+      ],
+
+      "Products & Consumables": [
+        {en:"shampoo", ar:"شامبو"},
+        {en:"conditioner", ar:"بلسم"},
+        {en:"beard oil", ar:"زيت اللحية"},
+        {en:"hair oil", ar:"زيت الشعر"},
+        {en:"pomade", ar:"بوماد"},
+        {en:"hair wax", ar:"شمع شعر"},
+        {en:"hair gel", ar:"جل شعر"},
+        {en:"hair spray", ar:"بخاخ شعر"},
+        {en:"matte paste", ar:"معجون مطفي"},
+        {en:"sea salt spray", ar:"بخاخ ملح البحر"},
+        {en:"dry shampoo", ar:"شامبو جاف"},
+        {en:"pre-shave oil", ar:"زيت قبل الحلاقة"},
+        {en:"shaving cream", ar:"كريم حلاقة"},
+        {en:"aftershave balm", ar:"بلسم ما بعد الحلاقة"},
+        {en:"styling powder", ar:"بودرة تصفيف"},
+        {en:"tonic", ar:"تونك"},
+        {en:"scalp treatment", ar:"علاج فروة الرأس"},
+        {en:"disinfectant spray", ar:"بخاخ مطهر"},
+        {en:"hand sanitizer", ar:"مطهر يدين"},
+        {en:"barber soap", ar:"صابون الحلاق"},
+        {en:"scented cologne", ar:"عطر خفيف"},
+        {en:"hair color (dye)", ar:"صبغة شعر"},
+        {en:"color developer", ar:"مطور اللون"},
+        {en:"bleach powder", ar:"بودرة تبييض"},
+        {en:"toner", ar:"تونر"}
+      ],
+
+      "Sanitation & Safety": [
+        {en:"disinfectant", ar:"مطهر"},
+        {en:"barbicide", ar:"باربيسايد (مطهر)"},
+        {en:"autoclave", ar:"جهاز تعقيم بالبخار"},
+        {en:"UV sterilizer", ar:"معقم بالأشعة فوق البنفسجية"},
+        {en:"single-use blades", ar:"شفرات للاستعمال مرة واحدة"},
+        {en:"disposable neck strips", ar:"شرائط رقبة للاستعمال مرة واحدة"},
+        {en:"gloves (disposable)", ar:"قفازات (قابلة للتصرف)"},
+        {en:"face masks", ar:"أقنعة وجه"},
+        {en:"first aid kit", ar:"عدة إسعافات أولية"},
+        {en:"biohazard bin", ar:"حاوية نفايات خطرة بيولوجياً"},
+        {en:"sharps container", ar:"حاوية أدوات حادة"},
+        {en:"hand wash sink", ar:"حوض غسيل اليدين"},
+        {en:"soap dispenser", ar:"موزع صابون"},
+        {en:"paper towels", ar:"مناديل ورقية"},
+        {en:"cleaning cloths", ar:"أقمشة تنظيف"},
+        {en:"surface cleaner", ar:"منظف الأسطح"},
+        {en:"floor disinfectant", ar:"مطهر أرضيات"},
+        {en:"non-slip mat", ar:"حصيرة غير قابلة للانزلاق"},
+        {en:"ventilation", ar:"تهوية"},
+        {en:"fire extinguisher", ar:"طفاية حريق"},
+        {en:"emergency exit sign", ar:"لافتة مخرج الطوارئ"},
+        {en:"safety data sheets (SDS)", ar:"صحائف بيانات السلامة"},
+        {en:"waste disposal contract", ar:"عقد التخلص من النفايات"}
+      ],
+
+      "Spaces & Layout": [
+        {en:"waiting area", ar:"منطقة الانتظار"},
+        {en:"cutting area", ar:"منطقة القص"},
+        {en:"shampoo station", ar:"محطة الشامبو"},
+        {en:"wash basin", ar:"حوض غسيل"},
+        {en:"reception area", ar:"منطقة الاستقبال"},
+        {en:"retail display", ar:"عرض بيع المنتجات"},
+        {en:"storage room", ar:"غرفة تخزين"},
+        {en:"break room", ar:"غرفة استراحة"},
+        {en:"restroom", ar:"حمام"},
+        {en:"staff locker", ar:"خزانة الموظفين"},
+        {en:"utility closet", ar:"خزانة المرافق"},
+        {en:"back office", ar:"مكتب خلفي"},
+        {en:"photo corner", ar:"ركن التصوير"},
+        {en:"outdoor sign", ar:"لافتة خارجية"},
+        {en:"barber pole", ar:"عمود الحلاق"},
+        {en:"entrance mat", ar:"حصيرة المدخل"},
+        {en:"queue line", ar:"صف الانتظار"},
+        {en:"appointment desk", ar:"مكتب المواعيد"},
+        {en:"consultation area", ar:"منطقة الاستشارة"},
+        {en:"kids corner", ar:"ركن الأطفال"},
+        {en:"display window", ar:"نافذة عرض"},
+        {en:"photo backdrop", ar:"خلفية تصوير"},
+        {en:"service counter", ar:"كاونتر الخدمة"},
+        {en:"outdoor seating", ar:"مقاعد خارجية"}
+      ],
+
+      "Signage, Branding & Retail": [
+        {en:"menu board", ar:"لوحة الأسعار"},
+        {en:"price list", ar:"قائمة الأسعار"},
+        {en:"service menu", ar:"قائمة الخدمات"},
+        {en:"promotional poster", ar:"ملصق ترويجي"},
+        {en:"product shelf label", ar:"بطاقة رف المنتج"},
+        {en:"business cards", ar:"بطاقات عمل"},
+        {en:"loyalty card", ar:"بطاقة ولاء"},
+        {en:"gift voucher", ar:"قسيمة هدية"},
+        {en:"opening hours sign", ar:"لافتة ساعات العمل"},
+        {en:"social media handle", ar:"حساب وسائل التواصل"},
+        {en:"logo plaque", ar:"لوحة الشعار"},
+        {en:"window decal", ar:"ملصق نافذة"},
+        {en:"price tag", ar:"بطاقة سعر"},
+        {en:"product tester", ar:"عينة اختبار المنتج"},
+        {en:"display mannequin head", ar:"رأس عرض تجريبي"},
+        {en:"seasonal promotion sign", ar:"لافتة عرض موسمي"},
+        {en:"safety signage", ar:"لافتات السلامة"},
+        {en:"directional signs", ar:"لافتات إرشادية"}
+      ],
+
+      "Staff Roles & Services": [
+        {en:"barber", ar:"حلاق"},
+        {en:"senior barber", ar:"حلاق كبير"},
+        {en:"junior barber", ar:"حلاق مبتدئ"},
+        {en:"apprentice", ar:"متدرب"},
+        {en:"receptionist", ar:"موظف استقبال"},
+        {en:"shop manager", ar:"مدير المحل"},
+        {en:"shop owner", ar:"مالك المحل"},
+        {en:"cleaner", ar:"عامل تنظيف"},
+        {en:"stylist", ar:"مصمم تسريحات"},
+        {en:"colorist", ar:"متخصص تلوين الشعر"},
+        {en:"beard specialist", ar:"أخصائي لحى"},
+        {en:"shampoo assistant", ar:"مساعد شامبو"},
+        {en:"appointment scheduler", ar:"منسق المواعيد"},
+        {en:"retail associate", ar:"موظف مبيعات"},
+        {en:"consultant", ar:"مستشار"},
+        {en:"mobile barber", ar:"حلاق متنقل"},
+        {en:"barber educator", ar:"مدرب حلاقين"},
+        {en:"barber judge (competitions)", ar:"حكم مسابقات الحلاقة"},
+        {en:"barber technician", ar:"فني معدات الحلاقة"},
+        {en:"barber ambassador", ar:"سفير العلامة"}
+      ],
+
+      "Services & Treatments": [
+        {en:"haircut", ar:"قص شعر"},
+        {en:"fade", ar:"قصة فيد"},
+        {en:"taper", ar:"قصة تايبر"},
+        {en:"buzz cut", ar:"قصة قصير جدًا"},
+        {en:"scissor cut", ar:"قص بالمقص"},
+        {en:"clipper cut", ar:"قص بالماكينة"},
+        {en:"beard trim", ar:"تشذيب اللحية"},
+        {en:"hot towel shave", ar:"حلاقة بمنشفة ساخنة"},
+        {en:"straight razor shave", ar:"حلاقة بالموسى المستقيم"},
+        {en:"line-up / shape-up", ar:"تحديد الخطوط"},
+        {en:"neck shave", ar:"حلاقة الرقبة"},
+        {en:"mustache trim", ar:"تشذيب الشارب"},
+        {en:"hair wash", ar:"غسل الشعر"},
+        {en:"scalp massage", ar:"تدليك فروة الرأس"},
+        {en:"coloring", ar:"تلوين الشعر"},
+        {en:"highlights", ar:"هايلايت"},
+        {en:"grey blending", ar:"مزج الشيب"},
+        {en:"hair treatment", ar:"علاج الشعر"},
+        {en:"kids haircut", ar:"قص شعر للأطفال"},
+        {en:"senior discount service", ar:"خدمة خصم لكبار السن"},
+        {en:"beard shaping", ar:"تشكيل اللحية"},
+        {en:"hot towel treatment", ar:"علاج بمنشفة ساخنة"},
+        {en:"facial grooming", ar:"تنسيق الوجه"},
+        {en:"eyebrow trim", ar:"تشذيب الحواجب"}
+      ],
+
+      "Consumables & Small Items": [
+        {en:"paper towels", ar:"مناديل ورقية"},
+        {en:"cotton pads", ar:"قُطَنات"},
+        {en:"cotton swabs", ar:"أعواد قطن"},
+        {en:"disposable gloves", ar:"قفازات للاستعمال مرة واحدة"},
+        {en:"disposable capes", ar:"رداءات للاستعمال مرة واحدة"},
+        {en:"neck strips", ar:"شرائط رقبة"},
+        {en:"razor blades (packs)", ar:"عبوات شفرات"},
+        {en:"sanitizer refills", ar:"عبوات معقم"},
+        {en:"barbicide solution", ar:"محلول باربيسايد"},
+        {en:"towel rolls", ar:"لفائف مناشف"},
+        {en:"plastic bags", ar:"أكياس بلاستيكية"},
+        {en:"labels & stickers", ar:"ملصقات"},
+        {en:"receipt paper", ar:"ورق إيصالات"},
+        {en:"battery packs", ar:"بطاريات"},
+        {en:"clipper oil", ar:"زيت ماكينة القص"},
+        {en:"clipper brush", ar:"فرشاة ماكينة القص"},
+        {en:"spare blades", ar:"شفرات احتياطية"},
+        {en:"rubber bands", ar:"أربطة مطاطية"},
+        {en:"hair nets", ar:"شبكات شعر"},
+        {en:"safety pins", ar:"دبابيس أمان"}
+      ],
+
+      "Tools for Business & Operations": [
+        {en:"appointment book", ar:"دفتر المواعيد"},
+        {en:"online booking system", ar:"نظام حجز عبر الإنترنت"},
+        {en:"POS system", ar:"نظام نقاط البيع"},
+        {en:"cash drawer", ar:"درج النقود"},
+        {en:"credit card reader", ar:"قارئ بطاقات"},
+        {en:"receipt printer", ar:"طابعة إيصالات"},
+        {en:"inventory list", ar:"قائمة المخزون"},
+        {en:"supplier contacts", ar:"جهات اتصال الموردين"},
+        {en:"staff rota", ar:"جدول دوام الموظفين"},
+        {en:"training manual", ar:"دليل التدريب"},
+        {en:"service menu board", ar:"لوحة قائمة الخدمات"},
+        {en:"price tags", ar:"بطاقات الأسعار"},
+        {en:"warranty cards", ar:"بطاقات الضمان"},
+        {en:"feedback forms", ar:"نماذج ملاحظات العملاء"},
+        {en:"marketing flyers", ar:"منشورات تسويقية"},
+        {en:"loyalty program", ar:"برنامج ولاء"},
+        {en:"gift cards", ar:"بطاقات هدايا"},
+        {en:"insurance documents", ar:"وثائق التأمين"},
+        {en:"health & safety policy", ar:"سياسة الصحة والسلامة"},
+        {en:"waste disposal contract", ar:"عقد التخلص من النفايات"}
+      ],
+
+      "Vintage & Specialty Items": [
+        {en:"antique barber chair", ar:"كرسي حلاق عتيق"},
+        {en:"vintage straight razor", ar:"موسى مستقيم عتيق"},
+        {en:"classic barber pole", ar:"عمود حلاق كلاسيكي"},
+        {en:"old-school shaving mug", ar:"كوب حلاقة قديم"},
+        {en:"manual strop", ar:"حزام شحذ يدوي"},
+        {en:"traditional shaving brush", ar:"فرشاة حلاقة تقليدية"},
+        {en:"leather barber apron", ar:"مئزر حلاق جلدي"},
+        {en:"brass fixtures", ar:"تركيبات نحاسية"},
+        {en:"hand-forged scissors", ar:"مقصات مطروقة يدوياً"},
+        {en:"collectible signage", ar:"لافتات قابلة للجمع"}
+      ]
+    };
+
+    // UI references
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // Create item element with English + Arabic and speak button
+    function createItem(obj){
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // Render categories with optional filter
+    function renderCategories(filterText = ''){
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if(filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // Speech synthesis: speak English term in selected accent
+    function speak(text){
+      if(!('speechSynthesis' in window)){
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      // try to pick a matching voice
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if(preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // Search filter
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // Initial render
+    renderCategories();
+
+    // Ensure voices loaded for some browsers
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // Accessibility: Enter in search focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        const firstBtn = document.querySelector('.speak-btn');
+        if(firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

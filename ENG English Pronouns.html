@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>English Pronouns — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --tile-min:120px; --pad:10px; --word-size:0.98rem; --trans-size:0.82rem;
+    }
+    /* Dense mode variables */
+    .dense {
+      --tile-min:90px;
+      --pad:8px;
+      --word-size:0.86rem;
+      --trans-size:0.70rem;
+    }
+
+    html,body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1100px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin:10px 0;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:8px;border:1px solid var(--border);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{border:1px solid var(--border);padding:8px;border-radius:6px;background:transparent;font-size:0.95rem;color:var(--text);outline:none;}
+    .density-toggle{display:flex;gap:6px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;}
+    main{margin-top:12px;}
+    section{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:#eef6ff;padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--pad);display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(15,20,30,0.04);min-height:56px;}
+    .left{display:flex;flex-direction:column;min-width:0;}
+    .word{font-weight:700;font-size:var(--word-size);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .trans{color:var(--muted);font-size:var(--trans-size);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .speak{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;}
+    footer{margin:18px 0;color:var(--muted);text-align:center;font-size:0.92rem;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .item{min-height:52px;padding:8px;} .speak{min-width:36px;min-height:36px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="English pronouns with Arabic translations">
+    <header>
+      <h1>English Pronouns — English with Arabic translations</h1>
+
+      <div class="controls" role="region" aria-label="Controls">
+        <!-- Voice / Accent selector -->
+        <div class="control" style="min-width:220px;">
+          <label for="voiceSelect">Voice / Accent</label>
+          <select id="voiceSelect" aria-label="Voice and accent selector" style="margin-left:8px;min-width:160px;">
+            <option value="auto">Auto (best available)</option>
+          </select>
+        </div>
+
+        <!-- Search -->
+        <div class="control" style="min-width:320px;">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter English or Arabic..." aria-label="Search pronouns" />
+        </div>
+
+        <!-- Density selector -->
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);">Cards density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <footer>
+      Tip: Click the speaker to hear the English pronunciation. Choose a voice/accent from the selector.
+    </footer>
+  </div>
+
+  <script>
+    // Pronouns dataset (grouped)
+    const DATA = {
+      "Personal Pronouns — Subject": [
+        {en:"I", ar:"أنا"}, {en:"you (singular)", ar:"أنت"}, {en:"he", ar:"هو"}, {en:"she", ar:"هي"},
+        {en:"it", ar:"هو / هي (لغير العاقل)"}, {en:"we", ar:"نحن"}, {en:"you (plural)", ar:"أنتم / أنتن"}, {en:"they", ar:"هم / هن"}
+      ],
+      "Personal Pronouns — Object": [
+        {en:"me", ar:"إياي / لي"}, {en:"you (obj)", ar:"إياك / لك"}, {en:"him", ar:"إياه / له"},
+        {en:"her", ar:"إياها / لها"}, {en:"it (obj)", ar:"له / لها (لغير العاقل)"}, {en:"us", ar:"إيانا / لنا"},
+        {en:"you (plural obj)", ar:"إياكم / لكم"}, {en:"them", ar:"إياهم / لهم"}
+      ],
+      "Possessive Adjectives (Determiners)": [
+        {en:"my", ar:"ـي / لي"}, {en:"your (singular)", ar:"ـك / لك"}, {en:"his", ar:"ـه / له"},
+        {en:"her", ar:"ـها / لها"}, {en:"its", ar:"ـه / له (لغير العاقل)"}, {en:"our", ar:"ـنا / لنا"},
+        {en:"your (plural)", ar:"ـكم / لكم"}, {en:"their", ar:"ـهم / لهم"}
+      ],
+      "Possessive Pronouns": [
+        {en:"mine", ar:"لي / ملكي"}, {en:"yours (singular)", ar:"لك / ملكك"}, {en:"his", ar:"له / ملكه"},
+        {en:"hers", ar:"لها / ملكها"}, {en:"ours", ar:"لنا / ملكنا"}, {en:"yours (plural)", ar:"لكم / ملككم"},
+        {en:"theirs", ar:"لهم / ملكهم"}
+      ],
+      "Reflexive & Intensive Pronouns": [
+        {en:"myself", ar:"نفسي"}, {en:"yourself (singular)", ar:"نفسك"}, {en:"himself", ar:"نفسه"},
+        {en:"herself", ar:"نفسها"}, {en:"itself", ar:"نفسه/نفسها (لغير العاقل)"}, {en:"ourselves", ar:"أنفسنا"},
+        {en:"yourselves (plural)", ar:"أنفسكم"}, {en:"themselves", ar:"أنفسهم"}
+      ],
+      "Demonstrative Pronouns": [
+        {en:"this", ar:"هذا / هذه"}, {en:"that", ar:"ذلك / تلك"}, {en:"these", ar:"هؤلاء / هذه (جمع)"},
+        {en:"those", ar:"أولئك / تلك (جمع)"}
+      ],
+      "Interrogative Pronouns": [
+        {en:"who", ar:"من"}, {en:"whom", ar:"من (مفعول)"}, {en:"whose", ar:"لمن / لمن (ملكية)"},
+        {en:"which", ar:"أي / أيٌّ"}, {en:"what", ar:"ما / ماذا"}
+      ],
+      "Relative Pronouns": [
+        {en:"who", ar:"الذي / التي"}, {en:"whom", ar:"الذي (مفعول)"}, {en:"whose", ar:"الذي له / التي لها"},
+        {en:"which", ar:"الذي / التي (لغير العاقل)"}, {en:"that", ar:"الذي / التي"}, {en:"where", ar:"حيث / الذي فيه"}
+      ],
+      "Indefinite Pronouns (common examples)": [
+        {en:"someone", ar:"شخص ما"}, {en:"somebody", ar:"شخص ما"}, {en:"something", ar:"شيء ما"},
+        {en:"anyone", ar:"أي شخص"}, {en:"anybody", ar:"أي شخص"}, {en:"anything", ar:"أي شيء"},
+        {en:"no one", ar:"لا أحد"}, {en:"nobody", ar:"لا أحد"}, {en:"nothing", ar:"لا شيء"},
+        {en:"everyone", ar:"الجميع"}, {en:"everybody", ar:"الجميع"}, {en:"everything", ar:"كل شيء"},
+        {en:"someone else", ar:"شخص آخر"}, {en:"anyone else", ar:"أي شخص آخر"}, {en:"no one else", ar:"لا أحد آخر"}
+      ],
+      "Reciprocal Pronouns": [
+        {en:"each other", ar:"بعضهم البعض"}, {en:"one another", ar:"بعضهم البعض (أكثر من اثنين)"}
+      ],
+      "Distributive Pronouns": [
+        {en:"each", ar:"كل / كل واحد"}, {en:"either", ar:"أحد الاثنين"}, {en:"neither", ar:"لا هذا ولا ذاك"}
+      ],
+      "Misc / Others": [
+        {en:"one (impersonal)", ar:"واحد (ضمير عام)"}, {en:"none", ar:"لا شيء / لا أحد"}, {en:"such", ar:"مثل ذلك / هذا النوع"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const searchEl = document.getElementById('search');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // Populate voice selector with available voices (and accents)
+    function populateVoices() {
+      const voices = window.speechSynthesis.getVoices() || [];
+      // Clear existing options except 'auto'
+      const current = voiceSelect.value;
+      voiceSelect.innerHTML = '<option value="auto">Auto (best available)</option>';
+      // Group voices by locale for clarity
+      const seenLocales = new Set();
+      voices.forEach(v => {
+        // show common English locales first
+        if (!v.lang) return;
+        const label = `${v.name} — ${v.lang}${v.localService ? ' (local)' : ''}`;
+        const opt = document.createElement('option');
+        opt.value = v.name + '||' + v.lang;
+        opt.textContent = label;
+        voiceSelect.appendChild(opt);
+        seenLocales.add(v.lang);
+      });
+      // restore previous selection if possible
+      if (current) {
+        const found = Array.from(voiceSelect.options).find(o => o.value === current);
+        if (found) voiceSelect.value = current;
+      }
+    }
+
+    // Create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const w = document.createElement('span');
+      w.className = 'word';
+      w.textContent = obj.en;
+
+      const t = document.createElement('span');
+      t.className = 'trans';
+      t.textContent = obj.ar;
+
+      left.appendChild(w);
+      left.appendChild(t);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // Render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // Speak function using selected voice/accent
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+
+      // If user selected a specific voice, try to use it
+      const sel = voiceSelect.value;
+      if (sel && sel !== 'auto') {
+        const [name, lang] = sel.split('||');
+        const voices = window.speechSynthesis.getVoices();
+        const match = voices.find(v => v.name === name && v.lang === lang) || voices.find(v => v.name === name);
+        if (match) utter.voice = match;
+        else {
+          // fallback: set lang to selected lang if provided
+          if (lang) utter.lang = lang;
+        }
+      } else {
+        // Auto: prefer selected accent if available (try en-GB then en-US)
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en'));
+        if (preferred) utter.voice = preferred;
+      }
+
+      // Respect accent selector's language if user chose a locale-like option
+      if (!utter.voice && voiceSelect.value && voiceSelect.value !== 'auto') {
+        const lang = voiceSelect.value.split('||')[1];
+        if (lang) utter.lang = lang;
+      }
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // Search filter
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // Populate voices when available
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Initial render
+    renderCategories();
+
+    // Accessibility: Enter in search focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

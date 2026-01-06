@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Países y gentilicios — Español (m/f) con traducción al árabe</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --tile-min:220px; --pad:12px; --word-size:1rem; --trans-size:0.86rem; --btn-size:44px;
+    }
+    .dense{--tile-min:160px;--pad:8px;--word-size:0.92rem;--trans-size:0.78rem;--btn-size:40px;}
+    html,body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin:10px 0;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:8px;border:1px solid var(--border);}
+    label{font-size:0.88rem;color:var(--muted);}
+    select,input[type="search"]{border:1px solid var(--border);padding:8px;border-radius:6px;background:transparent;font-size:0.95rem;color:var(--text);outline:none;}
+    .density-toggle{display:flex;gap:6px;align-items:center;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;margin-top:12px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--pad);display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:64px;}
+    .left{display:flex;flex-direction:column;min-width:0;}
+    .country{font-weight:700;}
+    .gentilicio{color:var(--muted);font-size:var(--trans-size);margin-top:6px;}
+    .arabic{color:#2b6b5a;font-size:0.95rem;margin-top:4px;}
+    .speak{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;}
+    section{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .chip{background:#eef6ff;padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    footer{margin:18px 0;color:var(--muted);text-align:center;font-size:0.92rem;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .item{min-height:56px;padding:8px;} .speak{min-width:36px;min-height:36px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Países y gentilicios">
+    <header>
+      <h1>Países y gentilicios — Español (m/f) con traducción al árabe</h1>
+      <div class="controls" role="region" aria-label="Controles">
+        <div class="control">
+          <label for="voiceSelect">Voz / Acento</label>
+          <select id="voiceSelect" aria-label="Selector de voz" style="margin-left:8px;">
+            <option value="auto">Auto</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Buscar</label>
+          <input id="search" type="search" placeholder="Filtrar país, gentilicio o árabe..." />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle">
+            <label style="font-size:0.88rem;color:var(--muted);">Densidad</label>
+            <button id="normalBtn">Normal</button>
+            <button id="denseBtn">Densa</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- Europa -->
+      <section aria-label="Europa">
+        <div class="category-header">
+          <div class="category-title">Europa</div>
+          <div class="chip">Europa — lista completa</div>
+        </div>
+        <div class="grid" role="list">
+          <div class="item" role="listitem"><div class="left"><div class="country">Albania</div><div class="gentilicio">albanés / albanesa</div><div class="arabic">ألباني / ألبانية</div></div><button class="speak" aria-label="Pronunciar albanés">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Alemania</div><div class="gentilicio">alemán / alemana</div><div class="arabic">ألماني / ألمانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Andorra</div><div class="gentilicio">andorrano / andorrana</div><div class="arabic">أندوري / أندورية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Armenia</div><div class="gentilicio">armenio / armenia</div><div class="arabic">أرميني / أرمينية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Austria</div><div class="gentilicio">austriaco / austriaca</div><div class="arabic">نمساوي / نمساوية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Azerbaiyán</div><div class="gentilicio">azerbaiyano / azerbaiyana</div><div class="arabic">أذربيجاني / أذربيجانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Bélgica</div><div class="gentilicio">belga / belga</div><div class="arabic">بلجيكي / بلجيكية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Bielorrusia</div><div class="gentilicio">bielorruso / bielorrusa</div><div class="arabic">بيلاروسي / بيلاروسية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Bosnia y Herzegovina</div><div class="gentilicio">bosnio / bosnia</div><div class="arabic">بوسني / بوسنية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Bulgaria</div><div class="gentilicio">búlgaro / búlgara</div><div class="arabic">بلغاري / بلغارية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Chipre</div><div class="gentilicio">chipriota / chipriota</div><div class="arabic">قبرصي / قبرصية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Croacia</div><div class="gentilicio">croata / croata</div><div class="arabic">كرواتي / كرواتية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Dinamarca</div><div class="gentilicio">danés / danesa</div><div class="arabic">دنماركي / دنماركية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Eslovaquia</div><div class="gentilicio">eslovaco / eslovaca</div><div class="arabic">سلوفاكي / سلوفاكية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Eslovenia</div><div class="gentilicio">esloveno / eslovena</div><div class="arabic">سلوفيني / سلوفينية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">España</div><div class="gentilicio">español / española</div><div class="arabic">إسباني / إسبانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Estonia</div><div class="gentilicio">estonio / estonia</div><div class="arabic">إستوني / إستونية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Finlandia</div><div class="gentilicio">finlandés / finlandesa</div><div class="arabic">فنلندي / فنلندية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Francia</div><div class="gentilicio">francés / francesa</div><div class="arabic">فرنسي / فرنسية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Georgia</div><div class="gentilicio">georgiano / georgiana</div><div class="arabic">جورجي / جورجية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Grecia</div><div class="gentilicio">griego / griega</div><div class="arabic">يوناني / يونانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Hungría</div><div class="gentilicio">húngaro / húngara</div><div class="arabic">مجرّي / مجرّية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Irlanda</div><div class="gentilicio">irlandés / irlandesa</div><div class="arabic">أيرلندي / أيرلندية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Islandia</div><div class="gentilicio">islandés / islandesa</div><div class="arabic">أيسلندي / أيسلندية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Italia</div><div class="gentilicio">italiano / italiana</div><div class="arabic">إيطالي / إيطالية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Kazajistán</div><div class="gentilicio">kazajo / kazaja</div><div class="arabic">كازاخستاني / كازاخستانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Kosovo</div><div class="gentilicio">kosovar / kosovar</div><div class="arabic">كوسوفي / كوسوفية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Letonia</div><div class="gentilicio">letón / letona</div><div class="arabic">لاتفي / لاتفية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Liechtenstein</div><div class="gentilicio">liechtensteiniano / liechtensteiniana</div><div class="arabic">ليختنشتايني / ليختنشتاينية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Lituania</div><div class="gentilicio">lituano / lituana</div><div class="arabic">لتواني / لتوانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Luxemburgo</div><div class="gentilicio">luxemburgués / luxemburguesa</div><div class="arabic">لوكسمبورغي / لوكسمبورغية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Malta</div><div class="gentilicio">maltés / maltesa</div><div class="arabic">مالطي / مالطية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Moldavia</div><div class="gentilicio">moldavo / moldava</div><div class="arabic">مولدافي / مولدافية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Mónaco</div><div class="gentilicio">monegasco / monegasca</div><div class="arabic">موناكي / موناكية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Montenegro</div><div class="gentilicio">montenegrino / montenegrina</div><div class="arabic">الجبل الأسود / جبل أسودية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Noruega</div><div class="gentilicio">noruego / noruega</div><div class="arabic">نرويجي / نرويجية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Países Bajos</div><div class="gentilicio">neerlandés / neerlandesa</div><div class="arabic">هولندي / هولندية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Polonia</div><div class="gentilicio">polaco / polaca</div><div class="arabic">بولندي / بولندية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Portugal</div><div class="gentilicio">portugués / portuguesa</div><div class="arabic">برتغالي / برتغالية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">República Checa</div><div class="gentilicio">checo / checa</div><div class="arabic">تشيكي / تشيكية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Rumanía</div><div class="gentilicio">rumano / rumana</div><div class="arabic">روماني / رومانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Rusia</div><div class="gentilicio">ruso / rusa</div><div class="arabic">روسي / روسية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">San Marino</div><div class="gentilicio">sanmarinense / sanmarinense</div><div class="arabic">سان ماريني / سان مارينية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Serbia</div><div class="gentilicio">serbio / serbia</div><div class="arabic">صربي / صربية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Suecia</div><div class="gentilicio">sueco / sueca</div><div class="arabic">سويدي / سويدية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Suiza</div><div class="gentilicio">suizo / suiza</div><div class="arabic">سويسري / سويسرية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Ucrania</div><div class="gentilicio">ucraniano / ucraniana</div><div class="arabic">أوكراني / أوكرانية</div></div><button class="speak">🔊</button></div>
+          <div class="item" role="listitem"><div class="left"><div class="country">Reino Unido</div><div class="gentilicio">británico / británica</div><div class="arabic">بريطاني / بريطانية</div></div><button class="speak">🔊</button></div>
+        </div>
+      </section>
+
+      <!-- América -->
+      <section aria-label="América">
+        <div class="category-header">
+          <div class="category-title">América (Norte, Centro, Caribe, Sur)</div>
+          <div class="chip">América — lista completa</div>
+        </div>
+        <div class="grid" role="list">
+          <div class="item"><div class="left"><div class="country">Antigua y Barbuda</div><div class="gentilicio">antiguano / antiguana; barbudense</div><div class="arabic">أنتيغوي / أنتيغوية؛ بربودي</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Argentina</div><div class="gentilicio">argentino / argentina</div><div class="arabic">أرجنتيني / أرجنتينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Bahamas</div><div class="gentilicio">bahameño / bahameña</div><div class="arabic">باهامي / باهامية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Barbados</div><div class="gentilicio">barbadense / barbadense</div><div class="arabic">بربادوسي / بربادوسية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Belice</div><div class="gentilicio">beliceño / beliceña</div><div class="arabic">بليزي / بليزيّة</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Bolivia</div><div class="gentilicio">boliviano / boliviana</div><div class="arabic">بوليفي / بوليفية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Brasil</div><div class="gentilicio">brasileño / brasileña</div><div class="arabic">برازيلي / برازيلية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Canadá</div><div class="gentilicio">canadiense / canadiense</div><div class="arabic">كندي / كندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Chile</div><div class="gentilicio">chileno / chilena</div><div class="arabic">تشيلي / تشيلية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Colombia</div><div class="gentilicio">colombiano / colombiana</div><div class="arabic">كولومبي / كولومبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Costa Rica</div><div class="gentilicio">costarricense / costarricense</div><div class="arabic">كوستاريكي / كوستاريكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Cuba</div><div class="gentilicio">cubano / cubana</div><div class="arabic">كوبي / كوبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Dominica</div><div class="gentilicio">dominicano / dominicana</div><div class="arabic">دومينيكي / دومينيكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Ecuador</div><div class="gentilicio">ecuatoriano / ecuatoriana</div><div class="arabic">إكوادوري / إكوادورية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">El Salvador</div><div class="gentilicio">salvadoreño / salvadoreña</div><div class="arabic">سلفادوري / سلفادورية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Estados Unidos</div><div class="gentilicio">estadounidense / estadounidense</div><div class="arabic">أمريكي / أمريكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Granada</div><div class="gentilicio">granadino / granadina</div><div class="arabic">غرناطي / غرناطية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Guatemala</div><div class="gentilicio">guatemalteco / guatemalteca</div><div class="arabic">غواتيمالي / غواتيمالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Guyana</div><div class="gentilicio">guyanés / guyanesa</div><div class="arabic">غياني / غيانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Haití</div><div class="gentilicio">haitiano / haitiana</div><div class="arabic">هايتي / هايتيّة</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Honduras</div><div class="gentilicio">hondureño / hondureña</div><div class="arabic">هندوراسي / هندوراسية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Jamaica</div><div class="gentilicio">jamaicano / jamaicana</div><div class="arabic">جامايكي / جامايكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">México</div><div class="gentilicio">mexicano / mexicana</div><div class="arabic">مكسيكي / مكسيكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Nicaragua</div><div class="gentilicio">nicaragüense / nicaragüense</div><div class="arabic">نيكاراغوي / نيكاراغوية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Panamá</div><div class="gentilicio">panameño / panameña</div><div class="arabic">بنمي / بنمية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Paraguay</div><div class="gentilicio">paraguayo / paraguaya</div><div class="arabic">باراغواي / باراغواية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Perú</div><div class="gentilicio">peruano / peruana</div><div class="arabic">بيروفي / بيروفية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">República Dominicana</div><div class="gentilicio">dominicano / dominicana</div><div class="arabic">دومينيكاني / دومينيكانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">San Cristóbal y Nieves</div><div class="gentilicio">sancristobaleño / sancristobaleña</div><div class="arabic">سانت كيتس ونيفيس / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">San Vicente y las Granadinas</div><div class="gentilicio">sanvicentino / sanvicentina</div><div class="arabic">سانت فنسنت وجزر غرينادين / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Santa Lucía</div><div class="gentilicio">santalucense / santalucense</div><div class="arabic">سانت لوسيا / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Surinam</div><div class="gentilicio">surinamés / surinamesa</div><div class="arabic">سورينامي / سورينامية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Trinidad y Tobago</div><div class="gentilicio">trinitense / trinitense; tobagueño / tobagueña</div><div class="arabic">ترينيدادي وتوباغوي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Uruguay</div><div class="gentilicio">uruguayo / uruguaya</div><div class="arabic">أوروغواي / أوروغواية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Venezuela</div><div class="gentilicio">venezolano / venezolana</div><div class="arabic">فنزويلي / فنزويلية</div></div><button class="speak">🔊</button></div>
+        </div>
+      </section>
+
+      <!-- África -->
+      <section aria-label="África">
+        <div class="category-header">
+          <div class="category-title">África</div>
+          <div class="chip">África — lista completa</div>
+        </div>
+        <div class="grid" role="list">
+          <div class="item"><div class="left"><div class="country">Argelia</div><div class="gentilicio">argelino / argelina</div><div class="arabic">جزائري / جزائرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Angola</div><div class="gentilicio">angoleño / angoleña</div><div class="arabic">أنغولي / أنغولية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Benín</div><div class="gentilicio">beninés / beninesa</div><div class="arabic">بيني / بينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Botsuana</div><div class="gentilicio">botsuano / botsuana</div><div class="arabic">بتسواني / بتسوانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Burkina Faso</div><div class="gentilicio">burkinés / burkinesa</div><div class="arabic">بوركيني / بوركينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Burundi</div><div class="gentilicio">burundés / burundesa</div><div class="arabic">بوروندي / بوروندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Cabo Verde</div><div class="gentilicio">caboverdiano / caboverdiana</div><div class="arabic">الرأس الأخضر / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Camerún</div><div class="gentilicio">camerunés / camerunesa</div><div class="arabic">كاميروني / كاميرونية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Chad</div><div class="gentilicio">chadiano / chadiana</div><div class="arabic">تشادي / تشادية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Comoras</div><div class="gentilicio">comorense / comorense</div><div class="arabic">قمرية / قمرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Congo (República del Congo)</div><div class="gentilicio">congoleño / congoleña</div><div class="arabic">كونغولي / كونغولية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Congo (República Democrática del Congo)</div><div class="gentilicio">congoleño / congoleña</div><div class="arabic">كونغولي ديمقراطي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Costa de Marfil</div><div class="gentilicio">marfileño / marfileña</div><div class="arabic">إيفواري / إيفوارية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Egipto</div><div class="gentilicio">egipcio / egipcia</div><div class="arabic">مصري / مصرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Eritrea</div><div class="gentilicio">eritreo / eritrea</div><div class="arabic">إريتري / إريترية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Etiopía</div><div class="gentilicio">etíope / etíope</div><div class="arabic">أثيوبي / أثيوبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Gabón</div><div class="gentilicio">gabonés / gabonesa</div><div class="arabic">غابوني / غابونية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Gambia</div><div class="gentilicio">gambiano / gambiana</div><div class="arabic">غامبي / غامبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Ghana</div><div class="gentilicio">ghanés / ghanesa</div><div class="arabic">غاني / غانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Guinea</div><div class="gentilicio">guineano / guineana</div><div class="arabic">غيني / غينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Guinea-Bisáu</div><div class="gentilicio">guineano-bisauense / ...</div><div class="arabic">غيني بيساو / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Guinea Ecuatorial</div><div class="gentilicio">ecuatoguineano / ecuatoguineana</div><div class="arabic">غيني استوائي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Kenia</div><div class="gentilicio">keniano / keniana</div><div class="arabic">كيني / كينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Lesoto</div><div class="gentilicio">lesotense / lesotense</div><div class="arabic">ليسوتو / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Liberia</div><div class="gentilicio">liberiano / liberiana</div><div class="arabic">ليبيري / ليبيرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Libia</div><div class="gentilicio">libio / libia</div><div class="arabic">ليبي / ليبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Madagascar</div><div class="gentilicio">malgache / malgache</div><div class="arabic">مدغشقري / مدغشقرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Malaui</div><div class="gentilicio">malauí / malauí</div><div class="arabic">ملاوي / ملاوية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Mali</div><div class="gentilicio">maliense / maliense</div><div class="arabic">مالي / مالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Marruecos</div><div class="gentilicio">marroquí / marroquí</div><div class="arabic">مغربي / مغربية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Mauricio</div><div class="gentilicio">mauriciano / mauriciana</div><div class="arabic">موريشي / موريشية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Mauritania</div><div class="gentilicio">mauritano / mauritana</div><div class="arabic">موريتاني / موريتانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Mozambique</div><div class="gentilicio">mozambiqueño / mozambiqueña</div><div class="arabic">موزمبيقي / موزمبيقية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Namibia</div><div class="gentilicio">namibio / namibia</div><div class="arabic">ناميبي / ناميبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Níger</div><div class="gentilicio">nigerino / nigerina</div><div class="arabic">نيجيري / نيجيرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Nigeria</div><div class="gentilicio">nigeriano / nigeriana</div><div class="arabic">نيجيري / نيجيرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">República Centroafricana</div><div class="gentilicio">centroafricano / centroafricana</div><div class="arabic">أفريقي وسطي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Ruanda</div><div class="gentilicio">ruandés / ruandesa</div><div class="arabic">رواندي / رواندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Santo Tomé y Príncipe</div><div class="gentilicio">santomense / santomense</div><div class="arabic">ساو تومي وبرينسيبي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Senegal</div><div class="gentilicio">senegalés / senegalesa</div><div class="arabic">سنغالي / سنغالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Seychelles</div><div class="gentilicio">seychellense / seychellense</div><div class="arabic">سيشلي / سيشلية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Sierra Leona</div><div class="gentilicio">sierraleonés / sierraleonesa</div><div class="arabic">سيراليوني / سيراليونية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Somalia</div><div class="gentilicio">somalí / somalí</div><div class="arabic">صومالي / صومالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Sudáfrica</div><div class="gentilicio">sudafricano / sudafricana</div><div class="arabic">جنوب أفريقي / جنوب أفريقية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Sudán</div><div class="gentilicio">sudanés / sudanesa</div><div class="arabic">سوداني / سودانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Sudán del Sur</div><div class="gentilicio">sudanes del sur / ...</div><div class="arabic">جنوب السودان / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Tanzania</div><div class="gentilicio">tanzano / tanzana</div><div class="arabic">تنزاني / تنزانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Togo</div><div class="gentilicio">togolés / togolesa</div><div class="arabic">توغولي / توغولية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Túnez</div><div class="gentilicio">tunecino / tunecina</div><div class="arabic">تونسي / تونسية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Uganda</div><div class="gentilicio">ugandés / ugandesa</div><div class="arabic">أوغندي / أوغندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Zambia</div><div class="gentilicio">zambiano / zambiana</div><div class="arabic">زامبي / زامبية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Zimbabue</div><div class="gentilicio">zimbabuense / zimbabuense</div><div class="arabic">زيمبابوي / ...</div></div><button class="speak">🔊</button></div>
+        </div>
+      </section>
+
+      <!-- Asia -->
+      <section aria-label="Asia">
+        <div class="category-header">
+          <div class="category-title">Asia</div>
+          <div class="chip">Asia — lista completa</div>
+        </div>
+        <div class="grid" role="list">
+          <div class="item"><div class="left"><div class="country">Afganistán</div><div class="gentilicio">afgano / afgana</div><div class="arabic">أفغاني / أفغانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Arabia Saudí</div><div class="gentilicio">saudí / saudí</div><div class="arabic">سعودي / سعودية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Armenia</div><div class="gentilicio">armenio / armenia</div><div class="arabic">أرميني / أرمينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Azerbaiyán</div><div class="gentilicio">azerbaiyano / azerbaiyana</div><div class="arabic">أذربيجاني / أذربيجانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Bangladés</div><div class="gentilicio">bangladesí / bangladesí</div><div class="arabic">بنغلاديشي / بنغلاديشية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Baréin</div><div class="gentilicio">bareiní / bareiní</div><div class="arabic">بحريني / بحرينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Brunéi</div><div class="gentilicio">bruneano / bruneana</div><div class="arabic">بروني / برونية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Bután</div><div class="gentilicio">butanés / butanesa</div><div class="arabic">بوتاني / بوتانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Camboya</div><div class="gentilicio">camboyano / camboyana</div><div class="arabic">كمبودي / كمبودية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">China</div><div class="gentilicio">chino / china</div><div class="arabic">صيني / صينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Corea del Norte</div><div class="gentilicio">norcoreano / norcoreana</div><div class="arabic">كوري شمالي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Corea del Sur</div><div class="gentilicio">surcoreano / surcoreana</div><div class="arabic">كوري جنوبي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Emiratos Árabes Unidos</div><div class="gentilicio">emiratí / emiratí</div><div class="arabic">إماراتي / إماراتية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Filipinas</div><div class="gentilicio">filipino / filipina</div><div class="arabic">فلبيني / فلبينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Georgia</div><div class="gentilicio">georgiano / georgiana</div><div class="arabic">جورجي / جورجية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">India</div><div class="gentilicio">indio / india</div><div class="arabic">هندي / هندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Indonesia</div><div class="gentilicio">indonesio / indonesia</div><div class="arabic">إندونيسي / إندونيسية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Irak</div><div class="gentilicio">iraquí / iraquí</div><div class="arabic">عراقي / عراقية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Irán</div><div class="gentilicio">iraní / iraní</div><div class="arabic">إيراني / إيرانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Israel</div><div class="gentilicio">israelí / israelí</div><div class="arabic">إسرائيلي / إسرائيلية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Japón</div><div class="gentilicio">japonés / japonesa</div><div class="arabic">ياباني / يابانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Jordania</div><div class="gentilicio">jordano / jordana</div><div class="arabic">أردني / أردنية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Kazajistán</div><div class="gentilicio">kazajo / kazaja</div><div class="arabic">كازاخستاني / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Kuwait</div><div class="gentilicio">kuwaití / kuwaití</div><div class="arabic">كويتي / كويتية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Líbano</div><div class="gentilicio">libanés / libanesa</div><div class="arabic">لبناني / لبنانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Malasia</div><div class="gentilicio">malasio / malasia</div><div class="arabic">ماليزيا / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Maldivas</div><div class="gentilicio">maldivo / maldiva</div><div class="arabic">مالديفي / مالديفية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Mongolia</div><div class="gentilicio">mongol / mongola</div><div class="arabic">منغولي / منغولية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Myanmar</div><div class="gentilicio">birmano / birmana</div><div class="arabic">بورمي / بورمية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Nepal</div><div class="gentilicio">nepalés / nepalésa</div><div class="arabic">نيبالي / نيبالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Omán</div><div class="gentilicio">omaní / omaní</div><div class="arabic">عماني / عمانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Pakistán</div><div class="gentilicio">pakistaní / pakistaní</div><div class="arabic">باكستاني / باكستانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Palestina</div><div class="gentilicio">palestino / palestina</div><div class="arabic">فلسطيني / فلسطينية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Qatar</div><div class="gentilicio">qatarí / qatarí</div><div class="arabic">قطري / قطرية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Singapur</div><div class="gentilicio">singapurense / singapurense</div><div class="arabic">سنغافوري / سنغافورية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Siria</div><div class="gentilicio">sirio / siria</div><div class="arabic">سوري / سورية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Sri Lanka</div><div class="gentilicio">ceilanés / ceilanesa; esrilanqués / esrilanquesa</div><div class="arabic">سريلانكي / سريلانكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Tayikistán</div><div class="gentilicio">tayiko / tayika</div><div class="arabic">طاجيكي / طاجيكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Tailandia</div><div class="gentilicio">tailandés / tailandesa</div><div class="arabic">تايلاندي / تايلاندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Timor Oriental</div><div class="gentilicio">timorense / timorense</div><div class="arabic">تيموري / تيمورية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Turkmenistán</div><div class="gentilicio">turcomano / turcomana</div><div class="arabic">تركماني / تركمانية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Turquía</div><div class="gentilicio">turco / turca</div><div class="arabic">تركي / تركية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Uzbekistán</div><div class="gentilicio">uzbeko / uzbeka</div><div class="arabic">أوزبكي / أوزبكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Vietnam</div><div class="gentilicio">vietnamita / vietnamita</div><div class="arabic">فيتنامي / فيتنامية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Yemen</div><div class="gentilicio">yemení / yemení</div><div class="arabic">يمني / يمنية</div></div><button class="speak">🔊</button></div>
+        </div>
+      </section>
+
+      <!-- Oceanía -->
+      <section aria-label="Oceanía">
+        <div class="category-header">
+          <div class="category-title">Oceanía</div>
+          <div class="chip">Oceanía — lista completa</div>
+        </div>
+        <div class="grid" role="list">
+          <div class="item"><div class="left"><div class="country">Australia</div><div class="gentilicio">australiano / australiana</div><div class="arabic">أسترالي / أسترالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Fiyi</div><div class="gentilicio">fiyiano / fiyiana</div><div class="arabic">فيجي / فيجية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Islas Marshall</div><div class="gentilicio">marshallés / marshallesa</div><div class="arabic">مارشالي / مارشالية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Islas Salomón</div><div class="gentilicio">salomonense / salomonense</div><div class="arabic">جزر سليمان / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Kiribati</div><div class="gentilicio">kiribatiano / kiribatiana</div><div class="arabic">كيريباتي / كيريباتية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Micronesia</div><div class="gentilicio">micronesio / micronesia</div><div class="arabic">ميكرونيسي / ميكرونيسية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Nauru</div><div class="gentilicio">nauruano / nauruana</div><div class="arabic">ناورو / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Nueva Zelanda</div><div class="gentilicio">neozelandés / neozelandesa</div><div class="arabic">نيوزيلندي / نيوزيلندية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Palaos</div><div class="gentilicio">palaoense / palaoense</div><div class="arabic">بالاوي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Papúa Nueva Guinea</div><div class="gentilicio">papuano / papuana</div><div class="arabic">بابوا غينيا الجديدة / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Samoa</div><div class="gentilicio">samoano / samoana</div><div class="arabic">ساموا / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Tonga</div><div class="gentilicio">tongano / tongana</div><div class="arabic">تونغي / تونغية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Tuvalu</div><div class="gentilicio">tuvaluano / tuvaluana</div><div class="arabic">توفالو / ...</div></div><button class="speak">🔊</button></div>
+        </div>
+      </section>
+
+      <!-- Territorios y dependencias (selección amplia) -->
+      <section aria-label="Territorios y dependencias">
+        <div class="category-header">
+          <div class="category-title">Territorios y dependencias (selección)</div>
+          <div class="chip">territorios incluidos</div>
+        </div>
+        <div class="grid" role="list">
+          <div class="item"><div class="left"><div class="country">Puerto Rico</div><div class="gentilicio">puertorriqueño / puertorriqueña</div><div class="arabic">بورتوريكي / بورتوريكية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Hong Kong (RAE)</div><div class="gentilicio">hongkonés / hongkonesa</div><div class="arabic">هونغ كونغي / هونغ كونغية</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Gibraltar</div><div class="gentilicio">gibraltareño / gibraltareña</div><div class="arabic">جبل طارق / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Islas Feroe</div><div class="gentilicio">feroés / feroesa</div><div class="arabic">جزر فارو / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Polinesia Francesa</div><div class="gentilicio">polinesio francés / polinesia francesa</div><div class="arabic">بولينيزي فرنسي / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Islas Caimán</div><div class="gentilicio">caimanés / caimanesa</div><div class="arabic">جزر كايمان / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Islas Malvinas / Falkland Islands</div><div class="gentilicio">malvinense / malvinense</div><div class="arabic">جزر فوكلاند / ...</div></div><button class="speak">🔊</button></div>
+          <div class="item"><div class="left"><div class="country">Isla de Man</div><div class="gentilicio">manés / manesa</div><div class="arabic">جزيرة مان / ...</div></div><button class="speak">🔊</button></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Lista basada en convenciones del español castellano para gentilicios; usa el buscador para filtrar por país, gentilicio o traducción al árabe.
+    </footer>
+  </div>
+
+  <script>
+    // Populate voices
+    const voiceSelect = document.getElementById('voiceSelect');
+    function populateVoices(){
+      const voices = window.speechSynthesis.getVoices() || [];
+      voiceSelect.innerHTML = '<option value="auto">Auto</option>';
+      voices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name + '||' + v.lang;
+        opt.textContent = `${v.name} — ${v.lang}`;
+        voiceSelect.appendChild(opt);
+      });
+    }
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Speak handler
+    function speak(text){
+      if(!('speechSynthesis' in window)) return;
+      const u = new SpeechSynthesisUtterance(text);
+      const sel = voiceSelect.value;
+      if(sel && sel !== 'auto'){ const [name,lang]=sel.split('||'); const v = window.speechSynthesis.getVoices().find(x=>x.name===name); if(v) u.voice=v; else if(lang) u.lang=lang; }
+      else { const v = window.speechSynthesis.getVoices().find(x=>x.lang==='es-ES') || window.speechSynthesis.getVoices().find(x=>x.lang && x.lang.startsWith('es')); if(v) u.voice=v; }
+      u.rate = 0.95; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+    }
+
+    // Attach speak buttons (pronounces masculine form by default)
+    document.addEventListener('click', (e) => {
+      if(e.target && e.target.classList.contains('speak')){
+        const item = e.target.closest('.item');
+        if(!item) return;
+        const gentil = item.querySelector('.gentilicio').textContent;
+        const first = gentil.split('/')[0].trim();
+        speak(first);
+      }
+    });
+
+    // Density controls
+    const app = document.getElementById('app');
+    document.getElementById('normalBtn').addEventListener('click', ()=>{ app.classList.remove('dense'); });
+    document.getElementById('denseBtn').addEventListener('click', ()=>{ app.classList.add('dense'); });
+
+    // Search filter
+    const search = document.getElementById('search');
+    search.addEventListener('input', ()=>{
+      const q = search.value.trim().toLowerCase();
+      document.querySelectorAll('[role="listitem"]').forEach(item=>{
+        const text = item.innerText.toLowerCase();
+        item.style.display = q ? (text.includes(q) ? '' : 'none') : '';
+      });
+    });
+  </script>
+</body>
+</html>

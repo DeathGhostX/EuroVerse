@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Animals Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --tile-min:140px; --pad:10px; --word-size:0.98rem; --trans-size:0.82rem;
+    }
+    .dense{--tile-min:100px;--pad:8px;--word-size:0.88rem;--trans-size:0.72rem;}
+    html,body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin:10px 0;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:8px;border:1px solid var(--border);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{border:1px solid var(--border);padding:8px;border-radius:6px;background:transparent;font-size:0.95rem;color:var(--text);outline:none;}
+    .density-toggle{display:flex;gap:6px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;}
+    main{margin-top:12px;}
+    section{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:#eef6ff;padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--pad);display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(15,20,30,0.04);min-height:56px;}
+    .left{display:flex;flex-direction:column;min-width:0;}
+    .word{font-weight:700;font-size:var(--word-size);}
+    .trans{color:var(--muted);font-size:var(--trans-size);margin-top:4px;}
+    .speak{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;}
+    footer{margin:18px 0;color:var(--muted);text-align:center;font-size:0.92rem;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .item{min-height:52px;padding:8px;} .speak{min-width:36px;min-height:36px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Animals vocabulary with Arabic translations">
+    <header>
+      <h1>Animals Vocabulary — English with Arabic translations</h1>
+
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control" style="min-width:220px;">
+          <label for="voiceSelect">Voice / Accent</label>
+          <select id="voiceSelect" aria-label="Voice and accent selector" style="margin-left:8px;min-width:160px;">
+            <option value="auto">Auto (best available)</option>
+          </select>
+        </div>
+
+        <div class="control" style="min-width:320px;">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter English or Arabic..." aria-label="Search animals" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);">Cards density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <footer>
+      Tip: Click the speaker to hear the English pronunciation. Choose a voice/accent from the selector.
+    </footer>
+  </div>
+
+  <script>
+    // Massive organized animal lists — each group contains 50+ items (English + Arabic)
+    const DATA = {
+      "Mammals (50+)": [
+        {en:"aardvark", ar:"خنزير الأرض"},
+        {en:"antelope", ar:"ظبي"},
+        {en:"armadillo", ar:"أرماديلو"},
+        {en:"bat", ar:"خفاش"},
+        {en:"bear", ar:"دب"},
+        {en:"beaver", ar:"قندس"},
+        {en:"bison", ar:"بيسون / ثور بري"},
+        {en:"boar", ar:"خنزير بري"},
+        {en:"buffalo", ar:"جاموس"},
+        {en:"camel", ar:"جمل"},
+        {en:"caribou", ar:"كاريبو / الرنّة الأمريكية"},
+        {en:"cat", ar:"قطة"},
+        {en:"cheetah", ar:"فهد"},
+        {en:"chimpanzee", ar:"شمبانزي"},
+        {en:"cow", ar:"بقرة"},
+        {en:"coyote", ar:"ذئب أمريكي / كايوتي"},
+        {en:"deer", ar:"غزال"},
+        {en:"dolphin", ar:"دلفين"},
+        {en:"donkey", ar:"حمار"},
+        {en:"elephant", ar:"فيل"},
+        {en:"elk", ar:"ألك / ظبي كبير"},
+        {en:"fox", ar:"ثعلب"},
+        {en:"gazelle", ar:"غزالة"},
+        {en:"giraffe", ar:"زرافة"},
+        {en:"goat", ar:"ماعز"},
+        {en:"gorilla", ar:"غوريلا"},
+        {en:"hare", ar:"أرنب بري"},
+        {en:"hippopotamus", ar:"فرس النهر"},
+        {en:"horse", ar:"حصان"},
+        {en:"hyena", ar:"ضبع"},
+        {en:"jaguar", ar:"جاغوار / نمر أمريكي"},
+        {en:"kangaroo", ar:"كنغر"},
+        {en:"koala", ar:"كوالا"},
+        {en:"lemur", ar:"ليمور"},
+        {en:"leopard", ar:"نمر مرقط"},
+        {en:"lion", ar:"أسد"},
+        {en:"llama", ar:"لاما"},
+        {en:"mole", ar:"خُلد"},
+        {en:"monkey", ar:"قرد"},
+        {en:"moose", ar:"مووس / الرنّة الأمريكية الكبيرة"},
+        {en:"mouse", ar:"فأر"},
+        {en:"otter", ar:"قضاعة"},
+        {en:"ox", ar:"ثور"}, 
+        {en:"panda", ar:"باندا"},
+        {en:"pig", ar:"خنزير"},
+        {en:"polar bear", ar:"دب قطبي"},
+        {en:"porcupine", ar:"قنفذ شائك"},
+        {en:"rabbit", ar:"أرنب"},
+        {en:"raccoon", ar:"راكون"},
+        {en:"rat", ar:"جرذ"},
+        {en:"reindeer", ar:"رنة"},
+        {en:"rhino (rhinoceros)", ar:"وحيد القرن"},
+        {en:"seal", ar:"فقمة"},
+        {en:"sheep", ar:"خروف"},
+        {en:"skunk", ar:"ظربان"},
+        {en:"sloth", ar:"كسلان"},
+        {en:"squirrel", ar:"سنجاب"},
+        {en:"tapir", ar:"تابير"},
+        {en:"tiger", ar:"نمر"},
+        {en:"walrus", ar:"ختم البحر"},
+        {en:"whale", ar:"حوت"},
+        {en:"wolf", ar:"ذئب"},
+        {en:"wombat", ar:"ومبات"},
+        {en:"yak", ar:"ياك"}
+      ],
+
+      "Birds (50+)": [
+        {en:"albatross", ar:"ألباتروس"},
+        {en:"auk", ar:"طائر أوك"},
+        {en:"avocet", ar:"أفوست"},
+        {en:"auklet", ar:"أوكليت"},
+        {en:"bald eagle", ar:"نسر أصلع"},
+        {en:"barn owl", ar:"بومة الحظيرة"},
+        {en:"barred owl", ar:"بومة مخططة"},
+        {en:"blackbird", ar:"طائر أسود"},
+        {en:"blue jay", ar:"عصفور أزرق (جاي)"},
+        {en:"budgerigar (budgie)", ar:"ببغاء البادجيريق"},
+        {en:"canary", ar:"كناري"},
+        {en:"cardinal", ar:"كاردينال (طائر)"},
+        {en:"cassowary", ar:"كاسواري"},
+        {en:"chickadee", ar:"شيكادي"},
+        {en:"chicken", ar:"دجاجة"},
+        {en:"cockatoo", ar:"كوكاتو"},
+        {en:"condor", ar:"كندور"},
+        {en:"cormorant", ar:"غراب البحر"},
+        {en:"crane", ar:"رافعة (طائر)"},
+        {en:"crow", ar:"غراب"},
+        {en:"cuckoo", ar:"وقواق"},
+        {en:"dove", ar:"حمامة"},
+        {en:"duck", ar:"بطة"},
+        {en:"eagle", ar:"نسر"},
+        {en:"egret", ar:"أيغريت (طائر أبيض)"},
+        {en:"emu", ar:"إيمو"},
+        {en:"falcon", ar:"صقر"},
+        {en:"finch", ar:"عصفور (فينش)"},
+        {en:"flamingo", ar:"فلامنغو"},
+        {en:"goldfinch", ar:"عصفور ذهبي"},
+        {en:"goose", ar:"إوزة"},
+        {en:"grouse", ar:"طائر الغروس"},
+        {en:"gull", ar:"نورس"},
+        {en:"hawk", ar:"صقر / باز"},
+        {en:"hummingbird", ar:"طائر الطنان"},
+        {en:"ibis", ar:"أيبس"},
+        {en:"jay", ar:"جاي"},
+        {en:"kingfisher", ar:"صائد السمك (كينغفيشر)"},
+        {en:"kiwi", ar:"كيوي (طائر)"},
+        {en:"lapwing", ar:"لابوينغ"},
+        {en:"lark", ar:"قبرة"},
+        {en:"magpie", ar:"غراب أبيض وأسود (ماجباي)"},
+        {en:"mallard", ar:"بط المولارد"},
+        {en:"mockingbird", ar:"مقلد الطيور"},
+        {en:"nightingale", ar:"بلبل"},
+        {en:"ostrich", ar:"نعامة"},
+        {en:"owl", ar:"بومة"},
+        {en:"parrot", ar:"ببغاء"},
+        {en:"pelican", ar:"بجع"},
+        {en:"penguin", ar:"بطريق"},
+        {en:"pheasant", ar:"طائر الفزان"},
+        {en:"pigeon", ar:"حمامة"}, 
+        {en:"quail", ar:"سلوى"}, 
+        {en:"raven", ar:"غراب كبير"}, 
+        {en:"robin", ar:"روبن"}, 
+        {en:"sandpiper", ar:"طائر رملي"}, 
+        {en:"sparrow", ar:"عصفور الدوري"}, 
+        {en:"stork", ar:"لقلق"}, 
+        {en:"swallow", ar:"سنونو"}, 
+        {en:"swan", ar:"بجعة"}, 
+        {en:"toucan", ar:"توكان"}, 
+        {en:"vulture", ar:"نسور الجيف"}, 
+        {en:"woodpecker", ar:"نقار الخشب"}
+      ],
+
+      "Reptiles (50+)": [
+        {en:"alligator", ar:"تمساح أمريكي"},
+        {en:"anaconda", ar:"أناكوندا"},
+        {en:"asp (snake)", ar:"أسب (ثعبان)"},
+        {en:"boa constrictor", ar:"بوا ضاغطة"},
+        {en:"box turtle", ar:"سلحفاة صندوقية"},
+        {en:"caiman", ar:"كايمان"},
+        {en:"chameleon", ar:"حرباء"},
+        {en:"cobra", ar:"كوبرا"},
+        {en:"collared lizard", ar:"سحلية ذات طوق"},
+        {en:"corn snake", ar:"ثعبان الذرة"},
+        {en:"crocodile", ar:"تمساح"},
+        {en:"diamondback rattlesnake", ar:"أفعى الجرس ذات الظهر الماسي"},
+        {en:"dragon (Komodo)", ar:"تنين كومودو"},
+        {en:"gecko", ar:"سحلية صغيرة (جيكو)"},
+        {en:"gila monster", ar:"وحش جيلا"},
+        {en:"green sea turtle", ar:"سلحفاة بحرية خضراء"},
+        {en:"iguana", ar:"إغوانا"},
+        {en:"king cobra", ar:"كوبرا الملك"},
+        {en:"leatherback turtle", ar:"سلحفاة ظهرية جلدية"},
+        {en:"monitor lizard", ar:"سحلية المراقب"},
+        {en:"moccasin (water snake)", ar:"مقاسن (ثعبان مائي)"},
+        {en:"mamba", ar:"مامبا"},
+        {en:"python", ar:"بايثون"},
+        {en:"rattlesnake", ar:"أفعى الجرس"},
+        {en:"sea snake", ar:"ثعبان بحري"},
+        {en:"skink", ar:"سكنك (نوع من السحالي)"},
+        {en:"slow worm", ar:"دودة بطيئة (سحلية)"},
+        {en:"softshell turtle", ar:"سلحفاة ذات قوقعة لينة"},
+        {en:"spiny-tailed lizard", ar:"سحلية ذات ذيل شوكي"},
+        {en:"terrapin", ar:"ترابين (سلحفاة مياه عذبة)"},
+        {en:"tortoise", ar:"سلحفاة برية"},
+        {en:"tree frog (reptile-adjacent)", ar:"ضفدع شجري (قريب من الزواحف)"},
+        {en:"water monitor", ar:"مراقب مائي"},
+        {en:"winged lizard", ar:"سحلية مجنحة (دراجون)"},
+        {en:"yellow-bellied slider", ar:"زلاجة بطن صفراء"},
+        {en:"agama", ar:"أغاما (سحلية)"},
+        {en:"bearded dragon", ar:"تنين ملتحي"},
+        {en:"gopher tortoise", ar:"سلحفاة الغوفر"},
+        {en:"horned lizard", ar:"سحلية قرنية"},
+        {en:"mole snake", ar:"ثعبان الخلد"},
+        {en:"night snake", ar:"ثعبان الليل"},
+        {en:"pine snake", ar:"ثعبان الصنوبر"},
+        {en:"rock python", ar:"بايثون صخري"},
+        {en:"sand boa", ar:"بوا رملية"},
+        {en:"sea turtle", ar:"سلحفاة بحرية"},
+        {en:"sidewinder", ar:"ثعبان جانبي الحركة"},
+        {en:"water dragon", ar:"تنين مائي"},
+        {en:"whip snake", ar:"ثعبان السوط"},
+        {en:"worm lizard", ar:"سحلية دودية"}
+      ],
+
+      "Amphibians (50+)": [
+        {en:"axolotl", ar:"أكسولوتل"},
+        {en:"caecilian", ar:"سِيسيليان (برمائي دودي)"},
+        {en:"fire salamander", ar:"سمندر النار"},
+        {en:"newt", ar:"سمندل صغير"},
+        {en:"salamander", ar:"سمندر"},
+        {en:"toad", ar:"ضفدع أرضي (علجوم)"},
+        {en:"tree frog", ar:"ضفدع شجري"},
+        {en:"bullfrog", ar:"ضفدع الثور"},
+        {en:"glass frog", ar:"ضفدع زجاجي"},
+        {en:"poison dart frog", ar:"ضفدع سهام سام"},
+        {en:"tiger salamander", ar:"سمندر النمر"},
+        {en:"spadefoot toad", ar:"علجوم مجرفة القدم"},
+        {en:"marsh frog", ar:"ضفدع المستنقع"},
+        {en:"wood frog", ar:"ضفدع الغابة"},
+        {en:"pickerel frog", ar:"ضفدع بيكرل"},
+        {en:"leopard frog", ar:"ضفدع النمر"},
+        {en:"green frog", ar:"ضفدع أخضر"},
+        {en:"clawed frog", ar:"ضفدع مخلب"},
+        {en:"African bullfrog", ar:"ضفدع أفريقي كبير"},
+        {en:"common toad", ar:"علجوم شائع"},
+        {en:"European fire-bellied toad", ar:"علجوم بطني ناري أوروبي"},
+        {en:"mountain salamander", ar:"سمندر جبلي"},
+        {en:"torrent salamander", ar:"سمندر الشلال"},
+        {en:"mudpuppy", ar:"مادبابي (سمندل مائي)"},
+        {en:"hellbender", ar:"هيلبيندر (سمندل كبير)"},
+        {en:"olm", ar:"أولم (سمندل أعمى)"},
+        {en:"siren", ar:"سيرين (برمائي طويل)"},
+        {en:"dusky salamander", ar:"سمندر داكن"},
+        {en:"red-eyed tree frog", ar:"ضفدع شجري ذو عين حمراء"},
+        {en:"glass lizard (legless)", ar:"سحلية زجاجية (بدون أرجل)"},
+        {en:"mountain frog", ar:"ضفدع جبلي"},
+        {en:"pond frog", ar:"ضفدع البركة"},
+        {en:"rain frog", ar:"ضفدع المطر"},
+        {en:"spotted salamander", ar:"سمندر مرقط"},
+        {en:"western toad", ar:"علجوم غربي"},
+        {en:"eastern newt", ar:"سمندل شرقي"},
+        {en:"pygmy frog", ar:"ضفدع قزم"},
+        {en:"glass toad", ar:"علجوم زجاجي"},
+        {en:"tree toad", ar:"علجوم شجري"},
+        {en:"marbled salamander", ar:"سمندر رخامي"},
+        {en:"water frog", ar:"ضفدع مائي"},
+        {en:"boreal toad", ar:"علجوم بوريال"},
+        {en:"mountain newt", ar:"سمندل جبلي"},
+        {en:"striped newt", ar:"سمندل مخطط"},
+        {en:"yellow-bellied toad", ar:"علجوم بطن أصفر"},
+        {en:"sedge frog", ar:"ضفدع السدّة"},
+        {en:"glass salamander", ar:"سمندر زجاجي"},
+        {en:"torrent frog", ar:"ضفدع الشلال"}
+      ],
+
+      "Fish (50+)": [
+        {en:"anchovy", ar:"أنشوفة"},
+        {en:"anglerfish", ar:"سمك الصياد"},
+        {en:"barracuda", ar:"باراكودا"},
+        {en:"bass", ar:"باس"},
+        {en:"beluga", ar:"بيلوجا (حوت أبيض)"},
+        {en:"betta (Siamese fighting fish)", ar:"بيتا (سمك سيامي)"},
+        {en:"blowfish (pufferfish)", ar:"سمك نفاخ"},
+        {en:"carp", ar:"سمك الكارب"},
+        {en:"catfish", ar:"سمك السلور"},
+        {en:"clownfish", ar:"سمك المهرج"},
+        {en:"cod", ar:"قد"},
+        {en:"coelacanth", ar:"سيولاكانث"},
+        {en:"conger eel", ar:"ثعبان البحر كونجر"},
+        {en:"crucian carp", ar:"كارب كروشيان"},
+        {en:"dolphinfish (mahi-mahi)", ar:"دولفينفيش (ماهي ماهي)"},
+        {en:"eel", ar:"ثعبان البحر"},
+        {en:"flounder", ar:"سمك فلوندر"},
+        {en:"grouper", ar:"جروبر"},
+        {en:"haddock", ar:"هادوك"},
+        {en:"hake", ar:"هاك"},
+        {en:"herring", ar:"رنجة"},
+        {en:"honeycomb grouper", ar:"جروبر قرصي"},
+        {en:"jellyfish (not fish biologically)", ar:"قنديل البحر (ليس سمكًا بيولوجيًا)"},
+        {en:"kingfish", ar:"كينغفيش"},
+        {en:"lamprey", ar:"لامبري"},
+        {en:"lingcod", ar:"لينجكود"},
+        {en:"mackerel", ar:"ماكريل"},
+        {en:"marlin", ar:"مارلن"},
+        {en:"minnow", ar:"سمك صغير (مينو)"},
+        {en:"mullet", ar:"موليت"},
+        {en:"needlefish", ar:"سمك الإبرة"},
+        {en:"nurse shark", ar:"قرش ممرض"},
+        {en:"ocean sunfish (mola)", ar:"سمك الشمس المحيطي (مولا)"},
+        {en:"perch", ar:"بيرش"},
+        {en:"pike", ar:"بايك"},
+        {en:"piranha", ar:"بيرانا"},
+        {en:"plaice", ar:"بليس"},
+        {en:"pollock", ar:"بولوك"},
+        {en:"ray (manta, stingray)", ar:"شفنين (مانتا، شوك)"},
+        {en:"salmon", ar:"سلمون"},
+        {en:"sardine", ar:"سردين"},
+        {en:"scorpionfish", ar:"سمك العقرب"},
+        {en:"shark", ar:"قرش"},
+        {en:"shrimp (prawn)", ar:"جمبري"},
+        {en:"sole", ar:"سول"},
+        {en:"sturgeon", ar:"حصان البحر (سترجون)"},
+        {en:"sunfish", ar:"سمك الشمس"},
+        {en:"tilapia", ar:"تيلاپيا"},
+        {en:"tuna", ar:"تونة"},
+        {en:"trout", ar:"تروت"},
+        {en:"wrasse", ar:"راس (نوع من الأسماك)"},
+        {en:"zander", ar:"زاندر"}
+      ],
+
+      "Insects (50+)": [
+        {en:"ant", ar:"نملة"},
+        {en:"aphid", ar:"من"},
+        {en:"bee", ar:"نحلة"},
+        {en:"beetle", ar:"خنفساء"},
+        {en:"butterfly", ar:"فراشة"},
+        {en:"caterpillar", ar:"يرقة الفراشة"},
+        {en:"cockroach", ar:"صرصور"},
+        {en:"cricket", ar:"صرصور الحقل"},
+        {en:"dragonfly", ar:"يعسوب"},
+        {en:"dung beetle", ar:"خنفساء الروث"},
+        {en:"earwig", ar:"أذن حشرة"},
+        {en:"firefly", ar:"يراعة"},
+        {en:"fly", ar:"ذبابة"},
+        {en:"grasshopper", ar:"جرادة"},
+        {en:"hornet", ar:"دبور"},
+        {en:"housefly", ar:"ذبابة المنزل"},
+        {en:"ladybug (ladybird)", ar:"دعسوقة"},
+        {en:"leafhopper", ar:"قافز الورق"},
+        {en:"locust", ar:"جراد"},
+        {en:"mantis (praying mantis)", ar:"سرعوف الصلاة"},
+        {en:"mayfly", ar:"مايفلاي"},
+        {en:"mosquito", ar:"بعوضة"},
+        {en:"moth", ar:"عثة"},
+        {en:"nettle caterpillar", ar:"يرقة القراص"},
+        {en:"oak processionary caterpillar", ar:"يرقة المعالجة البلوطية"},
+        {en:"paper wasp", ar:"دبور ورقي"},
+        {en:"pillbug (woodlouse)", ar:"قوقع الخشب (بيلباغ)"},
+        {en:"planthopper", ar:"قافز النبات"},
+        {en:"praying mantis", ar:"سرعوف الصلاة"},
+        {en:"scarab", ar:"خنفساء سكاراب"},
+        {en:"scarlet lily beetle", ar:"خنفساء الزنبق القرمزية"},
+        {en:"silverfish", ar:"سمكة فضية"},
+        {en:"stink bug", ar:"خنفساء كريهة الرائحة"},
+        {en:"stick insect", ar:"حشرة العصا"},
+        {en:"termite", ar:"نمل أبيض"},
+        {en:"thrips", ar:"ثريبس"},
+        {en:"tick (arachnid)", ar:"قرادة (عنكبوتي)"},
+        {en:"weevil", ar:"خنفساء السوس"},
+        {en:"wasp", ar:"دبور"},
+        {en:"wood-boring beetle", ar:"خنفساء حفر الخشب"},
+        {en:"yellow jacket", ar:"ياقة صفراء (دبور)"},
+        {en:"blowfly", ar:"ذبابة اللحم"},
+        {en:"cicada", ar:"صرصار الليل (سيكادا)"},
+        {en:"dobsonfly", ar:"دوبسونفلاي"},
+        {en:"flea", ar:"برغوث"},
+        {en:"gall midge", ar:"ذبابة الغال"},
+        {en:"leafcutter ant", ar:"نملة قاطعة الأوراق"},
+        {en:"longhorn beetle", ar:"خنفساء قرن طويلة"},
+        {en:"may beetle", ar:"خنفساء مايو"},
+        {en:"sawfly", ar:"ذبابة المنشار"}
+      ],
+
+      "Arachnids & Myriapods (50+)": [
+        {en:"black widow", ar:"أرملة سوداء"},
+        {en:"brown recluse", ar:"منعزل بني"},
+        {en:"camel spider", ar:"عنكبوت الجمل"},
+        {en:"centipede", ar:"ألفية (مئوية الأرجل)"},
+        {en:"chigger", ar:"حشرة صغيرة (شيغر)"},
+        {en:"dust mite", ar:"عث الغبار"},
+        {en:"funnel-web spider", ar:"عنكبوت شبكة القمع"},
+        {en:"harvestman (daddy longlegs)", ar:"حاصد الأرجل الطويلة"},
+        {en:"house spider", ar:"عنكبوت المنزل"},
+        {en:"jumping spider", ar:"عنكبوت القفز"},
+        {en:"mite", ar:"عثة"},
+        {en:"orb-weaver", ar:"عنكبوت نسيج الدائرة"},
+        {en:"scorpion", ar:"عقرب"},
+        {en:"tarantula", ar:"عنكبوت تارانتولا"},
+        {en:"tick", ar:"قرادة"},
+        {en:"wolf spider", ar:"عنكبوت الذئب"},
+        {en:"whip scorpion (vinegaroon)", ar:"عقرب السوط (فينغاروون)"},
+        {en:"pseudoscorpion", ar:"شبه عقرب"},
+        {en:"millipede", ar:"ألفية الأرجل (ميلبييد)"},
+        {en:"house dust mite", ar:"عث غبار المنزل"},
+        {en:"red spider mite", ar:"عثة عنكبوت حمراء"},
+        {en:"spider mite", ar:"عثة عنكبوت"},
+        {en:"brown dog tick", ar:"قرادة الكلب البني"},
+        {en:"deer tick", ar:"قرادة الغزال"},
+        {en:"lone star tick", ar:"قرادة النجم الوحيد"},
+        {en:"sea spider", ar:"عنكبوت البحر"},
+        {en:"garden spider", ar:"عنكبوت الحديقة"},
+        {en:"cellar spider", ar:"عنكبوت القبو"},
+        {en:"crab spider", ar:"عنكبوت السلطعون"},
+        {en:"sheet weaver", ar:"ناسج الأقمشة"},
+        {en:"sac spider", ar:"عنكبوت الكيس"},
+        {en:"wolf spider (various)", ar:"عنكبوت الذئب (أنواع)"},
+        {en:"jumping spider (various)", ar:"عنكبوت القفز (أنواع)"},
+        {en:"orb weaver (various)", ar:"ناسج الدوائر (أنواع)"},
+        {en:"trapdoor spider", ar:"عنكبوت باب الفخ"},
+        {en:"mouse spider", ar:"عنكبوت الفأر"},
+        {en:"fishing spider", ar:"عنكبوت الصيد"},
+        {en:"garden centipede", ar:"مئوية الأرجل الحديقة"},
+        {en:"stone centipede", ar:"مئوية الأرجل الصخرية"},
+        {en:"flat-backed millipede", ar:"ميلبييد مسطح الظهر"},
+        {en:"pill millipede", ar:"ميلبييد كروي"},
+        {en:"scolopendra (large centipede)", ar:"سكولوبندرا (مئوية الأرجل كبيرة)"},
+        {en:"woodlouse (not arachnid but myriapod-adjacent)", ar:"قوقع الخشب"},
+        {en:"sea mite", ar:"عثة بحرية"},
+        {en:"wind scorpion", ar:"عقرب الريح"},
+        {en:"sun spider", ar:"عنكبوت الشمس"},
+        {en:"pseudoscorpion (various)", ar:"شبه عقرب (أنواع)"}
+      ],
+
+      "Crustaceans & Marine Arthropods (50+)": [
+        {en:"barnacle", ar:"بلانكل"},
+        {en:"brine shrimp", ar:"جمبري ملحي"},
+        {en:"cancer (crab genus)", ar:"سرطان (جنس السلطعون)"},
+        {en:"coconut crab", ar:"سلطعون جوز الهند"},
+        {en:"crab", ar:"سلطعون"},
+        {en:"crayfish (crawfish)", ar:"قريدس / سرطان نهري"},
+        {en:"fiddler crab", ar:"سلطعون العازف"},
+        {en:"hermit crab", ar:"سلطعون ناسك"},
+        {en:"krill", ar:"كريل"},
+        {en:"lobster", ar:"جراد البحر"},
+        {en:"mantis shrimp", ar:"جمبري السرعوف"},
+        {en:"prawn", ar:"جمبري"},
+        {en:"shrimp", ar:"جمبري"},
+        {en:"shore crab", ar:"سلطعون الشاطئ"},
+        {en:"spider crab", ar:"سلطعون عنكبوتي"},
+        {en:"stone crab", ar:"سلطعون حجري"},
+        {en:"swimming crab", ar:"سلطعون سباح"},
+        {en:"tiger prawn", ar:"جمبري النمر"},
+        {en:"water flea", ar:"برغوث الماء"},
+        {en:"amphipod", ar:"أمفيبود"},
+        {en:"isopod", ar:"إيزوبود"},
+        {en:"copepod", ar:"كوبيبود"},
+        {en:"ghost shrimp", ar:"جمبري شبح"},
+        {en:"krab (fiddler)", ar:"كراب (عازف)"},
+        {en:"rock lobster", ar:"جراد البحر الصخري"},
+        {en:"spiny lobster", ar:"جراد البحر الشوكي"},
+        {en:"squat lobster", ar:"جراد البحر القرفصاء"},
+        {en:"tadpole shrimp", ar:"جمبري الشرغوف"},
+        {en:"tiger crab", ar:"سلطعون النمر"},
+        {en:"velvet crab", ar:"سلطعون مخملي"},
+        {en:"water boatman (hemiptera)", ar:"قارب الماء"},
+        {en:"sea spider (pycnogonid)", ar:"عنكبوت البحر"},
+        {en:"ghost crab", ar:"سلطعون الشبح"},
+        {en:"flea crab", ar:"سلطعون البرغوث"},
+        {en:"kelp crab", ar:"سلطعون الكلب"},
+        {en:"mole crab", ar:"سلطعون الخلد"},
+        {en:"peanut worm (sipunculid)", ar:"دودة الفول السوداني"},
+        {en:"pistol shrimp", ar:"جمبري المسدس"},
+        {en:"sand crab", ar:"سلطعون الرمال"},
+        {en:"sea lice", ar:"قمل البحر"},
+        {en:"sea scorpion (eurypterid, extinct)", ar:"عقرب البحر (منقرض)"},
+        {en:"skeleton shrimp", ar:"جمبري الهيكل"},
+        {en:"tiger crab", ar:"سلطعون النمر"},
+        {en:"tube worm (polychaete-associated)", ar:"دودة الأنبوب"},
+        {en:"water scorpion (Nepidae)", ar:"عقرب الماء"},
+        {en:"wharf crab", ar:"سلطعون الرصيف"},
+        {en:"xanthid crab", ar:"سلطعون زانثيد"},
+        {en:"yabby (freshwater crayfish)", ar:"يابي (قريدس مياه عذبة)"},
+        {en:"zoea (larval crab stage)", ar:"زوايا (طور يرقة السلطعون)"}
+      ],
+
+      "Mollusks (50+)": [
+        {en:"abalone", ar:"أبالون"},
+        {en:"octopus", ar:"أخطبوط"},
+        {en:"squid", ar:"حبار"},
+        {en:"cuttlefish", ar:"حبار البحر (كاتلفيش)"},
+        {en:"nautilus", ar:"نوتيلوس"},
+        {en:"clam", ar:"محار"},
+        {en:"oyster", ar:"محار اللؤلؤ"},
+        {en:"mussel", ar:"بلح البحر"},
+        {en:"scallop", ar:"محار مشط"},
+        {en:"whelk", ar:"ويلك (حلزون بحري)"},
+        {en:"conch", ar:"محار الكونش"},
+        {en:"periwinkle", ar:"بيروينكل (حلزون)"},
+        {en:"slug", ar:"حلزون بدون صدفة"},
+        {en:"snail", ar:"حلزون"},
+        {en:"nudibranch", ar:"نوديبراش (قنديل البحر)"},
+        {en:"chiton", ar:"شيتون"},
+        {en:"sea hare", ar:"أرنب البحر"},
+        {en:"limpet", ar:"ليمبت"},
+        {en:"razor clam", ar:"محار الشفرة"},
+        {en:"giant clam", ar:"محار عملاق"},
+        {en:"garden snail", ar:"حلزون الحديقة"},
+        {en:"apple snail", ar:"حلزون التفاح"},
+        {en:"cone snail", ar:"حلزون المخروط"},
+        {en:"whelk (various)", ar:"ويلك (أنواع)"},
+        {en:"tusk shell (scaphopod)", ar:"صدفة ناب (سكافوبود)"},
+        {en:"sea slug", ar:"حلزون البحر"},
+        {en:"sea snail", ar:"حلزون البحر"},
+        {en:"bubble shell", ar:"صدفة فقاعة"},
+        {en:"paper nautilus", ar:"نوتيلوس ورقي"},
+        {en:"chambered nautilus", ar:"نوتيلوس ذو حجرات"},
+        {en:"pearl oyster", ar:"محار اللؤلؤ"},
+        {en:"flat oyster", ar:"محار مسطح"},
+        {en:"edible snail", ar:"حلزون صالح للأكل"},
+        {en:"sea limpet", ar:"ليمبت البحر"},
+        {en:"kelp limpet", ar:"ليمبت الكلب"},
+        {en:"sea butterfly (pteropod)", ar:"فراشة البحر"},
+        {en:"sea angel", ar:"ملاك البحر"},
+        {en:"giant squid", ar:"حبار عملاق"},
+        {en:"vampire squid", ar:"حبار مصاص الدماء"},
+        {en:"chambered nautilus", ar:"نوتيلوس ذو حجرات"},
+        {en:"whelk (edible)", ar:"ويلك صالح للأكل"},
+        {en:"abalone (various)", ar:"أبالون (أنواع)"},
+        {en:"murex", ar:"موركس"},
+        {en:"whelk snail", ar:"حلزون ويلك"},
+        {en:"sea snail (various)", ar:"حلزون البحر (أنواع)"},
+        {en:"limpet (various)", ar:"ليمبت (أنواع)"},
+        {en:"nudibranch (various)", ar:"نوديبراش (أنواع)"}
+      ],
+
+      "Marine Invertebrates & Others (50+)": [
+        {en:"anemone", ar:"شقائق النعمان البحرية"},
+        {en:"barnacle", ar:"بلانكل"},
+        {en:"brittle star", ar:"نجم هش"},
+        {en:"coral", ar:"شعب مرجانية"},
+        {en:"crinoid (sea lily)", ar:"كرينويد (زنبق البحر)"},
+        {en:"cuttlefish", ar:"حبار البحر"},
+        {en:"feather star", ar:"نجم ريشة"},
+        {en:"flatworm", ar:"دودة مسطحة"},
+        {en:"hydroid", ar:"هيدرويد"},
+        {en:"jellyfish", ar:"قنديل البحر"},
+        {en:"kelp", ar:"عشب البحر (كالب)"},
+        {en:"krill", ar:"كريل"},
+        {en:"lamp shell (brachiopod)", ar:"صدفة مصباح (براكيوبود)"},
+        {en:"leech", ar:"علقة"},
+        {en:"lion's mane jellyfish", ar:"قنديل بحر عرف الأسد"},
+        {en:"marine worm (polychaete)", ar:"دودة بحرية (بوليشيت)"},
+        {en:"nudibranch", ar:"نوديبراش"},
+        {en:"plankton (phytoplankton)", ar:"بلانكتون (نباتي)"},
+        {en:"plankton (zooplankton)", ar:"بلانكتون (حيواني)"},
+        {en:"sea cucumber", ar:"خيار البحر"},
+        {en:"sea fan", ar:"مروحة بحرية"},
+        {en:"sea urchin", ar:"قنفذ البحر"},
+        {en:"sea sponge", ar:"إسفنج البحر"},
+        {en:"sea star (starfish)", ar:"نجم البحر"},
+        {en:"sea squirt (tunicate)", ar:"قنديل البحر (تونكيت)"},
+        {en:"soft coral", ar:"مرجان ناعم"},
+        {en:"tube worm", ar:"دودة الأنبوب"},
+        {en:"urchin (various)", ar:"قنفذ (أنواع)"},
+        {en:"venomous jellyfish", ar:"قنديل بحر سام"},
+        {en:"zooplankton (various)", ar:"بلانكتون حيواني (أنواع)"},
+        {en:"sea anemone (various)", ar:"شقائق النعمان البحرية (أنواع)"},
+        {en:"coral polyp", ar:"بوليب المرجان"},
+        {en:"gorgonian (sea fan)", ar:"جورجونيان (مروحة بحرية)"},
+        {en:"tube anemone", ar:"شقائق أنبوبية"},
+        {en:"sea pen", ar:"قلم البحر"},
+        {en:"comb jelly", ar:"قنديل مشط"},
+        {en:"sea slug (various)", ar:"حلزون البحر (أنواع)"},
+        {en:"flatworm (various)", ar:"دودة مسطحة (أنواع)"},
+        {en:"ribbon worm", ar:"دودة شريطية"},
+        {en:"peanut worm", ar:"دودة الفول السوداني"},
+        {en:"sea mouse", ar:"فأر البحر"},
+        {en:"bryozoan (moss animal)", ar:"بريوزوان (حيوان الطحلب)"},
+        {en:"entoproct", ar:"إنتوبروكت"},
+        {en:"chaetognath (arrow worm)", ar:"شيتوغناث (دودة السهم)"},
+        {en:"salp", ar:"سالب"},
+        {en:"pycnogonid (sea spider)", ar:"بيكنوغونيد (عنكبوت البحر)"},
+        {en:"sea apple (echinoderm)", ar:"تفاحة البحر (شقوق شوكية)"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // Populate voice selector with available voices
+    function populateVoices() {
+      const voices = window.speechSynthesis.getVoices() || [];
+      const current = voiceSelect.value;
+      voiceSelect.innerHTML = '<option value="auto">Auto (best available)</option>';
+      voices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name + '||' + v.lang;
+        opt.textContent = `${v.name} — ${v.lang}`;
+        voiceSelect.appendChild(opt);
+      });
+      if (current) {
+        const found = Array.from(voiceSelect.options).find(o => o.value === current);
+        if (found) voiceSelect.value = current;
+      }
+    }
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const w = document.createElement('span');
+      w.className = 'word';
+      w.textContent = obj.en;
+
+      const t = document.createElement('span');
+      t.className = 'trans';
+      t.textContent = obj.ar;
+
+      left.appendChild(w);
+      left.appendChild(t);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // Render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // Speak function using selected voice/accent
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+
+      const sel = voiceSelect.value;
+      if (sel && sel !== 'auto') {
+        const [name, lang] = sel.split('||');
+        const voices = window.speechSynthesis.getVoices();
+        const match = voices.find(v => v.name === name && v.lang === lang) || voices.find(v => v.name === name);
+        if (match) utter.voice = match;
+        else if (lang) utter.lang = lang;
+      } else {
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en'));
+        if (preferred) utter.voice = preferred;
+      }
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // Search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // Initial render
+    renderCategories();
+
+    // Accessibility: Enter in search focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

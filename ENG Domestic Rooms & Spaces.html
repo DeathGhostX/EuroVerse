@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Domestic Rooms and Spaces — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg:#f7f7f9; --card:#fff; --text:#111; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(0,0,0,0.06); --chip:#eef6ff;
+      --tile-min:140px; --tile-padding:10px; --word-size:1rem; --trans-size:0.85rem; --btn-size:44px;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#0b0d10; --card:#0f1317; --text:#e6eef8; --muted:#9aa6b2; --accent:#4ea1ff;
+        --accent-contrast:#07101a; --border:#1f2429; --shadow:0 2px 8px rgba(0,0,0,0.45); --chip:#12202b;
+      }
+    }
+
+    /* Dense mode */
+    .dense {
+      --tile-min:110px;
+      --tile-padding:8px;
+      --word-size:0.92rem;
+      --trans-size:0.78rem;
+      --btn-size:36px;
+    }
+
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1100px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.15rem;margin:0 0 8px;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.9rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:1rem;outline:none;}
+    main{margin-top:14px;}
+    .category{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:1rem;}
+    .chip{background:var(--chip);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.9rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:10px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:var(--tile-padding);display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;box-shadow:var(--shadow);min-height:56px;}
+    .word{font-size:var(--word-size);font-weight:700;line-height:1.15;}
+    .translation{font-size:var(--trans-size);color:var(--muted);margin-top:4px;display:block;line-height:1.15;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px 12px;border-radius:999px;font-size:0.95rem;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow);}
+    .speak-btn:active{transform:translateY(1px);filter:brightness(0.96);}
+    .footer{margin:18px 0 40px;color:var(--muted);text-align:center;font-size:0.95rem;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .grid{gap:8px;} .item{padding:8px;} .word{font-size:0.98rem;} .speak-btn{padding:10px 12px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap" role="application" aria-label="Domestic rooms and spaces vocabulary with Arabic translations and pronunciation">
+    <header>
+      <h1>Domestic Rooms & Spaces — English with Arabic translations</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter terms (English or Arabic)..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.9rem;color:var(--muted);white-space:nowrap;">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <div class="footer">
+      Tip: Pronunciations use your device's speech synthesis voices. If a voice is missing, try switching the accent or device.
+    </div>
+  </div>
+
+  <script>
+    // Grouped rooms/spaces with Arabic translations
+    const DATA = {
+      "Living Areas": [
+        {en:"living room", ar:"غرفة المعيشة"},
+        {en:"lounge", ar:"صالة"},
+        {en:"family room", ar:"غرفة العائلة"},
+        {en:"sitting room", ar:"غرفة الجلوس"},
+        {en:"parlor", ar:"صالون"},
+        {en:"den", ar:"غرفة صغيرة / مكتب منزلي"},
+        {en:"great room", ar:"غرفة كبيرة مفتوحة"},
+        {en:"sunroom", ar:"غرفة شمسية"},
+        {en:"conservatory", ar:"دفيئة/صالة زجاجية"},
+        {en:"atrium", ar:"فناء داخلي"}
+      ],
+
+      "Sleeping Areas": [
+        {en:"bedroom", ar:"غرفة نوم"},
+        {en:"master bedroom", ar:"غرفة النوم الرئيسية"},
+        {en:"guest room", ar:"غرفة الضيوف"},
+        {en:"children's room", ar:"غرفة الأطفال"},
+        {en:"nursery", ar:"حضانة / غرفة الطفل"},
+        {en:"teen room", ar:"غرفة المراهق"},
+        {en:"dormitory", ar:"مهجع / سكن جماعي"},
+        {en:"suite", ar:"جناح"},
+        {en:"dressing room", ar:"غرفة الملابس"},
+        {en:"walk-in closet", ar:"خزانة ملابس كبيرة"}
+      ],
+
+      "Cooking & Eating": [
+        {en:"kitchen", ar:"مطبخ"},
+        {en:"pantry", ar:"مخزن مؤن / مخزن طعام"},
+        {en:"butler's pantry", ar:"مخزن الخادم"},
+        {en:"scullery", ar:"غرفة غسل الأواني"},
+        {en:"breakfast nook", ar:"ركن الإفطار"},
+        {en:"dining room", ar:"غرفة الطعام"},
+        {en:"dining area", ar:"منطقة الطعام"},
+        {en:"eat-in kitchen", ar:"مطبخ مع منطقة طعام"},
+        {en:"kitchen island", ar:"جزيرة المطبخ"},
+        {en:"coffee corner", ar:"ركن القهوة"}
+      ],
+
+      "Hygiene & Laundry": [
+        {en:"bathroom", ar:"حمام"},
+        {en:"ensuite", ar:"حمام ملحق بالغرفة"},
+        {en:"powder room", ar:"مرحاض ضيوف / حمام صغير"},
+        {en:"toilet", ar:"مرحاض"},
+        {en:"shower room", ar:"غرفة دش"},
+        {en:"laundry room", ar:"غرفة الغسيل"},
+        {en:"utility room", ar:"غرفة الخدمات"},
+        {en:"drying room", ar:"غرفة التجفيف"},
+        {en:"changing room", ar:"غرفة تبديل الملابس"},
+        {en:"linen closet", ar:"خزانة الكتان"}
+      ],
+
+      "Work & Study": [
+        {en:"home office", ar:"مكتب منزلي"},
+        {en:"study", ar:"غرفة دراسة"},
+        {en:"library", ar:"مكتبة"},
+        {en:"workshop", ar:"ورشة عمل"},
+        {en:"studio", ar:"استوديو (فني/تصوير)"},
+        {en:"craft room", ar:"غرفة الحرف اليدوية"},
+        {en:"music room", ar:"غرفة الموسيقى"},
+        {en:"home classroom", ar:"غرفة تعليم منزلي"},
+        {en:"conference room", ar:"غرفة اجتماعات"},
+        {en:"media room", ar:"غرفة وسائط/سينما منزلية"}
+      ],
+
+      "Storage & Service": [
+        {en:"garage", ar:"مرأب"},
+        {en:"carport", ar:"مظلة سيارة"},
+        {en:"storage room", ar:"غرفة تخزين"},
+        {en:"closet", ar:"خزانة"},
+        {en:"attic", ar:"علية"},
+        {en:"basement", ar:"قبو"},
+        {en:"cellar", ar:"قبو تخزين (خمر)"},
+        {en:"shed", ar:"كوخ/مخزن خارجي"},
+        {en:"tool shed", ar:"مخزن أدوات"},
+        {en:"pantry", ar:"مخزن مؤن"}
+      ],
+
+      "Circulation & Entry": [
+        {en:"foyer", ar:"ردهة / مدخل"},
+        {en:"entryway", ar:"مدخل"},
+        {en:"hallway", ar:"ممر"},
+        {en:"corridor", ar:"ممر داخلي"},
+        {en:"vestibule", ar:"بهو صغير / مدخل"},
+        {en:"lobby", ar:"ردهة استقبال"},
+        {en:"landing", ar:"مساحة هبوط السلم"},
+        {en:"staircase", ar:"سلم داخلي"},
+        {en:"porch", ar:"شرفة أمامية"},
+        {en:"mudroom", ar:"غرفة الطين/مدخل للأحذية والمعاطف"}
+      ],
+
+      "Outdoor & Semi-outdoor": [
+        {en:"garden", ar:"حديقة"},
+        {en:"backyard", ar:"الفناء الخلفي"},
+        {en:"front yard", ar:"الفناء الأمامي"},
+        {en:"patio", ar:"فناء خارجي"},
+        {en:"terrace", ar:"تراس"},
+        {en:"balcony", ar:"شرفة"},
+        {en:"veranda / veranda", ar:"شرفة مغطاة / رواق"},
+        {en:"deck", ar:"سطح خشبي خارجي"},
+        {en:"courtyard", ar:"فناء داخلي"},
+        {en:"driveway", ar:"ممر السيارة"}
+      ],
+
+      "Leisure & Wellness": [
+        {en:"gym", ar:"صالة ألعاب رياضية"},
+        {en:"home gym", ar:"صالة رياضية منزلية"},
+        {en:"sauna", ar:"ساونا"},
+        {en:"steam room", ar:"غرفة بخار"},
+        {en:"spa", ar:"منتجع صحي"},
+        {en:"pool", ar:"مسبح"},
+        {en:"pool house", ar:"بيت المسبح"},
+        {en:"playroom", ar:"غرفة ألعاب"},
+        {en:"home theater", ar:"سينما منزلية"},
+        {en:"game room", ar:"غرفة ألعاب"}
+      ],
+
+      "Special Purpose Spaces": [
+        {en:"nursery", ar:"حضانة / غرفة الطفل"},
+        {en:"atelier", ar:"مرسم فني"},
+        {en:"greenhouse", ar:"دفيئة"},
+        {en:"potting shed", ar:"مخزن زراعة النباتات"},
+        {en:"wine cellar", ar:"قبو نبيذ"},
+        {en:"panic room", ar:"غرفة أمان"},
+        {en:"safe room", ar:"غرفة آمنة"},
+        {en:"server room", ar:"غرفة خوادم"},
+        {en:"mechanical room", ar:"غرفة الميكانيكا"},
+        {en:"boiler room", ar:"غرفة الغلاية"}
+      ],
+
+      "Transitional & Nooks": [
+        {en:"alcove", ar:"مقصورة/ركن"},
+        {en:"nook", ar:"ركن صغير"},
+        {en:"reading nook", ar:"ركن القراءة"},
+        {en:"window seat", ar:"مقعد النافذة"},
+        {en:"bay", ar:"مساحة باي"},
+        {en:"mezzanine", ar:"ميزانين / طابق نصفي"},
+        {en:"loft", ar:"لوفت / علية مؤهلة للسكن"},
+        {en:"gallery", ar:"ممر عرض / صالة"},
+        {en:"porch", ar:"شرفة"},
+        {en:"verandah", ar:"شرفة واسعة"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // speech synthesis
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if (preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // initial render (start in dense mode)
+    appEl.classList.add('dense');
+    renderCategories();
+
+    // ensure voices loaded
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // accessibility: Enter focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak-btn');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Adverbios del español - Lista ampliada con árabe y audio</title>
+<style>
+  :root{
+    --gap:12px;
+    --card-bg:#fff;
+    --card-border:#e0e0e0;
+    --accent:#0b6efd;
+    --muted:#666;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  body{
+    font-family:var(--font-sans);
+    margin:16px;
+    background:#f7f9fc;
+    color:#111;
+  }
+  header{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  h1{font-size:1.1rem;margin:0}
+  .controls{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .controls label{font-size:0.9rem;color:var(--muted)}
+  .grid-wrap{
+    margin-top:12px;
+  }
+  .grid{
+    display:grid;
+    gap:var(--gap);
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:8px;
+    padding:10px;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 1px 2px rgba(0,0,0,0.03);
+  }
+  .card .texts{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:0;
+  }
+  .adverb{
+    font-weight:700;
+    font-size:1rem;
+    color:#0b2545;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .translation{
+    font-size:0.92rem;
+    color:var(--muted);
+    direction:rtl;
+  }
+  .actions{
+    display:flex;
+    gap:6px;
+    align-items:center;
+  }
+  .btn{
+    background:transparent;
+    border:0;
+    cursor:pointer;
+    padding:6px;
+    border-radius:6px;
+    color:var(--accent);
+  }
+  .btn:active{transform:translateY(1px)}
+  .icon{
+    width:20px;height:20px;display:inline-block;
+  }
+  .small{
+    font-size:0.85rem;color:var(--muted);
+  }
+  footer{margin-top:18px;font-size:0.85rem;color:var(--muted)}
+  /* Responsive */
+  @media (max-width:900px){
+    .grid{grid-template-columns: repeat(3,1fr);}
+  }
+  @media (max-width:600px){
+    .grid{grid-template-columns: repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Adverbios del español — Lista ampliada</h1>
+    <div class="small">Traducción al árabe y reproducción de audio por tarjeta</div>
+  </div>
+  <div class="controls" aria-hidden="false">
+    <label>
+      Columnas
+      <input id="colsRange" type="range" min="1" max="6" value="4" />
+    </label>
+    <label>
+      Voz y acento
+      <select id="voiceSelect"></select>
+    </label>
+    <label>
+      Idioma audio
+      <select id="langSelect">
+        <option value="es">Español</option>
+        <option value="ar">Árabe</option>
+      </select>
+    </label>
+    <button id="refreshVoices" class="btn" title="Actualizar lista de voces">🔄</button>
+  </div>
+</header>
+
+<main class="grid-wrap">
+  <div id="grid" class="grid" role="list">
+    <!-- Tarjetas generadas por JavaScript -->
+  </div>
+</main>
+
+<footer>
+  <strong>Grupos incluidos</strong>: Modo; Tiempo; Lugar; Frecuencia; Grado; Afirmación y negación; Duda; Cantidad; Modalidad; Relativos y Discurso.
+</footer>
+
+<script>
+/* Datos ampliados: adverbios agrupados con traducción al árabe */
+const data = [
+  {group:'Modo', items:[
+    {es:'rápidamente', ar:'بسرعة'},
+    {es:'lentamente', ar:'ببطء'},
+    {es:'cuidadosamente', ar:'بحذر'},
+    {es:'fácilmente', ar:'بسهولة'},
+    {es:'difícilmente', ar:'بصعوبة'},
+    {es:'perfectamente', ar:'بشكل مثالي'},
+    {es:'mal', ar:'بشكل سيئ'},
+    {es:'bien', ar:'جيداً'},
+    {es:'suavemente', ar:'بلطف'},
+    {es:'bruscamente', ar:'بقسوة'},
+    {es:'silenciosamente', ar:'بصمت'},
+    {es:'ruidosamente', ar:'بصخب'},
+    {es:'vivamente', ar:'بحيوية'},
+    {es:'torpemente', ar:'بشكل أخرق'},
+    {es:'habilidosamente', ar:'بمهارة'},
+    {es:'alegremente', ar:'بفرح'},
+    {es:'seriamente', ar:'بجدية'},
+    {es:'sutilmente', ar:'بشكل دقيق'},
+    {es:'explícitamente', ar:'بوضوح'},
+    {es:'implícitamente', ar:'ضمنياً'}
+  ]},
+  {group:'Tiempo', items:[
+    {es:'ahora', ar:'الآن'},
+    {es:'ayer', ar:'أمس'},
+    {es:'hoy', ar:'اليوم'},
+    {es:'mañana', ar:'غداً'},
+    {es:'pronto', ar:'قريباً'},
+    {es:'tarde', ar:'متأخراً'},
+    {es:'temprano', ar:'مبكراً'},
+    {es:'recientemente', ar:'مؤخراً'},
+    {es:'anteriormente', ar:'سابقاً'},
+    {es:'posteriormente', ar:'لاحقاً'},
+    {es:'inmediatamente', ar:'فوراً'},
+    {es:'finalmente', ar:'أخيراً'},
+    {es:'todavía', ar:'لا يزال'},
+    {es:'ya', ar:'بالفعل'},
+    {es:'próximamente', ar:'قريباً'},
+    {es:'siempre', ar:'دائماً'},
+    {es:'nunca', ar:'أبداً'},
+    {es:'antes', ar:'قبل'},
+    {es:'después', ar:'بعد'},
+    {es:'ocasionalmente', ar:'بين الحين والآخر'}
+  ]},
+  {group:'Lugar', items:[
+    {es:'aquí', ar:'هنا'},
+    {es:'allí', ar:'هناك'},
+    {es:'cerca', ar:'قريباً'},
+    {es:'lejos', ar:'بعيداً'},
+    {es:'encima', ar:'فوق'},
+    {es:'debajo', ar:'تحت'},
+    {es:'adelante', ar:'أمام'},
+    {es:'atrás', ar:'خلف'},
+    {es:'dentro', ar:'في الداخل'},
+    {es:'fuera', ar:'في الخارج'},
+    {es:'alrededor', ar:'حول'},
+    {es:'enfrente', ar:'أمام'},
+    {es:'junto', ar:'بجانب'},
+    {es:'separadamente', ar:'بشكل منفصل'},
+    {es:'lejanamente', ar:'بُعداً'},
+    {es:'aquí mismo', ar:'هنا بالضبط'},
+    {es:'allá', ar:'هناك بعيداً'},
+    {es:'por todas partes', ar:'في كل مكان'},
+    {es:'hacia', ar:'نحو'},
+    {es:'desde', ar:'من'}
+  ]},
+  {group:'Frecuencia', items:[
+    {es:'siempre', ar:'دائماً'},
+    {es:'a menudo', ar:'غالباً'},
+    {es:'frecuentemente', ar:'بشكل متكرر'},
+    {es:'a veces', ar:'أحياناً'},
+    {es:'rara vez', ar:'نادراً'},
+    {es:'nunca', ar:'أبداً'},
+    {es:'diariamente', ar:'يومياً'},
+    {es:'semanalmente', ar:'أسبوعياً'},
+    {es:'mensualmente', ar:'شهرياً'},
+    {es:'ocasionalmente', ar:'بين الحين والآخر'},
+    {es:'constantemente', ar:'بشكل مستمر'},
+    {es:'periodicamente', ar:'دورياً'},
+    {es:'esporádicamente', ar:'بعشوائية'},
+    {es:'habitualmente', ar:'عادةً'},
+    {es:'cada tanto', ar:'من حين لآخر'},
+    {es:'con frecuencia', ar:'بتكرار'},
+    {es:'raramente', ar:'نادراً'},
+    {es:'una vez', ar:'مرة واحدة'},
+    {es:'varias veces', ar:'عدة مرات'},
+    {es:'de vez en cuando', ar:'من وقت لآخر'}
+  ]},
+  {group:'Grado', items:[
+    {es:'muy', ar:'جداً'},
+    {es:'bastante', ar:'إلى حد ما'},
+    {es:'demasiado', ar:'أكثر من اللازم'},
+    {es:'poco', ar:'قليلاً'},
+    {es:'más', ar:'أكثر'},
+    {es:'menos', ar:'أقل'},
+    {es:'totalmente', ar:'تماماً'},
+    {es:'completamente', ar:'بشكل كامل'},
+    {es:'parcialmente', ar:'جزئياً'},
+    {es:'casi', ar:'تقريباً'},
+    {es:'sumamente', ar:'بالغ جداً'},
+    {es:'ligeramente', ar:'بشكل طفيف'},
+    {es:'extremadamente', ar:'بشكل شديد'},
+    {es:'medianamente', ar:'بشكل متوسط'},
+    {es:'relativamente', ar:'نسبيًا'},
+    {es:'absolutamente', ar:'مطلقاً'},
+    {es:'prácticamente', ar:'عملياً'},
+    {es:'notablemente', ar:'بشكل ملحوظ'},
+    {es:'suficientemente', ar:'بما فيه الكفاية'},
+    {es:'apenas', ar:'بالكاد'}
+  ]},
+  {group:'Afirmación y negación', items:[
+    {es:'sí', ar:'نعم'},
+    {es:'no', ar:'لا'},
+    {es:'ciertamente', ar:'بالتأكيد'},
+    {es:'claro', ar:'بالطبع'},
+    {es:'en absoluto', ar:'على الإطلاق'},
+    {es:'efectivamente', ar:'فعلاً'},
+    {es:'negativamente', ar:'سلباً'},
+    {es:'positivamente', ar:'إيجابياً'},
+    {es:'obviamente', ar:'من الواضح'},
+    {es:'seguramente', ar:'بالتأكيد'},
+    {es:'por supuesto', ar:'بالطبع'},
+    {es:'de ningún modo', ar:'بأي حال'},
+    {es:'indudablemente', ar:'بلا شك'},
+    {es:'rotundamente', ar:'بشكل قاطع'},
+    {es:'definitivamente', ar:'بالتأكيد'},
+    {es:'sin duda', ar:'بدون شك'},
+    {es:'en efecto', ar:'في الواقع'},
+    {es:'jamás', ar:'أبداً'},
+    {es:'ni siquiera', ar:'حتى لا'},
+    {es:'con seguridad', ar:'بأمان'}
+  ]},
+  {group:'Duda', items:[
+    {es:'quizá', ar:'ربما'},
+    {es:'tal vez', ar:'ربما'},
+    {es:'posiblemente', ar:'من الممكن'},
+    {es:'probablemente', ar:'على الأرجح'},
+    {es:'aparentemente', ar:'على ما يبدو'},
+    {es:'supuestamente', ar:'من المفترض'},
+    {es:'eventualmente', ar:'في نهاية المطاف'},
+    {es:'presumiblemente', ar:'من المفترض'},
+    {es:'teóricamente', ar:'نظرياً'},
+    {es:'aparentemente', ar:'على ما يبدو'},
+    {es:'quizás', ar:'ربما'},
+    {es:'tal vez no', ar:'ربما لا'},
+    {es:'posible', ar:'ممكن'},
+    {es:'dudablemente', ar:'بشكل مشكوك'},
+    {es:'con reservas', ar:'مع تحفظات'},
+    {es:'a lo mejor', ar:'قد يكون'},
+    {es:'no necesariamente', ar:'ليس بالضرورة'},
+    {es:'probable', ar:'محتمل'},
+    {es:'improbable', ar:'غير محتمل'},
+    {es:'hipotéticamente', ar:'افتراضياً'}
+  ]},
+  {group:'Cantidad', items:[
+    {es:'mucho', ar:'كثيراً'},
+    {es:'poco', ar:'قليلاً'},
+    {es:'suficiente', ar:'كافٍ'},
+    {es:'demasiado', ar:'أكثر من اللازم'},
+    {es:'lo suficiente', ar:'بما فيه الكفاية'},
+    {es:'en exceso', ar:'بزيادة'},
+    {es:'por completo', ar:'تماماً'},
+    {es:'en parte', ar:'جزئياً'},
+    {es:'en gran medida', ar:'إلى حد كبير'},
+    {es:'en menor medida', ar:'إلى حد أقل'},
+    {es:'cantidad', ar:'كمية'},
+    {es:'numerosamente', ar:'بشكل كبير'},
+    {es:'escasamente', ar:'بشكل نادر'},
+    {es:'abundantemente', ar:'بوفرة'},
+    {es:'mínimamente', ar:'بأدنى حد'},
+    {es:'considerablemente', ar:'بشكل ملحوظ'},
+    {es:'moderadamente', ar:'باعتدال'},
+    {es:'excesivamente', ar:'بشكل مفرط'},
+    {es:'parcialmente', ar:'جزئياً'},
+    {es:'totalmente', ar:'تماماً'}
+  ]},
+  {group:'Modalidad', items:[
+    {es:'probablemente', ar:'على الأرجح'},
+    {es:'posiblemente', ar:'من الممكن'},
+    {es:'obligatoriamente', ar:'إلزامياً'},
+    {es:'voluntariamente', ar:'طوعياً'},
+    {es:'necesariamente', ar:'بالضرورة'},
+    {es:'casualmente', ar:'عن طريق الصدفة'},
+    {es:'intencionalmente', ar:'عن قصد'},
+    {es:'accidentalmente', ar:'عن طريق الخطأ'},
+    {es:'formalmente', ar:'رسمياً'},
+    {es:'informalmente', ar:'غير رسمي'},
+    {es:'legalmente', ar:'قانونياً'},
+    {es:'ilegalmente', ar:'بشكل غير قانوني'},
+    {es:'técnicamente', ar:'تقنياً'},
+    {es:'prácticamente', ar:'عملياً'},
+    {es:'teóricamente', ar:'نظرياً'},
+    {es:'efectivamente', ar:'فعلياً'},
+    {es:'posiblemente', ar:'ربما'},
+    {es:'condicionalmente', ar:'بشرط'},
+    {es:'relativamente', ar:'نسبيًا'},
+    {es:'absolutamente', ar:'مطلقاً'}
+  ]},
+  {group:'Relativos y Discurso', items:[
+    {es:'además', ar:'بالإضافة إلى ذلك'},
+    {es:'sin embargo', ar:'مع ذلك'},
+    {es:'por lo tanto', ar:'لذلك'},
+    {es:'en cambio', ar:'بدلاً من ذلك'},
+    {es:'por ejemplo', ar:'على سبيل المثال'},
+    {es:'en realidad', ar:'في الواقع'},
+    {es:'a propósito', ar:'عن قصد'},
+    {es:'en resumen', ar:'باختصار'},
+    {es:'en particular', ar:'على وجه الخصوص'},
+    {es:'en general', ar:'بشكل عام'},
+    {es:'concretamente', ar:'بشكل محدد'},
+    {es:'principalmente', ar:'بالأساس'},
+    {es:'eventualmente', ar:'في نهاية المطاف'},
+    {es:'posteriormente', ar:'لاحقاً'},
+    {es:'anteriormente', ar:'سابقاً'},
+    {es:'en efecto', ar:'في الواقع'},
+    {es:'por consiguiente', ar:'وبالتالي'},
+    {es:'aun así', ar:'مع ذلك'},
+    {es:'de hecho', ar:'في الواقع'},
+    {es:'en definitiva', ar:'في الختام'}
+  ]}
+];
+
+/* Generar tarjetas */
+const grid = document.getElementById('grid');
+
+function createCard(adverb, translation, group){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.setAttribute('role','listitem');
+  card.innerHTML = `
+    <div class="texts" title="${group}">
+      <div class="adverb">${adverb}</div>
+      <div class="translation" lang="ar">${translation}</div>
+    </div>
+    <div class="actions">
+      <button class="btn speak" data-es="${adverb}" data-ar="${translation}" title="Reproducir">
+        <span class="icon">🔊</span>
+      </button>
+    </div>
+  `;
+  return card;
+}
+
+function renderGrid(){
+  grid.innerHTML = '';
+  data.forEach(group=>{
+    // header card spanning full width
+    const headerCard = document.createElement('div');
+    headerCard.className = 'card';
+    headerCard.style.gridColumn = '1 / -1';
+    headerCard.style.background = '#f1f5ff';
+    headerCard.style.borderColor = '#dbe7ff';
+    headerCard.innerHTML = `<div class="texts"><div style="font-weight:800">${group.group}</div><div class="small">Grupo</div></div>`;
+    grid.appendChild(headerCard);
+    group.items.forEach(it=>{
+      grid.appendChild(createCard(it.es, it.ar, group.group));
+    });
+  });
+}
+
+/* Control columnas */
+const colsRange = document.getElementById('colsRange');
+colsRange.addEventListener('input', e=>{
+  const cols = e.target.value;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+});
+grid.style.gridTemplateColumns = `repeat(${colsRange.value}, 1fr)`;
+
+/* Síntesis de voz */
+let voices = [];
+function loadVoices(){
+  voices = speechSynthesis.getVoices();
+  const select = document.getElementById('voiceSelect');
+  select.innerHTML = '';
+  voices.forEach((v, i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${v.name} — ${v.lang}`;
+    select.appendChild(opt);
+  });
+  if(voices.length===0){
+    const opt = document.createElement('option');
+    opt.textContent = 'No hay voces disponibles';
+    document.getElementById('voiceSelect').appendChild(opt);
+  }
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+document.getElementById('refreshVoices').addEventListener('click', loadVoices);
+
+/* Reproducir texto según idioma y voz seleccionada */
+function speakText(text, lang){
+  if(!('speechSynthesis' in window)){
+    alert('Tu navegador no soporta SpeechSynthesis.');
+    return;
+  }
+  const select = document.getElementById('voiceSelect');
+  const voiceIndex = parseInt(select.value);
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = (lang === 'ar') ? 'ar' : 'es';
+  if(!isNaN(voiceIndex) && voices[voiceIndex]) utter.voice = voices[voiceIndex];
+  utter.rate = 0.95;
+  utter.pitch = 1;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utter);
+}
+
+/* Delegación de eventos para botones de reproducción */
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.speak');
+  if(!btn) return;
+  const langSel = document.getElementById('langSelect').value;
+  const text = (langSel === 'ar') ? btn.dataset.ar : btn.dataset.es;
+  speakText(text, langSel);
+});
+
+/* Inicializar */
+renderGrid();
+loadVoices();
+</script>
+</body>
+</html>

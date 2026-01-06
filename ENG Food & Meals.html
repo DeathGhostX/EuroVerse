@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Food & Meals Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg:#f7f7f9; --card:#fff; --text:#111; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(0,0,0,0.06); --chip:#eef6ff;
+      --tile-min:160px; --tile-padding:10px; --word-size:0.98rem; --trans-size:0.86rem; --btn-size:44px;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#0b0d10; --card:#0f1317; --text:#e6eef8; --muted:#9aa6b2; --accent:#4ea1ff;
+        --accent-contrast:#07101a; --border:#1f2429; --shadow:0 2px 8px rgba(0,0,0,0.45); --chip:#12202b;
+      }
+    }
+
+    /* Dense mode variables */
+    .dense {
+      --tile-min:120px;
+      --tile-padding:8px;
+      --word-size:0.92rem;
+      --trans-size:0.78rem;
+      --btn-size:36px;
+    }
+
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:0 0 8px;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:0.95rem;outline:none;}
+    main{margin-top:12px;}
+    .category{margin:12px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:var(--chip);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--tile-padding);display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;box-shadow:var(--shadow);min-height:48px;}
+    .word{font-size:var(--word-size);font-weight:600;line-height:1.15;}
+    .translation{font-size:var(--trans-size);color:var(--muted);margin-top:4px;display:block;line-height:1.1;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px 12px;border-radius:999px;font-size:0.9rem;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow);}
+    .speak-btn:active{transform:translateY(1px);filter:brightness(0.96);}
+    .footer{margin:14px 0 30px;color:var(--muted);text-align:center;font-size:0.92rem;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .grid{gap:6px;} .item{padding:6px;} .word{font-size:0.98rem;} .speak-btn{padding:8px 10px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap" role="application" aria-label="Food and meals vocabulary with Arabic translations and pronunciation">
+    <header>
+      <h1>Food & Meals Vocabulary — English with Arabic translations</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter terms (English or Arabic)..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);white-space:nowrap;">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <div class="footer">
+      Tip: Pronunciations use your device's speech synthesis voices. If a voice is missing, try switching the accent or device.
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // DATA: Food & meals vocabulary grouped with Arabic translations
+    // Categories include many items covering ingredients, dishes, utensils, methods, beverages, cuisines, etc.
+    // =========================
+    const DATA = {
+      "Meals & Courses": [
+        {en:"breakfast", ar:"فطور"},
+        {en:"brunch", ar:"فطور متأخر"},
+        {en:"lunch", ar:"غداء"},
+        {en:"dinner", ar:"عشاء"},
+        {en:"supper", ar:"عشاء (مصطلح قديم)"},
+        {en:"snack", ar:"وجبة خفيفة"},
+        {en:"appetizer", ar:"مقبلات"},
+        {en:"starter", ar:"مقبلات"},
+        {en:"main course", ar:"الطبق الرئيسي"},
+        {en:"side dish", ar:"طبق جانبي"},
+        {en:"dessert", ar:"حلوى"},
+        {en:"tasting menu", ar:"قائمة تذوق"},
+        {en:"buffet", ar:"بوفيه"},
+        {en:"set menu", ar:"قائمة ثابتة"},
+        {en:"course", ar:"طبق (في وجبة متعددة الأطباق)"},
+        {en:"family-style", ar:"تقديم على طريقة العائلة"},
+        {en:"course sequence", ar:"تسلسل الأطباق"},
+        {en:"finger food", ar:"طعام يؤكل باليد"},
+        {en:"street food", ar:"طعام الشارع"},
+        {en:"picnic", ar:"نزهة طعام"}
+      ],
+
+      "Ingredients — Fruits": [
+        {en:"apple", ar:"تفاح"},
+        {en:"banana", ar:"موز"},
+        {en:"orange", ar:"برتقال"},
+        {en:"lemon", ar:"ليمون"},
+        {en:"lime", ar:"ليمون أخضر"},
+        {en:"grape", ar:"عنب"},
+        {en:"strawberry", ar:"فراولة"},
+        {en:"blueberry", ar:"توت أزرق"},
+        {en:"raspberry", ar:"توت العليق"},
+        {en:"pear", ar:"كمثرى"},
+        {en:"peach", ar:"خوخ"},
+        {en:"plum", ar:"برقوق"},
+        {en:"cherry", ar:"كرز"},
+        {en:"mango", ar:"مانجو"},
+        {en:"pineapple", ar:"أناناس"},
+        {en:"watermelon", ar:"بطيخ"},
+        {en:"melon", ar:"شمام"},
+        {en:"kiwi", ar:"كيوي"},
+        {en:"pomegranate", ar:"رمان"},
+        {en:"fig", ar:"تين"}
+      ],
+
+      "Ingredients — Vegetables": [
+        {en:"tomato", ar:"طماطم"},
+        {en:"potato", ar:"بطاطس"},
+        {en:"onion", ar:"بصل"},
+        {en:"garlic", ar:"ثوم"},
+        {en:"carrot", ar:"جزر"},
+        {en:"lettuce", ar:"خس"},
+        {en:"spinach", ar:"سبانخ"},
+        {en:"cucumber", ar:"خيار"},
+        {en:"pepper", ar:"فلفل"},
+        {en:"chili pepper", ar:"فلفل حار"},
+        {en:"eggplant", ar:"باذنجان"},
+        {en:"zucchini", ar:"كوسا"},
+        {en:"mushroom", ar:"فطر"},
+        {en:"broccoli", ar:"بروكلي"},
+        {en:"cauliflower", ar:"قرنبيط"},
+        {en:"celery", ar:"كرفس"},
+        {en:"beetroot", ar:"شمندر"},
+        {en:"pumpkin", ar:"قرع"},
+        {en:"sweet potato", ar:"بطاطا حلوة"},
+        {en:"okra", ar:"بامية"}
+      ],
+
+      "Ingredients — Grains & Legumes": [
+        {en:"rice", ar:"أرز"},
+        {en:"wheat", ar:"قمح"},
+        {en:"barley", ar:"شعير"},
+        {en:"oats", ar:"شوفان"},
+        {en:"corn", ar:"ذرة"},
+        {en:"quinoa", ar:"كينوا"},
+        {en:"millet", ar:"دخن"},
+        {en:"bulgur", ar:"برغل"},
+        {en:"couscous", ar:"كسكس"},
+        {en:"lentils", ar:"عدس"},
+        {en:"chickpeas", ar:"حمص"},
+        {en:"beans", ar:"فاصوليا"},
+        {en:"soybeans", ar:"فول الصويا"},
+        {en:"black beans", ar:"فاصوليا سوداء"},
+        {en:"kidney beans", ar:"فاصوليا حمراء"},
+        {en:"split peas", ar:"بازلاء مجزأة"},
+        {en:"mung beans", ar:"فاصوليا مونج"},
+        {en:"red lentils", ar:"عدس أحمر"},
+        {en:"green lentils", ar:"عدس أخضر"},
+        {en:"sorghum", ar:"سورغم"}
+      ],
+
+      "Ingredients — Dairy & Eggs": [
+        {en:"milk", ar:"حليب"},
+        {en:"butter", ar:"زبدة"},
+        {en:"cheese", ar:"جبن"},
+        {en:"yogurt", ar:"زبادي"},
+        {en:"cream", ar:"كريمة"},
+        {en:"sour cream", ar:"قشدة حامضة"},
+        {en:"cottage cheese", ar:"جبن قريش"},
+        {en:"cream cheese", ar:"جبنة كريمية"},
+        {en:"egg", ar:"بيضة"},
+        {en:"egg white", ar:"بياض البيض"},
+        {en:"egg yolk", ar:"صفار البيض"},
+        {en:"buttermilk", ar:"لبن رائب"},
+        {en:"ghee", ar:"سمن"},
+        {en:"condensed milk", ar:"حليب مكثف"},
+        {en:"evaporated milk", ar:"حليب مبخر"},
+        {en:"kefir", ar:"كيفر"},
+        {en:"paneer", ar:"بانير (جبن هندي)"},
+        {en:"mascarpone", ar:"مسكربون"},
+        {en:"ricotta", ar:"ريكوتا"},
+        {en:"feta", ar:"فيتا"}
+      ],
+
+      "Ingredients — Meats & Seafood": [
+        {en:"beef", ar:"لحم بقري"},
+        {en:"pork", ar:"لحم خنزير"},
+        {en:"lamb", ar:"لحم ضأن"},
+        {en:"chicken", ar:"دجاج"},
+        {en:"turkey", ar:"ديك رومي"},
+        {en:"duck", ar:"بط"},
+        {en:"goat", ar:"ماعز"},
+        {en:"veal", ar:"لحم عجل"},
+        {en:"bacon", ar:"لحم مقدد"},
+        {en:"ham", ar:"لحم خنزير معالج"},
+        {en:"sausage", ar:"نقانق"},
+        {en:"salami", ar:"سلامي"},
+        {en:"shrimp", ar:"روبيان"},
+        {en:"prawn", ar:"جمبري كبير"},
+        {en:"crab", ar:"سلطعون"},
+        {en:"lobster", ar:"جراد البحر"},
+        {en:"fish", ar:"سمك"},
+        {en:"tuna", ar:"تونة"},
+        {en:"salmon", ar:"سلمون"},
+        {en:"mackerel", ar:"ماكريل"}
+      ],
+
+      "Spices & Herbs": [
+        {en:"salt", ar:"ملح"},
+        {en:"black pepper", ar:"فلفل أسود"},
+        {en:"cumin", ar:"كمون"},
+        {en:"coriander", ar:"كزبرة"},
+        {en:"turmeric", ar:"كركم"},
+        {en:"paprika", ar:"بابريكا"},
+        {en:"chili powder", ar:"مسحوق الفلفل الحار"},
+        {en:"cinnamon", ar:"قرفة"},
+        {en:"nutmeg", ar:"جوزة الطيب"},
+        {en:"clove", ar:"قرنفل"},
+        {en:"cardamom", ar:"هيل"},
+        {en:"ginger", ar:"زنجبيل"},
+        {en:"garlic powder", ar:"بودرة الثوم"},
+        {en:"oregano", ar:"أوريجانو"},
+        {en:"thyme", ar:"زعتر"},
+        {en:"rosemary", ar:"إكليل الجبل"},
+        {en:"basil", ar:"ريحان"},
+        {en:"parsley", ar:"بقدونس"},
+        {en:"mint", ar:"نعناع"},
+        {en:"bay leaf", ar:"ورق غار"}
+      ],
+
+      "Condiments & Sauces": [
+        {en:"olive oil", ar:"زيت زيتون"},
+        {en:"vegetable oil", ar:"زيت نباتي"},
+        {en:"vinegar", ar:"خل"},
+        {en:"soy sauce", ar:"صلصة الصويا"},
+        {en:"ketchup", ar:"كاتشب"},
+        {en:"mustard", ar:"خردل"},
+        {en:"mayonnaise", ar:"مايونيز"},
+        {en:"hot sauce", ar:"صلصة حارة"},
+        {en:"barbecue sauce", ar:"صلصة باربكيو"},
+        {en:"pesto", ar:"بيستو"},
+        {en:"teriyaki sauce", ar:"صلصة ترياكي"},
+        {en:"hoisin sauce", ar:"صلصة هويسن"},
+        {en:"fish sauce", ar:"صلصة السمك"},
+        {en:"tahini", ar:"طحينة"},
+        {en:"salsa", ar:"صلصة سالسا"},
+        {en:"gravy", ar:"مرق"},
+        {en:"relish", ar:"مخلل مقطع"},
+        {en:"chutney", ar:"تشاتني"},
+        {en:"aioli", ar:"أيولي"},
+        {en:"dressing", ar:"تتبيلة"}
+      ],
+
+      "Utensils & Cookware": [
+        {en:"knife", ar:"سكين"},
+        {en:"paring knife", ar:"سكين تقشير"},
+        {en:"chef's knife", ar:"سكين الشيف"},
+        {en:"cutting board", ar:"لوح تقطيع"},
+        {en:"spatula", ar:"مِلعقة مسطحة / سباتولا"},
+        {en:"ladle", ar:"مغرفة"},
+        {en:"whisk", ar:"مِضرب"},
+        {en:"tongs", ar:"ملقط"},
+        {en:"peeler", ar:"قشارة"},
+        {en:"grater", ar:"مبشرة"},
+        {en:"colander", ar:"مصفاة"},
+        {en:"sieve", ar:"منخل"},
+        {en:"measuring cup", ar:"كوب قياس"},
+        {en:"measuring spoon", ar:"معلقة قياس"},
+        {en:"mixing bowl", ar:"وعاء خلط"},
+        {en:"rolling pin", ar:"شوبك / مدلك العجين"},
+        {en:"baking tray", ar:"صينية خبز"},
+        {en:"saucepan", ar:"قدر صغير"},
+        {en:"frying pan", ar:"مقلاة"},
+        {en:"stockpot", ar:"قدر كبير"}
+      ],
+
+      "Kitchen Appliances": [
+        {en:"stove", ar:"موقد"},
+        {en:"oven", ar:"فرن"},
+        {en:"microwave", ar:"ميكروويف"},
+        {en:"refrigerator", ar:"ثلاجة"},
+        {en:"freezer", ar:"فريزر"},
+        {en:"dishwasher", ar:"غسالة صحون"},
+        {en:"blender", ar:"خلاط"},
+        {en:"food processor", ar:"محضر طعام"},
+        {en:"toaster", ar:"محمصة خبز"},
+        {en:"kettle", ar:"غلاية كهربائية"},
+        {en:"coffee maker", ar:"صانعة القهوة"},
+        {en:"espresso machine", ar:"آلة إسبرسو"},
+        {en:"rice cooker", ar:"طباخ أرز"},
+        {en:"slow cooker", ar:"طباخ بطيء"},
+        {en:"pressure cooker", ar:"قدر ضغط"},
+        {en:"air fryer", ar:"قلاية هوائية"},
+        {en:"stand mixer", ar:"خلاط ثابت"},
+        {en:"hand mixer", ar:"خلاط يدوي"},
+        {en:"deep fryer", ar:"قلاية عميقة"},
+        {en:"grill", ar:"شواية"}
+      ],
+
+      "Cooking Methods & Techniques": [
+        {en:"boil", ar:"يغلي / سلق"},
+        {en:"simmer", ar:"يُطهى على نار هادئة"},
+        {en:"steam", ar:"يبخر / تبخير"},
+        {en:"poach", ar:"يسلق برفق"},
+        {en:"fry", ar:"يقلي"},
+        {en:"deep-fry", ar:"يقلي عميقاً"},
+        {en:"pan-fry", ar:"يقلي في مقلاة"},
+        {en:"saute", ar:"يقلي بسرعة (سوتيه)"},
+        {en:"roast", ar:"يشوي / يحمص في الفرن"},
+        {en:"grill", ar:"يشوى على الشواية"},
+        {en:"broil", ar:"يشوى من الأعلى"},
+        {en:"braise", ar:"يُطهي ببطء مع سائل"},
+        {en:"stew", ar:"يُطهي على نار هادئة"},
+        {en:"blanch", ar:"يسلق ثم يبرد سريعاً"},
+        {en:"sear", ar:"يحمر بسرعة على نار عالية"},
+        {en:"reduce", ar:"يُقلل (الصلصة)"},
+        {en:"deglaze", ar:"يزيل الرواسب بسائل"},
+        {en:"julienne", ar:"يقطع شرائح رفيعة"},
+        {en:"dice", ar:"يقطع مكعبات"},
+        {en:"mince", ar:"يفرم ناعماً"}
+      ],
+
+      "Baking & Pastry": [
+        {en:"flour", ar:"دقيق"},
+        {en:"yeast", ar:"خميرة"},
+        {en:"baking powder", ar:"بيكنج باودر"},
+        {en:"baking soda", ar:"صودا الخبز"},
+        {en:"sugar", ar:"سكر"},
+        {en:"brown sugar", ar:"سكر بني"},
+        {en:"icing", ar:"تزيين/آيسنغ"},
+        {en:"fondant", ar:"فوندان"},
+        {en:"pastry", ar:"معجنات"},
+        {en:"dough", ar:"عجين"},
+        {en:"crumb", ar:"فتات"},
+        {en:"crumb coat", ar:"طبقة فتات"},
+        {en:"proofing", ar:"تخمير العجين"},
+        {en:"rolling", ar:"فرد العجين"},
+        {en:"lamination", ar:"ترقيق العجين (للفطائر)"},
+        {en:"custard", ar:"كاسترد"},
+        {en:"meringue", ar:"مرنغ"},
+        {en:"tart", ar:"تارت"},
+        {en:"pie", ar:"فطيرة"},
+        {en:"croissant", ar:"كرواسون"}
+      ],
+
+      "Beverages": [
+        {en:"water", ar:"ماء"},
+        {en:"sparkling water", ar:"ماء غازي"},
+        {en:"tea", ar:"شاي"},
+        {en:"coffee", ar:"قهوة"},
+        {en:"espresso", ar:"إسبريسو"},
+        {en:"latte", ar:"لاتيه"},
+        {en:"cappuccino", ar:"كابتشينو"},
+        {en:"juice", ar:"عصير"},
+        {en:"smoothie", ar:"سموذي"},
+        {en:"milkshake", ar:"ميلك شيك"},
+        {en:"soda", ar:"مشروب غازي"},
+        {en:"beer", ar:"بيرة"},
+        {en:"wine", ar:"نبيذ"},
+        {en:"cocktail", ar:"كوكتيل"},
+        {en:"mocktail", ar:"كوكتيل غير كحولي"},
+        {en:"liqueur", ar:"مشروب كحولي مُحلى"},
+        {en:"whisky", ar:"ويسكي"},
+        {en:"vodka", ar:"فودكا"},
+        {en:"rum", ar:"رم"},
+        {en:"tea infusion", ar:"منقوع شاي"}
+      ],
+
+      "Cuisines & Dishes": [
+        {en:"Italian cuisine", ar:"المطبخ الإيطالي"},
+        {en:"pizza", ar:"بيتزا"},
+        {en:"pasta", ar:"باستا"},
+        {en:"risotto", ar:"ريزوتو"},
+        {en:"Spanish cuisine", ar:"المطبخ الإسباني"},
+        {en:"paella", ar:"باييلا"},
+        {en:"tapas", ar:"تاباس"},
+        {en:"French cuisine", ar:"المطبخ الفرنسي"},
+        {en:"croissant", ar:"كرواسون"},
+        {en:"soupe", ar:"حساء (فرنسي)"},
+        {en:"Japanese cuisine", ar:"المطبخ الياباني"},
+        {en:"sushi", ar:"سوشي"},
+        {en:"ramen", ar:"رامن"},
+        {en:"Chinese cuisine", ar:"المطبخ الصيني"},
+        {en:"dim sum", ar:"ديم سوم"},
+        {en:"stir-fry", ar:"قلي سريع"},
+        {en:"Indian cuisine", ar:"المطبخ الهندي"},
+        {en:"curry", ar:"كاري"},
+        {en:"tandoori", ar:"تندوري"},
+        {en:"Middle Eastern cuisine", ar:"المطبخ الشرق أوسطي"}
+      ],
+
+      "Restaurant & Service Terms": [
+        {en:"menu", ar:"قائمة الطعام"},
+        {en:"à la carte", ar:"على حسب الطلب"},
+        {en:"table for two", ar:"طاولة لشخصين"},
+        {en:"reservation", ar:"حجز"},
+        {en:"waiter", ar:"نادل"},
+        {en:"waitress", ar:"نادلة"},
+        {en:"chef", ar:"شيف"},
+        {en:"sous chef", ar:"نائب الشيف"},
+        {en:"host", ar:"مضيف"},
+        {en:"bill / check", ar:"الفاتورة"},
+        {en:"tip", ar:"بقشيش"},
+        {en:"takeaway / to-go", ar:"طلب للمنزل"},
+        {en:"delivery", ar:"توصيل"},
+        {en:"cover charge", ar:"رسوم تغطية"},
+        {en:"happy hour", ar:"ساعة سعيدة"},
+        {en:"specials", ar:"عروض خاصة"},
+        {en:"chef's table", ar:"طاولة الشيف"},
+        {en:"front of house", ar:"قسم الخدمة"},
+        {en:"back of house", ar:"المطبخ/قسم التحضير"},
+        {en:"sommelier", ar:"سوملييه (خبير النبيذ)"}
+      ],
+
+      "Food Preservation & Storage": [
+        {en:"refrigeration", ar:"تبريد"},
+        {en:"freezing", ar:"تجميد"},
+        {en:"canning", ar:"تعليب"},
+        {en:"pickling", ar:"تخليل"},
+        {en:"fermentation", ar:"تخمير"},
+        {en:"vacuum sealing", ar:"ختم مفرغ الهواء"},
+        {en:"drying", ar:"تجفيف"},
+        {en:"smoking", ar:"تدخين"},
+        {en:"pasteurization", ar:"بسترة"},
+        {en:"preservative", ar:"مادة حافظة"},
+        {en:"airtight container", ar:"حاوية محكمة الإغلاق"},
+        {en:"pantry storage", ar:"تخزين في المخزن"},
+        {en:"cold chain", ar:"سلسلة التبريد"},
+        {en:"shelf life", ar:"مدة الصلاحية"},
+        {en:"expiration date", ar:"تاريخ الانتهاء"},
+        {en:"best before", ar:"يفضل قبل"},
+        {en:"root cellar", ar:"قبو جذور (تخزين)"},
+        {en:"pickling brine", ar:"محلول التخليل"},
+        {en:"curing", ar:"تمليح/تجفيف للحفظ"},
+        {en:"jam / preserve", ar:"مربى / محفوظات"}
+      ],
+
+      "Measurements & Kitchen Math": [
+        {en:"teaspoon (tsp)", ar:"ملعقة صغيرة"},
+        {en:"tablespoon (tbsp)", ar:"ملعقة كبيرة"},
+        {en:"cup", ar:"كوب"},
+        {en:"pint", ar:"باينت"},
+        {en:"quart", ar:"كوارط"},
+        {en:"gallon", ar:"جالون"},
+        {en:"milliliter (ml)", ar:"مليلتر"},
+        {en:"liter (L)", ar:"لتر"},
+        {en:"gram (g)", ar:"غرام"},
+        {en:"kilogram (kg)", ar:"كيلوغرام"},
+        {en:"ounce (oz)", ar:"أونصة"},
+        {en:"pound (lb)", ar:"رطل"},
+        {en:"pinch", ar:"رشة"},
+        {en:"dash", ar:"قطرة/قليل"},
+        {en:"to taste", ar:"حسب الذوق"},
+        {en:"yield", ar:"كمية الناتج"},
+        {en:"serving size", ar:"حجم الحصة"},
+        {en:"conversion", ar:"تحويل الوحدات"},
+        {en:"scales", ar:"ميزان"},
+        {en:"measuring jug", ar:"إبريق قياس"}
+      ],
+
+      "Dietary Terms & Nutrition": [
+        {en:"vegetarian", ar:"نباتي"},
+        {en:"vegan", ar:"نباتي صارم"},
+        {en:"gluten-free", ar:"خالٍ من الغلوتين"},
+        {en:"lactose-free", ar:"خالٍ من اللاكتوز"},
+        {en:"organic", ar:"عضوي"},
+        {en:"low-fat", ar:"منخفض الدسم"},
+        {en:"low-carb", ar:"منخفض الكربوهيدرات"},
+        {en:"high-protein", ar:"عالي البروتين"},
+        {en:"calories", ar:"سعرات حرارية"},
+        {en:"macronutrients", ar:"مغذيات كبيرة"},
+        {en:"micronutrients", ar:"مغذيات دقيقة"},
+        {en:"allergen", ar:"مسبب حساسية"},
+        {en:"nutritional label", ar:"ملصق غذائي"},
+        {en:"portion control", ar:"التحكم في الحصص"},
+        {en:"balanced diet", ar:"نظام غذائي متوازن"},
+        {en:"superfood", ar:"طعام فائق الفائدة"},
+        {en:"probiotic", ar:"بروبيوتيك"},
+        {en:"prebiotic", ar:"بريبايوتيك"},
+        {en:"fiber", ar:"ألياف"},
+        {en:"cholesterol", ar:"كوليسترول"}
+      ],
+
+      "Snacks, Street Food & Small Bites": [
+        {en:"sandwich", ar:"ساندويتش"},
+        {en:"wrap", ar:"راب"},
+        {en:"burger", ar:"برجر"},
+        {en:"hot dog", ar:"هوت دوغ"},
+        {en:"taco", ar:"تاكو"},
+        {en:"samosa", ar:"سمبوسة"},
+        {en:"empanada", ar:"إمبانادا"},
+        {en:"spring roll", ar:"لفافة ربيعية"},
+        {en:"dumpling", ar:"زلابية / دامبلنغ"},
+        {en:"kebab", ar:"كباب"},
+        {en:"falafel", ar:"فلافل"},
+        {en:"shawarma", ar:"شاورما"},
+        {en:"pancake", ar:"فطيرة / بان كيك"},
+        {en:"crepe", ar:"كريب"},
+        {en:"nachos", ar:"ناتشوز"},
+        {en:"fries", ar:"بطاطس مقلية"},
+        {en:"chips", ar:"رقائق / شيبس"},
+        {en:"popcorn", ar:"فشار"},
+        {en:"pretzel", ar:"بريتزل"},
+        {en:"sushi roll", ar:"لفافة سوشي"}
+      ],
+
+      "Soups, Salads & Starters": [
+        {en:"soup", ar:"حساء"},
+        {en:"broth", ar:"مرق"},
+        {en:"consommé", ar:"كونسومي (مرق صافٍ)"},
+        {en:"gazpacho", ar:"غزباتشو"},
+        {en:"salad", ar:"سلطة"},
+        {en:"caesar salad", ar:"سلطة سيزر"},
+        {en:"green salad", ar:"سلطة خضراء"},
+        {en:"coleslaw", ar:"سلطة ملفوف"},
+        {en:"caprese", ar:"كابريزي (طماطم وجبن)"},
+        {en:"bruschetta", ar:"بروشيتا"},
+        {en:"carpaccio", ar:"كارباشيو"},
+        {en:"ceviche", ar:"سيفيتشي"},
+        {en:"gazpacho", ar:"غزباتشو"},
+        {en:"miso soup", ar:"حساء ميسو"},
+        {en:"clam chowder", ar:"حساء محار كريمي"},
+        {en:"minestrone", ar:"مينستروني"},
+        {en:"bisque", ar:"بيسك (حساء كريمي)"},
+        {en:"appetizer platter", ar:"طبق مقبلات"},
+        {en:"antipasto", ar:"أنتيباستو"}
+      ],
+
+      "Desserts & Sweets": [
+        {en:"cake", ar:"كيك"},
+        {en:"cheesecake", ar:"تشيز كيك"},
+        {en:"ice cream", ar:"آيس كريم"},
+        {en:"gelato", ar:"جيلاتو"},
+        {en:"pudding", ar:"بودينغ"},
+        {en:"custard", ar:"كاسترد"},
+        {en:"brownie", ar:"براوني"},
+        {en:"cookie", ar:"بسكويت"},
+        {en:"biscuit", ar:"بسكويت"},
+        {en:"macaron", ar:"ماكارون"},
+        {en:"tiramisu", ar:"تيراميسو"},
+        {en:"pavlova", ar:"بافلوفا"},
+        {en:"creme brûlée", ar:"كريم بروليه"},
+        {en:"flan", ar:"فلان"},
+        {en:"baklava", ar:"بقلاوة"},
+        {en:"halva", ar:"حلاوة"},
+        {en:"donut", ar:"دونات"},
+        {en:"churros", ar:"تشوروز"},
+        {en:"fruit tart", ar:"تارت فواكه"},
+        {en:"sorbet", ar:"سوربيه"}
+      ],
+
+      "Breakfast Items": [
+        {en:"eggs benedict", ar:"بيض بنديكت"},
+        {en:"omelette", ar:"عجة"},
+        {en:"scrambled eggs", ar:"بيض مخفوق"},
+        {en:"poached eggs", ar:"بيض مسلوق برفق"},
+        {en:"pancakes", ar:"فطائر"},
+        {en:"waffles", ar:"وافل"},
+        {en:"porridge", ar:"عصيدة / شوفان"},
+        {en:"granola", ar:"جرانولا"},
+        {en:"muesli", ar:"موسلي"},
+        {en:"bagel", ar:"بيغل"},
+        {en:"toast", ar:"توست"},
+        {en:"cereal", ar:"حبوب الإفطار"},
+        {en:"hash browns", ar:"بطاطس مهروسة ومقلية"},
+        {en:"breakfast burrito", ar:"بوريتو الإفطار"},
+        {en:"frittata", ar:"فريتاتا"},
+        {en:"yogurt parfait", ar:"بارفيه زبادي"},
+        {en:"smoothie bowl", ar:"وعاء سموذي"},
+        {en:"breakfast sandwich", ar:"ساندويتش إفطار"},
+        {en:"granola bar", ar:"لوح جرانولا"},
+        {en:"fruit salad", ar:"سلطة فواكه"}
+      ],
+
+      "Food Safety & Hygiene": [
+        {en:"cross-contamination", ar:"تلوث متبادل"},
+        {en:"foodborne illness", ar:"مرض منقول عن طريق الغذاء"},
+        {en:"temperature danger zone", ar:"منطقة خطر درجة الحرارة"},
+        {en:"hand washing", ar:"غسل اليدين"},
+        {en:"sanitizer", ar:"مطهر"},
+        {en:"food handler", ar:"متعامل مع الطعام"},
+        {en:"expiry date", ar:"تاريخ الانتهاء"},
+        {en:"use by", ar:"يستخدم قبل"},
+        {en:"best before", ar:"يفضل قبل"},
+        {en:"storage temperature", ar:"درجة حرارة التخزين"},
+        {en:"thawing", ar:"إذابة التجميد"},
+        {en:"reheating", ar:"إعادة التسخين"},
+        {en:"leftovers", ar:"بقايا الطعام"},
+        {en:"FIFO (first in first out)", ar:"نظام FIFO (أول داخل أول خارج)"},
+        {en:"food handler certificate", ar:"شهادة متعامل طعام"},
+        {en:"pest control", ar:"مكافحة الآفات"},
+        {en:"cleaning schedule", ar:"جدول التنظيف"},
+        {en:"gloves", ar:"قفازات"},
+        {en:"hairnet", ar:"شبكة شعر"},
+        {en:"thermometer", ar:"مقياس حرارة"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // speech synthesis
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if (preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // initial render (start in dense mode)
+    appEl.classList.add('dense');
+    renderCategories();
+
+    // ensure voices loaded
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // accessibility: Enter focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak-btn');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

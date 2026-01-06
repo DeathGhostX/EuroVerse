@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verbos ingleses (3 letras) — Lista completa</title>
+<style>
+  :root{--cols:4;--gap:10px}
+  body{font-family:system-ui,Arial;margin:16px;background:#f7f7f9;color:#111}
+  h3{margin-top:0}
+  .controls{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .grid{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:var(--gap)}
+  .card{border:1px solid #ddd;padding:10px;border-radius:8px;position:relative;background:#fff;min-height:130px;box-shadow:0 1px 2px rgba(0,0,0,0.03)}
+  .play{position:absolute;top:8px;right:8px;cursor:pointer;font-size:18px}
+  .inf{font-weight:700;font-size:1.05rem;margin-bottom:4px}
+  .arab{color:#0b6623;font-size:0.95rem;margin-bottom:6px}
+  .forms{font-size:0.9rem;line-height:1.25}
+  label{font-size:0.9rem}
+  .massive-note{font-size:0.9rem;color:#555;margin-bottom:8px}
+  .footer-note{font-size:0.85rem;color:#666;margin-top:12px}
+  button{padding:6px 10px;border-radius:6px;border:1px solid #bbb;background:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+<h3>Verbos ingleses (3 letras) — Lista completa</h3>
+<div class="massive-note"><strong>Contenido:</strong> infinitivo (3 letras) + Simple Past / Past Perfect / Present / Future Perfect / Simple Future + traducción al árabe (cuando está disponible).</div>
+
+<div class="controls">
+  <label>Densidad (columnas): <input id="density" type="range" min="2" max="8" value="4"></label>
+  <label>Espacio: <input id="gap" type="range" min="6" max="24" value="10"></label>
+  <label>Voz: <select id="voices"></select></label>
+  <button id="toggleArabic">Alternar mostrar árabe</button>
+</div>
+
+<div id="grid" class="grid" aria-live="polite"></div>
+
+<script>
+/*
+  Formato:
+  [infinitive, simplePast, pastPerfect, present (3rd sing), futurePerfect, simpleFuture, arabicTranslation]
+*/
+const verbs = [
+  ["act","acted","had acted","acts","will have acted","will act","يفعل"],
+  ["add","added","had added","adds","will have added","will add","يضيف"],
+  ["age","aged","had aged","ages","will have aged","will age","يشيخ"],
+  ["aim","aimed","had aimed","aims","will have aimed","will aim","يهدف"],
+  ["air","aired","had aired","airs","will have aired","will air","يبث"],
+  ["ask","asked","had asked","asks","will have asked","will ask","يسأل"],
+  ["bag","bagged","had bagged","bags","will have bagged","will bag","يحزم"],
+  ["ban","banned","had banned","bans","will have banned","will ban","يحظر"],
+  ["bar","barred","had barred","bars","will have barred","will bar","يمنع"],
+  ["bat","batted","had batted","bats","will have batted","will bat","يضرب"],
+  ["bay","bayed","had bayed","bays","will have bayed","will bay","ينبح"],
+  ["bed","bedded","had bedded","beds","will have bedded","will bed","ينام"],
+  ["beg","begged","had begged","begs","will have begged","will beg","يتوسل"],
+  ["bet","bet","had bet","bets","will have bet","will bet","يراهن"],
+  ["bid","bid","had bid","bids","will have bid","will bid","يعرض"],
+  ["bog","bogged","had bogged","bogs","will have bogged","will bog","يغرق"],
+  ["boo","booed","had booed","boos","will have booed","will boo","يهتف ضد"],
+  ["box","boxed","had boxed","boxes","will have boxed","will box","يلاكم"],
+  ["boy","boyed","had boyed","boys","will have boyed","will boy","ولد"],
+  ["buy","bought","had bought","buys","will have bought","will buy","يشتري"],
+  ["cab","cabbed","had cabbed","cabs","will have cabbed","will cab","يستقل تاكسي"],
+  ["can","could","had been able","cans","will have been able","will can","يستطيع"],
+  ["cap","capped","had capped","caps","will have capped","will cap","يغطى"],
+  ["car","carred","had carred","cars","will have carred","will car","يقود"], 
+  ["cat","catted","had catted","cats","will have catted","will cat","قطة (verbo raro)"],
+  ["cut","cut","had cut","cuts","will have cut","will cut","يقطع"],
+  ["cry","cried","had cried","cries","will have cried","will cry","يبكي"],
+  ["cob","cobbed","had cobbed","cobs","will have cobbed","will cob","يصلح"],
+  ["cod","coded","had coded","codes","will have coded","will code","يبرمج"],
+  ["cop","copped","had copped","cops","will have copped","will cop","يمسك"],
+  ["cow","cowed","had cowed","cows","will have cowed","will cow","يخيف"],
+  ["cut","cut","had cut","cuts","will have cut","will cut","يقطع"],
+  ["dab","dabbed","had dabbed","dabs","will have dabbed","will dab","يمسح"],
+  ["dad","dadded","had dadded","dads","will have dadded","will dad","أب (verbo raro)"],
+  ["dam","dammed","had dammed","dams","will have dammed","will dam","يسد"],
+  ["day","dayed","had dayed","days","will have dayed","will day","يمضي اليوم"],
+  ["dig","dug","had dug","digs","will have dug","will dig","يحفر"],
+  ["dip","dipped","had dipped","dips","will have dipped","will dip","يغمس"],
+  ["do","did","had done","does","will have done","will do","يفعل"],
+  ["dog","dogged","had dogged","dogs","will have dogged","will dog","يتعقب"],
+  ["dot","dotted","had dotted","dots","will have dotted","will dot","يضع نقاط"],
+  ["dry","dried","had dried","dries","will have dried","will dry","يجفف"],
+  ["dub","dubbed","had dubbed","dubs","will have dubbed","will dub","يدبلج"],
+  ["dye","dyed","had dyed","dyes","will have dyed","will dye","يصبغ"],
+  ["eat","ate","had eaten","eats","will have eaten","will eat","يأكل"],
+  ["ebb","ebbed","had ebbed","ebbs","will have ebbed","will ebb","ينحسر"],
+  ["egg","egged","had egged","eggs","will have egged","will egg","يشجع"],
+  ["end","ended","had ended","ends","will have ended","will end","ينهي"],
+  ["eng","engged","had engged","engs","will have engged","will eng","يشرك"],
+  ["env","envied","had envied","envies","will have envied","will envy","يحسد"],
+  ["err","erred","had erred","errs","will have erred","will err","يخطئ"],
+  ["eat","ate","had eaten","eats","will have eaten","will eat","يأكل"],
+  ["fan","fanned","had fanned","fans","will have fanned","will fan","يشجع"],
+  ["far","farred","had farred","fars","will have farred","will far","يبعد"],
+  ["fax","faxed","had faxed","faxes","will have faxed","will fax","يرسل فاكس"],
+  ["fed","fed","had fed","feeds","will have fed","will feed","يطعم"],
+  ["fee","feed","had feed","fees","will have feed","will fee","رسوم (verbo raro)"],
+  ["fit","fit","had fit","fits","will have fit","will fit","يناسب"],
+  ["fix","fixed","had fixed","fixes","will have fixed","will fix","يصلح"],
+  ["fly","flew","had flown","flies","will have flown","will fly","يطير"],
+  ["fog","fogged","had fogged","fogs","will have fogged","will fog","يغطى بالضباب"],
+  ["for","forged","had forged","fors","will have forged","will for","يتقدم"],
+  ["fry","fried","had fried","fries","will have fried","will fry","يقلي"],
+  ["fun","funned","had funned","funs","will have funned","will fun","يمرح"],
+  ["get","got","had got","gets","will have got","will get","يحصل"],
+  ["got","got","had got","gets","will have got","will get","حصل"],
+  ["gig","gigged","had gigged","gigs","will have gigged","will gig","يعزف"],
+  ["gin","ginned","had ginned","gins","will have ginned","will gin","يفصل"],
+  ["go","went","had gone","goes","will have gone","will go","يذهب"],
+  ["gag","gagged","had gagged","gags","will have gagged","will gag","يخنق"],
+  ["gap","gapped","had gapped","gaps","will have gapped","will gap","يفتح فجوة"],
+  ["gas","gassed","had gassed","gases","will have gassed","will gas","يملأ بالغاز"],
+  ["gel","gelled","had gelled","gels","will have gelled","will gel","يتماسك"],
+  ["get","got","had got","gets","will have got","will get","يحصل"],
+  ["gig","gigged","had gigged","gigs","will have gigged","will gig","يؤدي"],
+  ["gin","ginned","had ginned","gins","will have ginned","will gin","يفصل"],
+  ["gut","gutted","had gutted","guts","will have gutted","will gut","يفرغ"],
+  ["had","had","had had","has","will have had","will have","كان لديه"],
+  ["ham","hammed","had hammed","hams","will have hammed","will ham","يبالغ"],
+  ["has","had","had had","has","will have had","will have","يملك"],
+  ["hat","hatted","had hatted","hats","will have hatted","will hat","يلبس قبعة"],
+  ["hay","hayed","had hayed","hays","will have hayed","will hay","يحصد"],
+  ["hem","hemmed","had hemmed","hems","will have hemmed","will hem","يخيط حاشية"],
+  ["her","hered","had hered","hers","will have hered","will her","يخص"],
+  ["hew","hewed","had hewn","hews","will have hewn","will hew","ينحت"],
+  ["hid","hid","had hidden","hides","will have hidden","will hide","يخفي"],
+  ["hit","hit","had hit","hits","will have hit","will hit","يضرب"],
+  ["hop","hopped","had hopped","hops","will have hopped","will hop","يقفز"],
+  ["hot","hotted","had hotted","hots","will have hotted","will hot","يسخن"],
+  ["hug","hugged","had hugged","hugs","will have hugged","will hug","يعانق"],
+  ["hum","hummed","had hummed","hums","will have hummed","will hum","يهمهم"],
+  ["hut","hutted","had hutted","huts","will have hutted","will hut","يبني كوخ"],
+  ["ice","iced","had iced","ices","will have iced","will ice","يجمد"],
+  ["ink","inked","had inked","inks","will have inked","will ink","يطبع"],
+  ["inn","inned","had inned","inns","will have inned","will inn","يسكن في نزل"],
+  ["ion","ioned","had ioned","ions","will have ioned","will ion","يأين"],
+  ["jab","jabbed","had jabbed","jabs","will have jabbed","will jab","يطعن"],
+  ["jam","jammed","had jammed","jams","will have jammed","will jam","يعرقل"],
+  ["jar","jarred","had jarred","jars","will have jarred","will jar","يهز"],
+  ["jaw","jawed","had jawed","jaws","will have jawed","will jaw","يتحدث كثيراً"],
+  ["jay","jayed","had jayed","jays","will have jayed","will jay","غراب أزرق"],
+  ["jet","jetted","had jetted","jets","will have jetted","will jet","يطير بطائرة نفاثة"],
+  ["jig","jigged","had jigged","jigs","will have jigged","will jig","يرقص"],
+  ["job","jobbed","had jobbed","jobs","will have jobbed","will job","يعمل"],
+  ["jog","jogged","had jogged","jogs","will have jogged","will jog","يجري ببطء"],
+  ["joy","joyed","had joyed","joys","will have joyed","will joy","يفرح"],
+  ["jug","jugged","had jugged","jugs","will have jugged","will jug","يضع في إبريق"],
+  ["jut","jutted","had jutted","juts","will have jutted","will jut","يبرز"],
+  ["key","keyed","had keyed","keys","will have keyed","will key","يدخل بيانات"],
+  ["kid","kidded","had kidded","kids","will have kidded","will kid","يمزح"],
+  ["kin","kinned","had kinned","kins","will have kinned","will kin","ينتمي"],
+  ["kit","kitted","had kitted","kits","will have kitted","will kit","يزود"],
+  ["lab","labbed","had labbed","labs","will have labbed","will lab","يعمل في مختبر"],
+  ["lad","ladded","had ladded","lads","will have ladded","will lad","شاب"],
+  ["lag","lagged","had lagged","lags","will have lagged","will lag","يتأخر"],
+  ["lap","lapped","had lapped","laps","will have lapped","will lap","يلتف"],
+  ["law","lawed","had lawed","laws","will have lawed","will law","يشرع"],
+  ["lay","laid","had laid","lays","will have laid","will lay","يضع"],
+  ["lea","leaded","had leaded","leas","will have leaded","will lea","قائد"],
+  ["led","led","had led","leads","will have led","will lead","قاد"],
+  ["leg","legged","had legged","legs","will have legged","will leg","يمشي"],
+  ["let","let","had let","lets","will have let","will let","يسمح"],
+  ["lid","lidded","had lidded","lids","will have lidded","will lid","يغطي"],
+  ["lie","lay","had lain","lies","will have lain","will lie","يكذب/يستلقي"],
+  ["lip","lipped","had lipped","lips","will have lipped","will lip","يقول بصوت منخفض"],
+  ["lit","lit","had lit","lights","will have lit","will light","أضاء"],
+  ["log","logged","had logged","logs","will have logged","will log","يسجل"],
+  ["lop","lopped","had lopped","lops","will have lopped","will lop","يقطع"],
+  ["lot","lotted","had lotted","lots","will have lotted","will lot","يخصص"],
+  ["low","lowed","had lowed","lows","will have lowed","will low","ينخفض"],
+  ["lug","lugged","had lugged","lugs","will have lugged","will lug","يحمل بصعوبة"],
+  ["lux","luxed","had luxed","luxs","will have luxed","will lux","يفخم"],
+  ["mad","madded","had madded","mads","will have madded","will mad","يغضب"],
+  ["man","manned","had manned","mans","will have manned","will man","يشغل"],
+  ["map","mapped","had mapped","maps","will have mapped","will map","يرسم خريطة"],
+  ["mar","marred","had marred","mars","will have marred","will mar","يخرب"],
+  ["mat","matted","had matted","mats","will have matted","will mat","يصفف"],
+  ["may","might","had might","mays","will have might","will may","قد"],
+  ["mix","mixed","had mixed","mixes","will have mixed","will mix","يخلط"],
+  ["mow","mowed","had mowed","mows","will have mowed","will mow","يجز"],
+  ["mud","mudded","had mudded","muds","will have mudded","will mud","يغطى بالطين"],
+  ["mug","mugged","had mugged","mugs","will have mugged","will mug","يسرق"],
+  ["nag","nagged","had nagged","nags","will have nagged","will nag","ينتقد باستمرار"],
+  ["nap","napped","had napped","naps","will have napped","will nap","يأخذ قيلولة"],
+  ["net","netted","had netted","nets","will have netted","will net","يصطاد بالشبكة"],
+  ["new","newed","had newed","news","will have newed","will new","يجدد"],
+  ["nip","nipped","had nipped","nips","will have nipped","will nip","يقضم"],
+  ["nod","nodded","had nodded","nods","will have nodded","will nod","يهز رأسه"],
+  ["nor","nored","had nored","nors","will have nored","will nor","لا"],
+  ["not","notted","had notted","nots","will have notted","will not","لا"],
+  ["now","nowned","had nowned","nows","will have nowned","will now","الآن"],
+  ["nun","nunned","had nunned","nuns","will have nunned","will nun","راهبة"],
+  ["nut","nutted","had nutted","nuts","will have nutted","will nut","يأكل جوز"],
+  ["oak","oaked","had oaked","oaks","will have oaked","will oak","يصنع من البلوط"],
+  ["oar","oared","had oared","oars","will have oared","will oar","يجذف"],
+  ["odd","odded","had odded","odds","will have odded","will odd","غريب"],
+  ["off","offed","had offed","offs","will have offed","will off","يقضي على"],
+  ["oil","oiled","had oiled","oils","will have oiled","will oil","يزيت"],
+  ["old","olded","had olded","olds","will have olded","will old","يشيخ"],
+  ["one","oned","had oned","ones","will have oned","will one","واحد"],
+  ["opt","opted","had opted","opts","will have opted","will opt","يختار"],
+  ["orb","orbed","had orbed","orbs","will have orbed","will orb","يدور"],
+  ["ore","ored","had ored","ores","will have ored","will ore","يستخرج خام"],
+  ["own","owned","had owned","owns","will have owned","will own","يمتلك"],
+  ["pad","padded","had padded","pads","will have padded","will pad","يبطن"],
+  ["pal","palled","had palled","pals","will have palled","will pal","يصادق"],
+  ["pan","panned","had panned","pans","will have panned","will pan","يقلب"],
+  ["pap","papped","had papped","paps","will have papped","will pap","ينشر صور"],
+  ["par","parred","had parred","pars","will have parred","will par","يساوي"],
+  ["pat","patted","had patted","pats","will have patted","will pat","يربت"],
+  ["paw","pawed","had pawed","paws","will have pawed","will paw","يخدش"],
+  ["pay","paid","had paid","pays","will have paid","will pay","يدفع"],
+  ["peg","pegged","had pegged","pegs","will have pegged","will peg","يثبت"],
+  ["pen","penned","had penned","pens","will have penned","will pen","يكتب"],
+  ["pep","pepped","had pepped","peps","will have pepped","will pep","ينشط"],
+  ["per","perred","had perred","pers","will have perred","will per","لكل"],
+  ["pet","petted","had petted","pets","will have petted","will pet","يدلل"],
+  ["pew","pewed","had pewed","pews","will have pewed","will pew","يجلس في مقعد"],
+  ["pie","pied","had pied","pies","will have pied","will pie","يخبز فطيرة"],
+  ["pig","pigged","had pigged","pigs","will have pigged","will pig","يتصرف كخنزير"],
+  ["pin","pinned","had pinned","pins","will have pinned","will pin","يثبت"],
+  ["pip","pipped","had pipped","pips","will have pipped","will pip","يفوز بصعوبة"],
+  ["pit","pitted","had pitted","pits","will have pitted","will pit","يجوف"],
+  ["ply","plied","had plied","plies","will have plied","will ply","يعمل بجد"],
+  ["pod","podded","had podded","pods","will have podded","will pod","يضع في قرن"],
+  ["pop","popped","had popped","pops","will have popped","will pop","ينفجر"],
+  ["pot","potted","had potted","pots","will have potted","will pot","يزرع في وعاء"],
+  ["pow","powed","had powed","pows","will have powed","will pow","يضرب بقوة"],
+  ["pro","proed","had proed","pros","will have proed","will pro","يدافع"],
+  ["pry","pried","had pried","pries","will have pried","will pry","يتطفل"],
+  ["pub","pubbed","had pubbed","pubs","will have pubbed","will pub","ينشر"],
+  ["pug","pugged","had pugged","pugs","will have pugged","will pug","يلعب"],
+  ["pun","punned","had punned","puns","will have punned","will pun","يلعب بالألفاظ"],
+  ["put","put","had put","puts","will have put","will put","يضع"],
+  ["rag","ragged","had ragged","rags","will have ragged","will rag","ينتقد"],
+  ["ram","rammed","had rammed","rams","will have rammed","will ram","يصطدم"],
+  ["ran","ran","had run","runs","will have run","will run","ركض"],
+  ["rap","rapped","had rapped","raps","will have rapped","will rap","يطرق"],
+  ["rat","ratted","had ratted","rats","will have ratted","will rat","يبلغ عن"],
+  ["raw","rawed","had rawed","raws","will have rawed","will raw","نيء"],
+  ["ray","rayed","had rayed","rays","will have rayed","will ray","يشع"],
+  ["red","redded","had redded","reds","will have redded","will red","يحمر"],
+  ["rid","rid","had rid","rids","will have rid","will rid","يتخلص من"],
+  ["rig","rigged","had rigged","rigs","will have rigged","will rig","يعبث"],
+  ["rim","rimmed","had rimmed","rims","will have rimmed","will rim","يحيط"],
+  ["rip","ripped","had ripped","rips","will have ripped","will rip","يمزق"],
+  ["rob","robbed","had robbed","robs","will have robbed","will rob","يسرق"],
+  ["rod","rodded","had rodded","rods","will have rodded","will rod","يصطاد"],
+  ["rot","rotted","had rotted","rots","will have rotted","will rot","يتعفن"],
+  ["row","rowed","had rowed","rows","will have rowed","will row","يجذف"],
+  ["rub","rubbed","had rubbed","rubs","will have rubbed","will rub","يفرك"],
+  ["rug","rugged","had rugged","rugs","will have rugged","will rug","يغطى بسجادة"],
+  ["run","ran","had run","runs","will have run","will run","يركض"],
+  ["rut","rutted","had rutted","ruts","will have rutted","will rut","يترك أثر"],
+  ["sac","sacked","had sacked","sacs","will have sacked","will sac","يفصل"],
+  ["sad","sadded","had sadded","sads","will have sadded","will sad","يحزن"],
+  ["sag","sagged","had sagged","sags","will have sagged","will sag","ينخفض"],
+  ["saw","sawed","had sawn","saws","will have sawn","will saw","ينشر"],
+  ["say","said","had said","says","will have said","will say","يقول"],
+  ["sea","seared","had seared","seas","will have seared","will sea","بحر"],
+  ["see","saw","had seen","sees","will have seen","will see","يرى"],
+  ["set","set","had set","sets","will have set","will set","يضع"],
+  ["sew","sewed","had sewn","sews","will have sewn","will sew","يخيط"],
+  ["shy","shyed","had shied","shys","will have shied","will shy","يخجل"],
+  ["sip","sipped","had sipped","sips","will have sipped","will sip","يرشف"],
+  ["sit","sat","had sat","sits","will have sat","will sit","يجلس"],
+  ["sow","sowed","had sown","sows","will have sown","will sow","يزرع"],
+  ["spa","spaed","had spaed","spas","will have spaed","will spa","منتجع صحي"],
+  ["spy","spied","had spied","spies","will have spied","will spy","يتجسس"],
+  ["sub","subbed","had subbed","subs","will have subbed","will sub","يحل محل"],
+  ["sue","sued","had sued","sues","will have sued","will sue","يقاضي"],
+  ["sum","summed","had summed","sums","will have summed","will sum","يجمع"],
+  ["sup","supped","had supped","sups","will have supped","will sup","يتناول العشاء"],
+  ["sux","suxed","had suxed","suxs","will have suxed","will sux","يفشل"],
+  ["saw","sawed","had sawn","saws","will have sawn","will saw","ينشر"],
+  ["tag","tagged","had tagged","tags","will have tagged","will tag","يضع علامة"],
+  ["tap","tapped","had tapped","taps","will have tapped","will tap","ينقر"],
+  ["tar","tarred","had tarred","tars","will have tarred","will tar","يدهن بالقطران"],
+  ["tax","taxed","had taxed","taxes","will have taxed","will tax","يفرض ضريبة"],
+  ["tea","teamed","had teamed","teas","will have teamed","will tea","شاي"],
+  ["tee","teed","had teed","tees","will have teed","will tee","يضع الكرة على حامل"],
+  ["ten","tended","had tended","tens","will have tended","will ten","عشرة"],
+  ["the","theed","had theed","thes","will have theed","will the","أداة تعريف"],
+  ["thy","thyed","had thyed","thys","will have thyed","will thy","لك"],
+  ["tie","tied","had tied","ties","will have tied","will tie","يربط"],
+  ["tin","tinned","had tinned","tins","will have tinned","will tin","يعلب"],
+  ["tip","tipped","had tipped","tips","will have tipped","will tip","يميل"],
+  ["toe","toed","had toed","toes","will have toed","will toe","يمشي على أطراف الأصابع"],
+  ["tog","togged","had togged","togs","will have togged","will tog","يلبس"],
+  ["ton","toned","had toned","tons","will have toned","will ton","طن"],
+  ["top","topped","had topped","tops","will have topped","will top","يتصدر"],
+  ["tow","towed","had towed","tows","will have towed","will tow","يسحب"],
+  ["toy","toyed","had toyed","toys","will have toyed","will toy","يلعب"],
+  ["try","tried","had tried","tries","will have tried","will try","يحاول"],
+  ["tub","tubbed","had tubbed","tubs","will have tubbed","will tub","يستحم"],
+  ["tug","tugged","had tugged","tugs","will have tugged","will tug","يسحب"],
+  ["tut","tutted","had tutted","tuts","will have tutted","will tut","يستنكر"],
+  ["tux","tuxed","had tuxed","tuxs","will have tuxed","will tux","بدلة رسمية"],
+  ["use","used","had used","uses","will have used","will use","يستخدم"],
+  ["van","vanned","had vanned","vans","will have vanned","will van","شاحنة صغيرة"],
+  ["vat","vatted","had vatted","vats","will have vatted","will vat","خزان"],
+  ["vet","vetted","had vetted","vets","will have vetted","will vet","يفحص"],
+  ["vex","vexed","had vexed","vexes","will have vexed","will vex","يزعج"],
+  ["vie","vied","had vied","vies","will have vied","will vie","يتنافس"],
+  ["vow","vowed","had vowed","vows","will have vowed","will vow","يقسم"],
+  ["wag","wagged","had wagged","wags","will have wagged","will wag","يهز"],
+  ["wad","wadded","had wadded","wads","will have wadded","will wad","يلف"],
+  ["wag","wagged","had wagged","wags","will have wagged","will wag","يهز"],
+  ["wan","wanned","had wanned","wans","will have wanned","will wan","باهت"],
+  ["war","warred","had warred","wars","will have warred","will war","يحارب"],
+  ["wax","waxed","had waxed","waxes","will have waxed","will wax","يشمع"],
+  ["way","wayed","had wayed","ways","will have wayed","will way","طريق"],
+  ["wed","wed","had wed","weds","will have wed","will wed","يتزوج"],
+  ["wee","weed","had weeded","wees","will have weeded","will wee","يتبول"],
+  ["wet","wet","had wet","wets","will have wet","will wet","يبلل"],
+  ["win","won","had won","wins","will have won","will win","يفوز"],
+  ["wit","witted","had witted","wits","will have witted","will wit","يفهم"],
+  ["wow","wowed","had wowed","wows","will have wowed","will wow","يدهش"],
+  ["yak","yakked","had yakked","yaks","will have yakked","will yak","يتحدث كثيراً"],
+  ["yam","yammed","had yammed","yams","will have yammed","will yam","يأكل اليام"],
+  ["yaw","yawed","had yawed","yaws","will have yawed","will yaw","ينحرف"],
+  ["yep","yepped","had yepped","yeps","will have yepped","will yep","نعم (عامي)"],
+  ["yew","yewed","had yewed","yews","will have yewed","will yew","شجرة"],
+  ["yip","yipped","had yipped","yips","will have yipped","will yip","ينبح صغيراً"],
+  ["yob","yobbed","had yobbed","yobs","will have yobbed","will yob","شاب مشاغب"],
+  ["yok","yoked","had yoked","yoks","will have yoked","will yok","يجمع"],
+  ["yow","yowed","had yowed","yows","will have yowed","will yow","يصرخ"],
+  ["zag","zagged","had zagged","zags","will have zagged","will zag","ينعطف"],
+  ["zap","zapped","had zapped","zaps","will have zapped","will zap","يضرب"],
+  ["zig","zigged","had zigged","zigs","will have zigged","will zig","ينعطف"],
+  ["zip","zipped","had zipped","zips","will have zipped","will zip","يغلق بسحاب"],
+  ["zoo","zooed","had zooed","zoos","will have zooed","will zoo","حديقة حيوان"]
+];
+
+const grid = document.getElementById('grid');
+let showArabic = true;
+
+function render(list = verbs){
+  grid.innerHTML = '';
+  list.forEach(v=>{
+    const card = document.createElement('div'); card.className = 'card';
+    const arabHtml = showArabic ? `<div class="arab">${v[6] || ''}</div>` : '';
+    card.innerHTML = `
+      <div class="play" title="Reproducir" data-inf="${v[0]}" data-ar="${v[6] || ''}">🔊</div>
+      <div class="inf">${v[0]}</div>
+      ${arabHtml}
+      <div class="forms">
+        <div><strong>Simple Past:</strong> ${v[1]}</div>
+        <div><strong>Past Perfect:</strong> ${v[2]}</div>
+        <div><strong>Present:</strong> ${v[3]}</div>
+        <div><strong>Future Perfect:</strong> ${v[4]}</div>
+        <div><strong>Simple Future:</strong> ${v[5]}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+render();
+
+document.getElementById('density').addEventListener('input', e => {
+  document.documentElement.style.setProperty('--cols', e.target.value);
+});
+document.getElementById('gap').addEventListener('input', e => {
+  document.documentElement.style.setProperty('--gap', e.target.value + 'px');
+});
+document.getElementById('toggleArabic').addEventListener('click', () => {
+  showArabic = !showArabic;
+  render();
+});
+
+/* Voces del navegador */
+const voicesSelect = document.getElementById('voices');
+function loadVoices(){
+  const vs = speechSynthesis.getVoices();
+  if(!vs || vs.length === 0){
+    voicesSelect.innerHTML = '<option>Voces no disponibles</option>';
+    return;
+  }
+  voicesSelect.innerHTML = vs.map((v,i)=>`<option value="${i}">${v.name} — ${v.lang}</option>`).join('');
+}
+loadVoices();
+speechSynthesis.onvoiceschanged = loadVoices;
+
+/* Reproducción por celda */
+grid.addEventListener('click', e => {
+  const t = e.target.closest('.play');
+  if(!t) return;
+  const inf = t.dataset.inf || '';
+  const ar = t.dataset.ar || '';
+  const text = ar ? `${inf}. ${ar}` : inf;
+  const utter = new SpeechSynthesisUtterance(text);
+  const vs = speechSynthesis.getVoices();
+  const idx = parseInt(voicesSelect.value || '0', 10);
+  if(vs[idx]) utter.voice = vs[idx];
+  speechSynthesis.speak(utter);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Massive English Adjectives — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0b1220; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --tile-min:120px; --pad:10px; --word-size:0.98rem; --trans-size:0.82rem;
+    }
+    .dense{--tile-min:90px;--pad:8px;--word-size:0.86rem;--trans-size:0.70rem;}
+    html,body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:6px 0;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin:10px 0;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:8px;border:1px solid var(--border);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{border:1px solid var(--border);padding:8px;border-radius:6px;background:transparent;font-size:0.95rem;color:var(--text);outline:none;}
+    .density-toggle{display:flex;gap:6px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;}
+    main{margin-top:12px;}
+    section{margin:14px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:#eef6ff;padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--pad);display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(15,20,30,0.04);min-height:56px;}
+    .left{display:flex;flex-direction:column;min-width:0;}
+    .word{font-weight:700;font-size:var(--word-size);}
+    .trans{color:var(--muted);font-size:var(--trans-size);margin-top:4px;}
+    .speak{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px;border-radius:999px;cursor:pointer;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;}
+    footer{margin:18px 0;color:var(--muted);text-align:center;font-size:0.92rem;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .item{min-height:52px;padding:8px;} .speak{min-width:36px;min-height:36px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Massive English adjectives with Arabic translations">
+    <header>
+      <h1>Massive English Adjectives — English with Arabic translations</h1>
+
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control" style="min-width:220px;">
+          <label for="voiceSelect">Voice / Accent</label>
+          <select id="voiceSelect" aria-label="Voice and accent selector" style="margin-left:8px;min-width:160px;">
+            <option value="auto">Auto (best available)</option>
+          </select>
+        </div>
+
+        <div class="control" style="min-width:320px;">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter English or Arabic..." aria-label="Search adjectives" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);">Cards density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <footer>
+      Tip: Click the speaker to hear the English pronunciation. Choose a voice/accent from the selector.
+    </footer>
+  </div>
+
+  <script>
+    // Six large adjective groups, each with 100+ items (English + Arabic)
+    const DATA = {
+      "Appearance & Visual Qualities (100+)": [
+        {en:"beautiful", ar:"جميل"}, {en:"handsome", ar:"وسيم"}, {en:"pretty", ar:"جميل"}, {en:"ugly", ar:"قبيح"},
+        {en:"attractive", ar:"جذاب"}, {en:"plain", ar:"عادي"}, {en:"elegant", ar:"أنيق"}, {en:"stylish", ar:"أنيق"},
+        {en:"chic", ar:"شيك"}, {en:"glamorous", ar:"براق"}, {en:"graceful", ar:"رشيق"}, {en:"sleek", ar:"أملس"},
+        {en:"shabby", ar:"مهترئ"}, {en:"scruffy", ar:"مهمل"}, {en:"neat", ar:"مرتب"}, {en:"tidy", ar:"منظم"},
+        {en:"messy", ar:"فوضوي"}, {en:"spotless", ar:"نظيف تمامًا"}, {en:"dirty", ar:"قذر"}, {en:"stunning", ar:"مذهل"},
+        {en:"gorgeous", ar:"فاتن"}, {en:"radiant", ar:"مشرق"}, {en:"dazzling", ar:"مبهر"}, {en:"plain-looking", ar:"مظهر عادي"},
+        {en:"handsome-looking", ar:"مظهر وسيم"}, {en:"well-groomed", ar:"معتنى به جيدًا"}, {en:"unkempt", ar:"غير مهندم"},
+        {en:"polished", ar:"مصقول"}, {en:"refined", ar:"مكرر"}, {en:"ornate", ar:"مزخرف"}, {en:"minimalist", ar:"بسيط"},
+        {en:"colorful", ar:"ملون"}, {en:"monochrome", ar:"أحادي اللون"}, {en:"vibrant", ar:"زاهي"}, {en:"muted", ar:"معتّم"},
+        {en:"bright", ar:"ساطع"}, {en:"dull", ar:"باهت"}, {en:"transparent", ar:"شفاف"}, {en:"opaque", ar:"غير شفاف"},
+        {en:"shiny", ar:"لامع"}, {en:"matte", ar:"مطفي"}, {en:"glossy", ar:"لامع"}, {en:"sparkling", ar:"متلألئ"},
+        {en:"faded", ar:"باهت اللون"}, {en:"fresh-looking", ar:"يبدو جديدًا"}, {en:"ancient-looking", ar:"يبدو عتيقًا"},
+        {en:"modern", ar:"حديث"}, {en:"contemporary", ar:"معاصر"}, {en:"classic", ar:"كلاسيكي"}, {en:"retro", ar:"رجعي"},
+        {en:"vintage", ar:"عتيق"}, {en:"antique", ar:"تحفة قديمة"}, {en:"ornamental", ar:"زخرفي"}, {en:"plain-textured", ar:"قوام بسيط"},
+        {en:"patterned", ar:"منقوش"}, {en:"striped", ar:"مخطط"}, {en:"spotted", ar:"مرقط"}, {en:"checked", ar:"مربّع"},
+        {en:"geometric", ar:"هندسي"}, {en:"floral", ar:"زهري"}, {en:"abstract", ar:"مجرد"}, {en:"symmetrical", ar:"متماثل"},
+        {en:"asymmetrical", ar:"غير متماثل"}, {en:"balanced", ar:"متوازن"}, {en:"awkward-looking", ar:"مظهره محرج"}, {en:"imposing", ar:"مهيب"},
+        {en:"modest", ar:"متواضع"}, {en:"showy", ar:"مبهرج"}, {en:"flashy", ar:"براق"}, {en:"understated", ar:"متواضع المظهر"},
+        {en:"eye-catching", ar:"جذاب للعين"}, {en:"unremarkable", ar:"غير ملحوظ"}, {en:"distinctive", ar:"مميز"}, {en:"unique", ar:"فريد"},
+        {en:"ordinary", ar:"عادي"}, {en:"exquisite", ar:"رائع"}, {en:"crude", ar:"خام"}, {en:"refined-looking", ar:"يبدو مصقولًا"},
+        {en:"well-proportioned", ar:"متناسب جيدًا"}, {en:"ill-proportioned", ar:"غير متناسب"}, {en:"scenic", ar:"خلاب"}, {en:"picturesque", ar:"صوري"},
+        {en:"plain-faced", ar:"وجه عادي"}, {en:"wrinkled", ar:"مجعّد"}, {en:"smooth-faced", ar:"وجه أملس"}, {en:"freckled", ar:"مرقط النمش"},
+        {en:"blemished", ar:"مع شوائب"}, {en:"clear-skinned", ar:"بشرة صافية"}, {en:"sunburned", ar:"محروق من الشمس"}, {en:"tanned", ar:"مسمر"}
+      ],
+
+      "Size, Amount & Quantity (100+)": [
+        {en:"big", ar:"كبير"}, {en:"large", ar:"واسع"}, {en:"huge", ar:"ضخم"}, {en:"gigantic", ar:"عملاق"},
+        {en:"massive", ar:"هائل"}, {en:"enormous", ar:"ضخم"}, {en:"immense", ar:"شاسع"}, {en:"vast", ar:"واسع جدًا"},
+        {en:"colossal", ar:"ضخم للغاية"}, {en:"tiny", ar:"ضئيل"}, {en:"small", ar:"صغير"}, {en:"miniature", ar:"مصغر"},
+        {en:"minute", ar:"دقيق جدًا"}, {en:"microscopic", ar:"دقيق للغاية"}, {en:"petite", ar:"نحيف/صغير (للسيدات)"}, {en:"compact", ar:"مضغوط"},
+        {en:"short", ar:"قصير"}, {en:"tall", ar:"طويل"}, {en:"slender", ar:"نحيل"}, {en:"thin", ar:"نحيف"},
+        {en:"thick", ar:"سميك"}, {en:"wide", ar:"عريض"}, {en:"narrow", ar:"ضيق"}, {en:"deep", ar:"عميق"},
+        {en:"shallow", ar:"ضحل"}, {en:"long", ar:"طويل"}, {en:"lengthy", ar:"طويل المدى"}, {en:"brief", ar:"قصير"},
+        {en:"short-lived", ar:"قصير الأمد"}, {en:"endless", ar:"لا نهاية له"}, {en:"countless", ar:"لا يحصى"}, {en:"numerous", ar:"كثير"},
+        {en:"several", ar:"عدة"}, {en:"many", ar:"عديد"}, {en:"few", ar:"قليل"}, {en:"scant", ar:"قليل"},
+        {en:"sparse", ar:"متناثر"}, {en:"abundant", ar:"وفير"}, {en:"plentiful", ar:"وفير"}, {en:"ample", ar:"كافٍ"},
+        {en:"limited", ar:"محدود"}, {en:"finite", ar:"محدود"}, {en:"infinite", ar:"لا نهائي"}, {en:"whole", ar:"كامل"},
+        {en:"partial", ar:"جزئي"}, {en:"fractional", ar:"جزئي/كسري"}, {en:"single", ar:"مفرد"}, {en:"double", ar:"مزدوج"},
+        {en:"multiple", ar:"متعدد"}, {en:"sequential", ar:"متتابع"}, {en:"simultaneous", ar:"متزامن"}, {en:"occasional", ar:"عرضي"},
+        {en:"frequent", ar:"متكرر"}, {en:"rare", ar:"نادر"}, {en:"sporadic", ar:"متقطع"}, {en:"steady", ar:"ثابت"},
+        {en:"intermittent", ar:"متقطع"}, {en:"continuous", ar:"مستمر"}, {en:"constant", ar:"ثابت"}, {en:"variable", ar:"متغير"},
+        {en:"measurable", ar:"قابل للقياس"}, {en:"immeasurable", ar:"لا يقاس"}, {en:"bulk", ar:"بالكمية الكبيرة"}, {en:"minute-scale", ar:"مقياس دقيق"},
+        {en:"substantial", ar:"كبير/ملحوظ"}, {en:"insubstantial", ar:"غير جوهري"}, {en:"considerable", ar:"كبير"}, {en:"negligible", ar:"لا يذكر"},
+        {en:"modest", ar:"متواضع"}, {en:"generous", ar:"سخي"}, {en:"paltry", ar:"حقير/قليل"}, {en:"hefty", ar:"ثخين/كبير الوزن"},
+        {en:"lightweight", ar:"خفيف الوزن"}, {en:"oversized", ar:"أكبر من اللازم"}, {en:"undersized", ar:"أصغر من اللازم"}, {en:"roomy", ar:"فسيح"},
+        {en:"cramped", ar:"مكتظ/ضيق"}, {en:"spacious", ar:"واسع"}, {en:"compact-sized", ar:"مضغوط الحجم"}, {en:"microsized", ar:"صغير جدًا"}
+      ],
+
+      "Color, Light & Visual Tone (100+)": [
+        {en:"red", ar:"أحمر"}, {en:"blue", ar:"أزرق"}, {en:"green", ar:"أخضر"}, {en:"yellow", ar:"أصفر"},
+        {en:"orange", ar:"برتقالي"}, {en:"purple", ar:"أرجواني"}, {en:"pink", ar:"وردي"}, {en:"brown", ar:"بني"},
+        {en:"black", ar:"أسود"}, {en:"white", ar:"أبيض"}, {en:"gray", ar:"رمادي"}, {en:"grey", ar:"رمادي"},
+        {en:"beige", ar:"بيج"}, {en:"maroon", ar:"أحمر داكن"}, {en:"navy", ar:"كحلي"}, {en:"teal", ar:"أخضر مزرق"},
+        {en:"turquoise", ar:"فيروزي"}, {en:"magenta", ar:"ماجنتا"}, {en:"lavender", ar:"لافندر"}, {en:"golden", ar:"ذهبي"},
+        {en:"silver", ar:"فضي"}, {en:"bronze", ar:"برونزي"}, {en:"bronzy", ar:"برونزي"}, {en:"copper", ar:"نحاسي"},
+        {en:"bright", ar:"ساطع"}, {en:"vivid", ar:"زاهي"}, {en:"dull", ar:"باهت"}, {en:"pale", ar:"باهت"},
+        {en:"pastel", ar:"باستيل"}, {en:"neon", ar:"نيون"}, {en:"muted", ar:"معتّم"}, {en:"saturated", ar:"مشبع اللون"},
+        {en:"unsaturated", ar:"غير مشبع"}, {en:"warm-toned", ar:"ذو نغمة دافئة"}, {en:"cool-toned", ar:"ذو نغمة باردة"}, {en:"monochrome", ar:"أحادي اللون"},
+        {en:"two-toned", ar:"ذو لونين"}, {en:"ombre", ar:"تدرج لوني"}, {en:"iridescent", ar:"متلألئ بألوان متغيرة"}, {en:"metallic", ar:"معدني"},
+        {en:"matte", ar:"مطفي"}, {en:"glossy", ar:"لامع"}, {en:"sheeny", ar:"لامع قليلاً"}, {en:"lustrous", ar:"لامع"},
+        {en:"shimmering", ar:"متلألئ"}, {en:"glittering", ar:"متلألئ باللمعان"}, {en:"translucent", ar:"شبه شفاف"}, {en:"transparent", ar:"شفاف"},
+        {en:"opaque", ar:"غير شفاف"}, {en:"iridescent", ar:"متلألئ"}, {en:"sepia", ar:"سيبيا (لون بني قديم)"}, {en:"monotone", ar:"أحادي النغمة"},
+        {en:"colorful", ar:"ملون"}, {en:"drab", ar:"باهت/كئيب"}, {en:"rich-colored", ar:"ذو لون غني"}, {en:"faded", ar:"باهت اللون"},
+        {en:"sunlit", ar:"مضاء بالشمس"}, {en:"shadowy", ar:"مظلم بالظل"}, {en:"backlit", ar:"مضاء من الخلف"}, {en:"neon-lit", ar:"مضاء بنيون"},
+        {en:"hazy", ar:"ضبابي"}, {en:"clear", ar:"واضح"}, {en:"crisp", ar:"حاد/واضح"}, {en:"washed-out", ar:"باهت/مغسول اللون"},
+        {en:"rich", ar:"غني اللون"}, {en:"subtle", ar:"دقيق/رفيع"}, {en:"bold", ar:"جريء"}, {en:"contrasting", ar:"متباين"},
+        {en:"harmonious", ar:"متناغم"}, {en:"muted-pastel", ar:"باستيل معتّم"}, {en:"electric", ar:"كهربائي/زاهي جدًا"}, {en:"dusky", ar:"شاحب/غسق"}
+      ],
+
+      "Texture, Surface & Shape (100+)": [
+        {en:"smooth", ar:"أملس"}, {en:"rough", ar:"خشن"}, {en:"bumpy", ar:"متموّج"}, {en:"gritty", ar:"محبب"},
+        {en:"silky", ar:"حريري"}, {en:"velvety", ar:"مخملي"}, {en:"fuzzy", ar:"مشعر"}, {en:"hairy", ar:"مشعر"},
+        {en:"slippery", ar:"زلق"}, {en:"sticky", ar:"لزج"}, {en:"oily", ar:"زيتي"}, {en:"greasy", ar:"دهنى"},
+        {en:"dry", ar:"جاف"}, {en:"moist", ar:"رطب"}, {en:"damp", ar:"مبلل قليلاً"}, {en:"soggy", ar:"مبتل"},
+        {en:"porous", ar:"مسامي"}, {en:"dense", ar:"كثيف"}, {en:"spongy", ar:"إسفنجي"}, {en:"firm", ar:"قاسٍ/ثابت"},
+        {en:"soft", ar:"ناعم"}, {en:"hard", ar:"قاسي"}, {en:"rigid", ar:"صلب"}, {en:"flexible", ar:"مرن"},
+        {en:"pliable", ar:"قابل للثني"}, {en:"malleable", ar:"قابل للسحق"}, {en:"brittle", ar:"هش"}, {en:"fragile", ar:"قابل للكسر"},
+        {en:"sturdy", ar:"متين"}, {en:"solid", ar:"صلب"}, {en:"hollow", ar:"مجوف"}, {en:"bulky", ar:"ضخم"},
+        {en:"compact", ar:"مضغوط"}, {en:"rounded", ar:"مستدير"}, {en:"angular", ar:"زاوي"}, {en:"pointed", ar:"حاد"},
+        {en:"flat", ar:"مسطح"}, {en:"curved", ar:"منحني"}, {en:"concave", ar:"مقعر"}, {en:"convex", ar:"محدب"},
+        {en:"textured", ar:"محبب/ذو ملمس"}, {en:"patterned", ar:"منقوش"}, {en:"ribbed", ar:"مخدد"}, {en:"grooved", ar:"محفور"},
+        {en:"polished", ar:"مصقول"}, {en:"brushed", ar:"مصقول بفرشاة"}, {en:"etched", ar:"منقوش"}, {en:"embossed", ar:"منقوش بارز"},
+        {en:"woven", ar:"منسوج"}, {en:"knitted", ar:"محبوك"}, {en:"stitched", ar:"مخيط"}, {en:"sewn", ar:"مخيط"},
+        {en:"frayed", ar:"مهترئ الأطراف"}, {en:"torn", ar:"ممزق"}, {en:"patched", ar:"مصلح/ملتصق"}, {en:"laminated", ar:"مغلف"},
+        {en:"coated", ar:"مطلي"}, {en:"glazed", ar:"مبلمر"}, {en:"porcelain-like", ar:"كالبورسلان"}, {en:"grainy", ar:"محبب الحبوب"},
+        {en:"pebbled", ar:"محبب كالحصى"}, {en:"marbled", ar:"مرمرى"}, {en:"striated", ar:"مخطط"}, {en:"veined", ar:"مخطط بالأوردة"},
+        {en:"jagged", ar:"مسنن"}, {en:"smooth-edged", ar:"حواف ناعمة"}, {en:"serrated", ar:"مسنن الحافة"}, {en:"polished-smooth", ar:"أملس مصقول"},
+        {en:"corrugated", ar:"متموج"}, {en:"pleated", ar:"مكسر"}, {en:"ruffled", ar:"مجعّد"}, {en:"pleated", ar:"مكسر"}
+      ],
+
+      "Emotion, Mood & Feeling (100+)": [
+        {en:"happy", ar:"سعيد"}, {en:"joyful", ar:"مبتهج"}, {en:"cheerful", ar:"مرح"}, {en:"content", ar:"راضٍ"},
+        {en:"satisfied", ar:"مكتفٍ"}, {en:"pleased", ar:"مسرور"}, {en:"delighted", ar:"مسرور جدًا"}, {en:"ecstatic", ar:"مبتهج للغاية"},
+        {en:"sad", ar:"حزين"}, {en:"melancholic", ar:"كئيب"}, {en:"depressed", ar:"مكتئب"}, {en:"downcast", ar:"محبط"},
+        {en:"angry", ar:"غاضب"}, {en:"irate", ar:"ساخط"}, {en:"furious", ar:"غاضب جدًا"}, {en:"annoyed", ar:"منزعج"},
+        {en:"frustrated", ar:"محبط"}, {en:"anxious", ar:"قلق"}, {en:"nervous", ar:"متوتر"}, {en:"tense", ar:"متوتر"},
+        {en:"calm", ar:"هادئ"}, {en:"relaxed", ar:"مسترخٍ"}, {en:"serene", ar:"ساحر الهدوء"}, {en:"peaceful", ar:"سلمي"},
+        {en:"worried", ar:"قلق"}, {en:"concerned", ar:"مهتم/قلق"}, {en:"hopeful", ar:"مفعم بالأمل"}, {en:"optimistic", ar:"متفائل"},
+        {en:"pessimistic", ar:"متشائم"}, {en:"confident", ar:"واثق"}, {en:"proud", ar:"فخور"}, {en:"ashamed", ar:"خجلان"},
+        {en:"embarrassed", ar:"محرج"}, {en:"guilty", ar:"مذنب"}, {en:"remorseful", ar:"نادم"}, {en:"regretful", ar:"نادم"},
+        {en:"surprised", ar:"مندهش"}, {en:"astonished", ar:"مندهش جدًا"}, {en:"amazed", ar:"مندهش"}, {en:"shocked", ar:"مصعوق"},
+        {en:"bored", ar:"ضجر"}, {en:"indifferent", ar:"غير مبالٍ"}, {en:"curious", ar:"فضولي"}, {en:"inquisitive", ar:"فضولي جدًا"},
+        {en:"jealous", ar:"غيور"}, {en:"envious", ar:"حسود"}, {en:"affectionate", ar:"حنون"}, {en:"loving", ar:"محب"},
+        {en:"romantic", ar:"رومانسي"}, {en:"sympathetic", ar:"متعاطف"}, {en:"empathetic", ar:"متعاطف بعمق"}, {en:"compassionate", ar:"رحيم"},
+        {en:"cold-hearted", ar:"قاسي القلب"}, {en:"hostile", ar:"عدائي"}, {en:"friendly", ar:"ودود"}, {en:"amiable", ar:"لطيف"},
+        {en:"suspicious", ar:"مشتبه به"}, {en:"distrustful", ar:"غير واثق"}, {en:"trusting", ar:"موثوق"}, {en:"loyal", ar:"مخلص"},
+        {en:"faithful", ar:"وفيّ"}, {en:"betrayed", ar:"مخدوع"}, {en:"vindictive", ar:"انتقامي"}, {en:"forgiving", ar:"متسامح"},
+        {en:"resigned", ar:"مستسلم"}, {en:"determined", ar:"مصمم"}, {en:"resolute", ar:"حازم"}, {en:"hesitant", ar:"متردد"},
+        {en:"decisive", ar:"حاسم"}, {en:"indecisive", ar:"متردد"}, {en:"ambivalent", ar:"متردد/مزدوج المشاعر"}, {en:"motivated", ar:"متحفز"},
+        {en:"unmotivated", ar:"غير متحفز"}, {en:"energetic", ar:"نشيط"}, {en:"lethargic", ar:"كسول"}, {en:"inspired", ar:"ملهم"},
+        {en:"uninspired", ar:"غير ملهم"}, {en:"hopeful", ar:"مفعم بالأمل"}, {en:"desperate", ar:"يائس"}, {en:"optimistic", ar:"متفائل"},
+        {en:"pensive", ar:"متأمل"}, {en:"reflective", ar:"متأمل"}, {en:"wistful", ar:"حزين بحنين"}, {en:"nostalgic", ar:"حنين للماضي"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // Populate voice selector
+    function populateVoices() {
+      const voices = window.speechSynthesis.getVoices() || [];
+      const current = voiceSelect.value;
+      voiceSelect.innerHTML = '<option value="auto">Auto (best available)</option>';
+      voices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name + '||' + v.lang;
+        opt.textContent = `${v.name} — ${v.lang}`;
+        voiceSelect.appendChild(opt);
+      });
+      if (current) {
+        const found = Array.from(voiceSelect.options).find(o => o.value === current);
+        if (found) voiceSelect.value = current;
+      }
+    }
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const w = document.createElement('span');
+      w.className = 'word';
+      w.textContent = obj.en;
+
+      const t = document.createElement('span');
+      t.className = 'trans';
+      t.textContent = obj.ar;
+
+      left.appendChild(w);
+      left.appendChild(t);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // Render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // Speak function
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+
+      const sel = voiceSelect.value;
+      if (sel && sel !== 'auto') {
+        const [name, lang] = sel.split('||');
+        const voices = window.speechSynthesis.getVoices();
+        const match = voices.find(v => v.name === name && v.lang === lang) || voices.find(v => v.name === name);
+        if (match) utter.voice = match;
+        else if (lang) utter.lang = lang;
+      } else {
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en'));
+        if (preferred) utter.voice = preferred;
+      }
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // Search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // Initial render
+    renderCategories();
+
+    // Accessibility: Enter in search focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>English Expressions — Compact Grid — Expanded Authentic Phrases</title>
+<style>
+  :root{
+    --gap:6px;
+    --card-padding:6px;
+    --card-bg:#fff;
+    --card-border:#e6e6e6;
+    --accent:#0b6efd;
+    --text:#111;
+    --muted:#666;
+    --term-font-size:0.86rem;
+    --trans-font-size:0.78rem;
+    --icon-size:22px;
+    --card-min-height:44px;
+  }
+
+  html,body{height:100%}
+  body{
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    margin:0;
+    background:#f6f7fb;
+    color:var(--text);
+    padding:14px;
+    box-sizing:border-box;
+  }
+
+  header{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+  }
+  h1{font-size:1.05rem;margin:0}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .controls label{font-size:0.85rem;color:var(--muted)}
+  select,input[type="search"],button{padding:6px;border-radius:6px;border:1px solid var(--card-border);background:#fff;font-size:0.88rem}
+
+  /* Grid container: default 12 columns */
+  #grid{
+    display:grid;
+    gap:var(--gap);
+    grid-template-columns:repeat(12,1fr);
+    align-items:start;
+  }
+
+  /* Compact card */
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:8px;
+    padding:var(--card-padding);
+    box-shadow:0 1px 1px rgba(0,0,0,0.03);
+    display:flex;
+    gap:8px;
+    align-items:center;
+    min-height:var(--card-min-height);
+    overflow:hidden;
+  }
+  .card .left{flex:1;min-width:0}
+  .term{
+    font-weight:700;
+    font-size:var(--term-font-size);
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .trans{
+    font-size:var(--trans-font-size);
+    color:var(--muted);
+    direction:rtl;
+    text-align:right;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .actions{display:flex;gap:6px;align-items:center}
+  .btn{background:transparent;border:0;cursor:pointer;padding:4px;border-radius:6px;color:var(--accent)}
+  .icon{
+    width:var(--icon-size);
+    height:var(--icon-size);
+    display:inline-grid;
+    place-items:center;
+    background:rgba(11,110,253,0.06);
+    border-radius:6px;
+    color:var(--accent);
+    font-size:0.95rem;
+  }
+
+  /* Group header spans full width */
+  .group{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:6px 0}
+  .group h2{font-size:0.88rem;margin:0;padding:6px 8px;border-radius:8px;background:#fff;border:1px solid var(--card-border)}
+
+  /* Responsive adjustments */
+  @media (max-width:1400px){ #grid{grid-template-columns:repeat(10,1fr)} }
+  @media (max-width:1100px){ #grid{grid-template-columns:repeat(8,1fr)} }
+  @media (max-width:800px){ #grid{grid-template-columns:repeat(6,1fr)} }
+  @media (max-width:520px){
+    #grid{display:block;overflow-x:auto;white-space:nowrap;padding-bottom:6px}
+    .card{display:inline-flex;vertical-align:top;width:220px;margin-right:6px}
+    .group{display:block}
+  }
+
+  footer{margin-top:12px;color:var(--muted);font-size:0.85rem}
+  .search{padding:6px;border:1px solid var(--card-border);border-radius:8px;background:#fff}
+  .note{font-size:0.82rem;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>English Expressions — Compact Grid — Expanded Authentic Phrases</h1>
+    <div style="font-size:0.85rem;color:#666;margin-top:6px">Curated, unique expressions only. Use Columns and Density to adjust layout.</div>
+  </div>
+
+  <div class="controls" role="region" aria-label="Controls">
+    <label for="columns">Columns</label>
+    <select id="columns" title="Columns (6–12)">
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12" selected>12</option>
+    </select>
+
+    <label for="density">Density (per group)</label>
+    <select id="density" title="Expressions per group">
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+
+    <label for="lang">Language</label>
+    <select id="lang">
+      <option value="en" selected>English</option>
+      <option value="ar">Arabic</option>
+    </select>
+
+    <label for="voiceSelect">Voice</label>
+    <select id="voiceSelect" aria-label="Voice selection"><option>Detecting voices...</option></select>
+
+    <button id="playAll" class="btn" title="Play all cards">Play all</button>
+
+    <input id="search" class="search" type="search" placeholder="Search expression..." aria-label="Search expressions" />
+  </div>
+</header>
+
+<main>
+  <div id="grid" aria-live="polite"></div>
+  <div class="note" id="densityNote"></div>
+</main>
+
+<footer>
+  <strong>Note</strong> Speech uses the browser SpeechSynthesis API. Available voices depend on browser and OS.
+</footer>
+
+<script>
+/*
+  Expanded curated groups.
+  - Each group contains only authentic, meaningful expressions.
+  - No invented filler, no numeric suffixes, no duplicates.
+  - If density requested exceeds available unique phrases in a group, the UI caps to available count and informs the user.
+*/
+
+/* Expanded curated lists (unique, meaningful phrases).
+   You can extend these lists manually; avoid invented or nonsensical entries.
+*/
+const baseGroups = {
+  "Greetings": [
+    ["Hello","مرحبا"],
+    ["Hi","أهلا"],
+    ["Hey","هاي"],
+    ["Good morning","صباح الخير"],
+    ["Good afternoon","مساء الخير"],
+    ["Good evening","مساء الخير"],
+    ["Good night","تصبح على خير"],
+    ["How are you?","كيف حالك؟"],
+    ["How's it going?","كيف تسير الأمور؟"],
+    ["Nice to meet you","تشرفت بمقابلتك"],
+    ["Pleased to meet you","سعيد بلقائك"],
+    ["Welcome","أهلاً وسهلاً"],
+    ["Long time no see","لم أرك منذ وقت طويل"],
+    ["What's up?","ما الأخبار؟"],
+    ["How have you been?","كيف كنت؟"],
+    ["It's good to see you","سعيد برؤيتك"],
+    ["Morning!","صباح الخير!"],
+    ["Evening!","مساء الخير!"],
+    ["How do you do?","كيف حالك؟ (رسمي)"],
+    ["Glad to see you","سعيد برؤيتك"]
+  ],
+
+  "Daily phrases": [
+    ["Please","من فضلك"],
+    ["Thank you","شكرا"],
+    ["Thanks a lot","شكرا جزيلا"],
+    ["You're welcome","على الرحب والسعة"],
+    ["Excuse me","عفواً"],
+    ["I'm sorry","أنا آسف"],
+    ["No problem","لا مشكلة"],
+    ["That's okay","لا بأس"],
+    ["Bless you","يرحمك الله"],
+    ["Congratulations","مبروك"],
+    ["Good luck","حظاً سعيداً"],
+    ["Enjoy","استمتع"],
+    ["Have a nice day","أتمنى لك يوماً سعيداً"],
+    ["All the best","كل التوفيق"],
+    ["Take care","اعتن بنفسك"],
+    ["My pleasure","من دواعي سروري"],
+    ["No worries","لا تقلق"],
+    ["That's great","هذا رائع"],
+    ["Well done","أحسنت"],
+    ["Keep it up","استمر على هذا المنوال"]
+  ],
+
+  "Questions": [
+    ["What is your name?","ما اسمك؟"],
+    ["Where are you from?","من أين أنت؟"],
+    ["How old are you?","كم عمرك؟"],
+    ["Do you speak English?","هل تتكلم الإنجليزية؟"],
+    ["Can you help me?","هل يمكنك مساعدتي؟"],
+    ["What do you do?","ماذا تعمل؟"],
+    ["Where do you live?","أين تسكن؟"],
+    ["Are you okay?","هل أنت بخير؟"],
+    ["What's this?","ما هذا؟"],
+    ["When is it?","متى؟"],
+    ["Why did that happen?","لماذا حدث ذلك؟"],
+    ["How does this work?","كيف يعمل هذا؟"],
+    ["Which one should I choose?","أي واحد يجب أن أختار؟"],
+    ["Who is responsible?","من المسؤول؟"],
+    ["Could you explain that?","هل يمكنك شرح ذلك؟"],
+    ["Do you understand?","هل تفهم؟"],
+    ["Can I ask you something?","هل يمكنني أن أسألك شيئاً؟"],
+    ["Is that correct?","هل هذا صحيح؟"],
+    ["Where can I find it?","أين يمكنني العثور عليه؟"],
+    ["How much does it cost?","كم يكلف؟"]
+  ],
+
+  "Travel": [
+    ["I need a taxi","أحتاج إلى سيارة أجرة"],
+    ["Where is the train station?","أين محطة القطار؟"],
+    ["Where is the bus stop?","أين موقف الحافلات؟"],
+    ["How much is a ticket?","كم ثمن التذكرة؟"],
+    ["One ticket please","تذكرة واحدة من فضلك"],
+    ["I have a reservation","لدي حجز"],
+    ["Check-in, please","تسجيل الوصول من فضلك"],
+    ["Check-out time?","ما وقت تسجيل المغادرة؟"],
+    ["Is breakfast included?","هل الإفطار مشمول؟"],
+    ["Where is the airport?","أين المطار؟"],
+    ["Which platform is it?","أي رصيف؟"],
+    ["Is this seat taken?","هل هذا المقعد محجوز؟"],
+    ["Do you have a map?","هل لديك خريطة؟"],
+    ["How long is the trip?","كم تستغرق الرحلة؟"],
+    ["Can I get a refund?","هل يمكنني استرداد المال؟"],
+    ["Where can I buy a ticket?","أين يمكنني شراء تذكرة؟"],
+    ["Is there a direct train?","هل هناك قطار مباشر؟"],
+    ["How do I get to the city center?","كيف أصل إلى وسط المدينة؟"],
+    ["Is there luggage storage?","هل يوجد مكان لتخزين الأمتعة؟"],
+    ["Do I need a visa?","هل أحتاج إلى تأشيرة؟"]
+  ],
+
+  "Shopping": [
+    ["How much is this?","كم ثمن هذا؟"],
+    ["Do you accept credit cards?","هل تقبلون بطاقات الائتمان؟"],
+    ["Can I try it on?","هل يمكنني تجربته؟"],
+    ["I would like this","أريد هذا"],
+    ["Do you have a discount?","هل لديكم خصم؟"],
+    ["Where can I buy this?","أين يمكنني شراء هذا؟"],
+    ["Is this on sale?","هل هذا معروض للبيع بخصم؟"],
+    ["Can I return this?","هل يمكنني إرجاع هذا؟"],
+    ["What's your best price?","ما أفضل سعر لديكم؟"],
+    ["Do you have this in another size?","هل لديكم هذا بمقاس آخر؟"],
+    ["Can I pay in installments?","هل يمكنني الدفع بالتقسيط؟"],
+    ["Do you offer gift wrapping?","هل تقدمون تغليف هدايا؟"],
+    ["Is tax included?","هل الضريبة مشمولة؟"],
+    ["Do you have a loyalty program?","هل لديكم برنامج ولاء؟"],
+    ["Can I reserve this?","هل يمكنني حجز هذا؟"],
+    ["Do you ship internationally?","هل تشحنون دولياً؟"],
+    ["Is this authentic?","هل هذا أصلي؟"],
+    ["Can I see the receipt?","هل يمكنني رؤية الإيصال؟"],
+    ["Do you have a warranty?","هل لديكم ضمان؟"],
+    ["Can I get a refund?","هل يمكنني استرداد المال؟"]
+  ],
+
+  "Restaurant": [
+    ["A table for two, please","طاولة لشخصين من فضلك"],
+    ["The menu, please","القائمة من فضلك"],
+    ["I am allergic to...","أنا أعاني من حساسية تجاه..."],
+    ["Can I have the bill?","هل يمكنني الحصول على الفاتورة؟"],
+    ["Water, please","ماء من فضلك"],
+    ["I'm vegetarian","أنا نباتي"],
+    ["Is there a vegetarian option?","هل يوجد خيار نباتي؟"],
+    ["No sugar please","بدون سكر من فضلك"],
+    ["Extra spicy","حار جداً"],
+    ["Not spicy","غير حار"],
+    ["Could I have the salt?","هل يمكنني الحصول على الملح؟"],
+    ["Could I have a napkin?","هل يمكنني الحصول على منديل؟"],
+    ["Could I have a spoon?","هل يمكنني الحصول على ملعقة؟"],
+    ["Do you have a kids menu?","هل لديكم قائمة للأطفال؟"],
+    ["Can I have it to go?","هل يمكنني أخذه للمنزل؟"],
+    ["Is service included?","هل الخدمة مشمولة؟"],
+    ["Do you have any specials today?","هل لديكم عروض خاصة اليوم؟"],
+    ["Can I see the wine list?","هل يمكنني رؤية قائمة النبيذ؟"],
+    ["Could you recommend a dish?","هل يمكنك ترشيح طبق؟"],
+    ["Is this dish gluten-free?","هل هذا الطبق خالٍ من الغلوتين؟"]
+  ],
+
+  "Emergency": [
+    ["Help!","النجدة!"],
+    ["Call the police","اتصل بالشرطة"],
+    ["I need a doctor","أحتاج إلى طبيب"],
+    ["I'm lost","أنا ضائع"],
+    ["Fire!","حريق!"],
+    ["I feel sick","أشعر بالمرض"],
+    ["My wallet was stolen","سرق محفظتي"],
+    ["I lost my passport","فقدت جواز سفري"],
+    ["Is there a safe place?","هل هناك مكان آمن؟"],
+    ["I need emergency shelter","أحتاج مأوى طارئ"],
+    ["I need medical evacuation","أحتاج إخلاء طبي"],
+    ["Where is the nearest hospital?","أين أقرب مستشفى؟"],
+    ["I need help with my visa","أحتاج مساعدة بخصوص التأشيرة"],
+    ["I need to contact my embassy","أحتاج الاتصال بسفارتي"],
+    ["Call an ambulance","اتصل بالإسعاف"],
+    ["Is there a pharmacy open now?","هل هناك صيدلية مفتوحة الآن؟"],
+    ["I have been injured","لقد تعرضت لإصابة"],
+    ["Someone is hurt","هناك شخص مصاب"],
+    ["I need police assistance","أحتاج مساعدة الشرطة"],
+    ["My phone was stolen","تم سرقة هاتفي"]
+  ],
+
+  "Directions": [
+    ["Left","يسار"],
+    ["Right","يمين"],
+    ["Straight ahead","إلى الأمام مباشرة"],
+    ["Turn left","انعطف يساراً"],
+    ["Turn right","انعطف يميناً"],
+    ["Go straight","امضِ مباشرة"],
+    ["Stop here","توقف هنا"],
+    ["Is it within walking distance?","هل يمكن الوصول إليه سيراً؟"],
+    ["How far is it?","كم يبعد؟"],
+    ["Can you show me on the map?","هل يمكنك أن تريني على الخريطة؟"],
+    ["Which way?","أي طريق؟"],
+    ["Near","قريب"],
+    ["Far","بعيد"],
+    ["Take the next street","خذ الشارع التالي"],
+    ["Cross the road","اعبر الطريق"],
+    ["Follow the signs","اتبع الإشارات"],
+    ["At the roundabout, take the second exit","عند الدوار خذ المخرج الثاني"],
+    ["It's on your left","إنه على يسارك"],
+    ["It's on your right","إنه على يمينك"],
+    ["Turn back","ارجع للخلف"]
+  ],
+
+  "Numbers & Time": [
+    ["One","واحد"],
+    ["Two","اثنان"],
+    ["Three","ثلاثة"],
+    ["Four","أربعة"],
+    ["Five","خمسة"],
+    ["Six","ستة"],
+    ["Seven","سبعة"],
+    ["Eight","ثمانية"],
+    ["Nine","تسعة"],
+    ["Ten","عشرة"],
+    ["Eleven","أحد عشر"],
+    ["Twelve","اثنا عشر"],
+    ["Twenty","عشرون"],
+    ["Thirty","ثلاثون"],
+    ["Hundred","مائة"],
+    ["Today","اليوم"],
+    ["Tomorrow","غداً"],
+    ["Yesterday","أمس"],
+    ["Now","الآن"],
+    ["Later","لاحقاً"],
+    ["This morning","هذا الصباح"],
+    ["This evening","هذا المساء"],
+    ["At what time?","في أي وقت؟"],
+    ["What time is it?","كم الساعة؟"],
+    ["See you tomorrow","أراك غداً"]
+  ],
+
+  "Health & Wellbeing": [
+    ["I need water","أحتاج ماء"],
+    ["I need medicine","أحتاج دواء"],
+    ["Where is the pharmacy?","أين الصيدلية؟"],
+    ["I have a fever","لدي حمى"],
+    ["I have a headache","لدي صداع"],
+    ["Do you have insurance?","هل لديك تأمين؟"],
+    ["I need a prescription","أحتاج وصفة طبية"],
+    ["Is there a clinic nearby?","هل هناك عيادة قريبة؟"],
+    ["Do you have any allergies?","هل لديك أي حساسية؟"],
+    ["Are you taking any medication?","هل تتناول أي أدوية؟"],
+    ["Do you have chronic conditions?","هل لديك حالات مزمنة؟"],
+    ["I need a break","أحتاج استراحة"],
+    ["I'm feeling anxious","أشعر بالقلق"],
+    ["I need someone to talk to","أحتاج شخصاً لأتحدث معه"],
+    ["I feel dizzy","أشعر بدوار"],
+    ["I can't breathe","لا أستطيع التنفس"],
+    ["I have chest pain","أشعر بألم في الصدر"],
+    ["Is there a doctor on duty?","هل يوجد طبيب في الخدمة؟"],
+    ["Where can I get tested?","أين يمكنني إجراء اختبار؟"],
+    ["Do you have first aid?","هل لديكم إسعافات أولية؟"]
+  ],
+
+  "Work & Study": [
+    ["I work as...","أعمل كـ..."],
+    ["I am unemployed","أنا عاطل عن العمل"],
+    ["I have an interview","لدي مقابلة عمل"],
+    ["I need a CV","أحتاج سيرة ذاتية"],
+    ["I study at...","أدرس في..."],
+    ["I am a student","أنا طالب"],
+    ["Can you recommend a school?","هل يمكنك ترشيح مدرسة؟"],
+    ["I need a tutor","أحتاج مدرس خصوصي"],
+    ["What is the schedule?","ما هو الجدول؟"],
+    ["Is there homework?","هل هناك واجب منزلي؟"],
+    ["When is the exam?","متى الامتحان؟"],
+    ["Can I get extra materials?","هل يمكنني الحصول على مواد إضافية؟"],
+    ["I need a day off","أحتاج يوم عطلة"],
+    ["When is the deadline?","متى الموعد النهائي؟"],
+    ["I am on vacation","أنا في إجازة"],
+    ["Can I submit this online?","هل يمكنني تقديم هذا عبر الإنترنت؟"],
+    ["Where is the office?","أين المكتب؟"],
+    ["Who is my supervisor?","من هو مشرفي؟"],
+    ["Can I have a reference?","هل يمكنني الحصول على توصية؟"],
+    ["Is there a training session?","هل هناك جلسة تدريب؟"]
+  ],
+
+  "Technology & Communication": [
+    ["My phone is dead","هاتفي نفد شحنه"],
+    ["I need internet","أحتاج إلى الإنترنت"],
+    ["Can you connect me?","هل يمكنك توصيلي؟"],
+    ["My password doesn't work","كلمة المرور لا تعمل"],
+    ["I forgot my password","نسيت كلمة المرور"],
+    ["Reset password","إعادة تعيين كلمة المرور"],
+    ["Can I call you later?","هل يمكنني الاتصال بك لاحقاً؟"],
+    ["Send me a message","أرسل لي رسالة"],
+    ["What's your email?","ما بريدك الإلكتروني؟"],
+    ["Do you have Wi-Fi?","هل لديكم واي فاي؟"],
+    ["Can I pay online?","هل يمكنني الدفع عبر الإنترنت؟"],
+    ["Track my order","تتبع طلبي"],
+    ["Order status","حالة الطلب"],
+    ["Add to cart","أضف إلى السلة"],
+    ["Checkout","الدفع"],
+    ["Is there a charger I can borrow?","هل يوجد شاحن يمكنني استعاره؟"],
+    ["Where is the nearest outlet?","أين أقرب منفذ كهربائي؟"],
+    ["How do I connect to Wi-Fi?","كيف أتصل بالواي فاي؟"],
+    ["Is the app available in English?","هل التطبيق متاح بالإنجليزية؟"],
+    ["Can you send the file?","هل يمكنك إرسال الملف؟"]
+  ]
+};
+
+/* Build groups according to selected density, but DO NOT invent phrases.
+   If requested density > available unique phrases, cap to available count.
+*/
+function buildGroups(density){
+  const out = {};
+  const availability = {};
+  Object.keys(baseGroups).forEach(groupName=>{
+    const available = baseGroups[groupName].length;
+    availability[groupName] = available;
+    const take = Math.min(density, available);
+    out[groupName] = baseGroups[groupName].slice(0, take).map(p => ({ english: p[0], arabic: p[1] }));
+  });
+  return { groups: out, availability };
+}
+
+/* Initial state */
+let selectedDensity = 25; // default to 25 to show more but not exceed many groups
+let built = buildGroups(selectedDensity);
+let groups = built.groups;
+let availability = built.availability;
+
+/* Render */
+const grid = document.getElementById('grid');
+const densityNote = document.getElementById('densityNote');
+
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function render(groupsObj){
+  grid.innerHTML = '';
+  Object.keys(groupsObj).forEach(groupName=>{
+    const gdiv = document.createElement('div');
+    gdiv.className='group';
+    gdiv.innerHTML = `<h2>${escapeHtml(groupName)}</h2>`;
+    grid.appendChild(gdiv);
+    groupsObj[groupName].forEach(item=>{
+      const card = document.createElement('div');
+      card.className='card';
+      card.setAttribute('data-english', item.english);
+      card.setAttribute('data-arabic', item.arabic);
+      card.innerHTML = `
+        <div class="left">
+          <div class="term" title="${escapeHtml(item.english)}">${escapeHtml(item.english)}</div>
+          <div class="trans" title="${escapeHtml(item.arabic)}">${escapeHtml(item.arabic)}</div>
+        </div>
+        <div class="actions">
+          <button class="btn speak" title="Listen">
+            <span class="icon" aria-hidden="true">🔊</span>
+          </button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  });
+
+  // Update density note: inform user if any group was capped
+  const cappedGroups = Object.keys(availability).filter(g => availability[g] < selectedDensity);
+  if(cappedGroups.length){
+    densityNote.textContent = `Note: some groups have fewer than ${selectedDensity} unique expressions. Those groups are capped to their available unique items.`;
+  } else {
+    densityNote.textContent = '';
+  }
+}
+
+/* Initial render */
+render(groups);
+
+/* Columns control */
+document.getElementById('columns').addEventListener('change', e=>{
+  const cols = Number(e.target.value) || 12;
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+});
+
+/* Density control */
+document.getElementById('density').addEventListener('change', e=>{
+  selectedDensity = Number(e.target.value) || 25;
+  const builtNow = buildGroups(selectedDensity);
+  groups = builtNow.groups;
+  availability = builtNow.availability;
+  render(groups);
+});
+
+/* Search across all groups */
+document.getElementById('search').addEventListener('input', e=>{
+  const q = e.target.value.trim().toLowerCase();
+  if(!q){ render(groups); return; }
+  const filtered = {};
+  Object.keys(groups).forEach(g=>{
+    const matches = groups[g].filter(it=>{
+      return (it.english||'').toLowerCase().includes(q) || (it.arabic||'').includes(q);
+    });
+    if(matches.length) filtered[g] = matches;
+  });
+  render(filtered);
+});
+
+/* Speech Synthesis setup */
+const voiceSelect = document.getElementById('voiceSelect');
+const langSelect = document.getElementById('lang');
+let voices = [];
+function loadVoices(){
+  voices = (speechSynthesis.getVoices() || []).sort((a,b)=>a.name.localeCompare(b.name));
+  voiceSelect.innerHTML = '';
+  if(!voices.length){ voiceSelect.innerHTML = '<option>No voices available</option>'; return; }
+  voices.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = `${v.name} — ${v.lang}`;
+    voiceSelect.appendChild(opt);
+  });
+}
+loadVoices();
+if(typeof speechSynthesis !== 'undefined') speechSynthesis.onvoiceschanged = loadVoices;
+
+function speakText(text, lang){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  const selected = voiceSelect.value;
+  const v = voices.find(x=>x.name===selected) || voices.find(x=>x.lang && x.lang.startsWith(lang)) || voices[0];
+  if(v) u.voice = v;
+  u.lang = lang === 'ar' ? 'ar' : 'en-US';
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+/* Card speak */
+grid.addEventListener('click', e=>{
+  const btn = e.target.closest('.speak');
+  if(!btn) return;
+  const card = btn.closest('.card');
+  const lang = langSelect.value || 'en';
+  const text = lang === 'ar' ? card.dataset.arabic : card.dataset.english;
+  speakText(text, lang);
+});
+
+/* Play all (rendered cards) */
+document.getElementById('playAll').addEventListener('click', async ()=>{
+  const lang = langSelect.value || 'en';
+  const cards = Array.from(document.querySelectorAll('.card'));
+  for(const c of cards){
+    const text = lang === 'ar' ? c.dataset.arabic : c.dataset.english;
+    speakText(text, lang);
+    await waitForEnd();
+  }
+});
+function waitForEnd(){
+  return new Promise(resolve=>{
+    if(!('speechSynthesis' in window)) return resolve();
+    const onEnd = ()=>{ speechSynthesis.removeEventListener('end', onEnd); resolve(); };
+    speechSynthesis.addEventListener('end', onEnd);
+    setTimeout(()=>{ speechSynthesis.removeEventListener('end', onEnd); resolve(); }, 1200);
+  });
+}
+
+/* Accessibility: keyboard support for play all (Enter on focused button) */
+document.getElementById('playAll').addEventListener('keyup', e=>{
+  if(e.key === 'Enter') e.target.click();
+});
+</script>
+</body>
+</html>

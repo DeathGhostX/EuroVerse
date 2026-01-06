@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>500 Professions for English Learning</title>
+<style>
+  :root{
+    --gap:12px;
+    --card-bg:#fff;
+    --card-border:#e6e9ef;
+    --accent:#0b6efd;
+    --text:#111;
+    --muted:#666;
+    --radius:10px;
+  }
+  body{
+    font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:#f5f7fb;
+    color:var(--text);
+    margin:18px;
+  }
+  header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .title{
+    display:flex;
+    flex-direction:column;
+  }
+  h1{margin:0;font-size:20px}
+  .subtitle{color:var(--muted);font-size:13px}
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .controls label{font-size:13px;color:var(--muted)}
+  .controls select, .controls input[type="range"]{height:32px}
+  main{display:flex;flex-direction:column;gap:18px}
+  .group{
+    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,252,0.9));
+    border-radius:var(--radius);
+    padding:12px;
+    border:1px solid rgba(0,0,0,0.03);
+  }
+  .group-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+  }
+  .group-title{font-weight:700;font-size:16px}
+  .group-desc{color:var(--muted);font-size:13px}
+  .grid{
+    display:grid;
+    gap:var(--gap);
+    grid-template-columns:repeat(4,1fr);
+  }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:8px;
+    padding:10px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    box-shadow:0 1px 2px rgba(16,24,40,0.03);
+  }
+  .info{flex:1;min-width:0}
+  .nombre{font-weight:600;font-size:14px;line-height:1.1}
+  .arab{color:var(--muted);font-size:13px;direction:rtl;unicode-bidi:isolate}
+  .actions{display:flex;gap:8px;align-items:center}
+  button.speak{
+    background:transparent;border:none;cursor:pointer;color:var(--accent);font-size:18px;padding:6px;
+  }
+  .small{font-size:13px;color:var(--muted)}
+  .cols-1{grid-template-columns:repeat(1,1fr) !important;}
+  .cols-2{grid-template-columns:repeat(2,1fr) !important;}
+  .cols-3{grid-template-columns:repeat(3,1fr) !important;}
+  .cols-4{grid-template-columns:repeat(4,1fr) !important;}
+  .cols-5{grid-template-columns:repeat(5,1fr) !important;}
+  .cols-6{grid-template-columns:repeat(6,1fr) !important;}
+  @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:760px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:420px){ .grid{grid-template-columns:repeat(1,1fr);} }
+  footer{margin-top:18px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>500 Professions for English Learning</h1>
+    <div class="subtitle">Arabic translation on each card · Per-card TTS · Adjustable density</div>
+  </div>
+
+  <div class="controls" aria-hidden="false">
+    <label for="density">Columns</label>
+    <input id="density" type="range" min="1" max="6" value="4" />
+    <span id="densityVal" class="small">4</span>
+
+    <label for="voiceSelect">Voice</label>
+    <select id="voiceSelect" aria-label="Voice selector"></select>
+
+    <label for="rate" class="small">Rate</label>
+    <input id="rate" type="range" min="0.6" max="1.6" step="0.1" value="1" />
+  </div>
+</header>
+
+<main id="mainContent">
+  <!-- Groups rendered here -->
+</main>
+
+<footer>
+  Tip: For very long lists, virtualization or pagination improves performance on older browsers.
+</footer>
+
+<script>
+/* 20 groups × 25 professions = 500 entries.
+   English names in 'en', Arabic translations in 'ar'. */
+const groups = [
+  {
+    name: "Health and Medicine",
+    description: "Healthcare professionals",
+    professions: [
+      {en:"Doctor", ar:"طبيب"},
+      {en:"Nurse", ar:"ممرض"},
+      {en:"Surgeon", ar:"جراح"},
+      {en:"Pediatrician", ar:"طبيب أطفال"},
+      {en:"Gynecologist", ar:"طبيب نسائي"},
+      {en:"Psychiatrist", ar:"طبيب نفسي"},
+      {en:"Dentist", ar:"طبيب أسنان"},
+      {en:"Dental hygienist", ar:"أخصائي صحة الفم"},
+      {en:"Physiotherapist", ar:"أخصائي علاج طبيعي"},
+      {en:"Occupational therapist", ar:"أخصائي علاج وظيفي"},
+      {en:"Optometrist", ar:"أخصائي بصريات"},
+      {en:"Audiologist", ar:"أخصائي سمع"},
+      {en:"Pharmacist", ar:"صيدلي"},
+      {en:"Lab technician", ar:"فني مختبر"},
+      {en:"Radiologist", ar:"أخصائي أشعة"},
+      {en:"Paramedic", ar:"مسعف"},
+      {en:"Nutritionist", ar:"أخصائي تغذية"},
+      {en:"Epidemiologist", ar:"عالم أوبئة"},
+      {en:"Veterinarian", ar:"طبيب بيطري"},
+      {en:"Anesthesiologist", ar:"طبيب تخدير"},
+      {en:"Endocrinologist", ar:"أخصائي غدد صماء"},
+      {en:"Cardiologist", ar:"طبيب قلب"},
+      {en:"Dermatologist", ar:"طبيب جلدية"},
+      {en:"Oncologist", ar:"طبيب أورام"},
+      {en:"Neurologist", ar:"طبيب أعصاب"}
+    ]
+  },
+  {
+    name: "Education and Training",
+    description: "Teachers and trainers",
+    professions: [
+      {en:"Primary school teacher", ar:"معلم ابتدائي"},
+      {en:"Secondary school teacher", ar:"معلم ثانوي"},
+      {en:"University lecturer", ar:"أستاذ جامعي"},
+      {en:"Early years teacher", ar:"معلم رياض أطفال"},
+      {en:"Tutor", ar:"مدرس خصوصي"},
+      {en:"Vocational trainer", ar:"مدرب مهني"},
+      {en:"Guidance counselor", ar:"مرشد تربوي"},
+      {en:"Librarian", ar:"أمين مكتبة"},
+      {en:"Academic researcher", ar:"باحث أكاديمي"},
+      {en:"Language teacher", ar:"مدرس لغات"},
+      {en:"Music teacher", ar:"مدرس موسيقى"},
+      {en:"Art teacher", ar:"مدرس فنون"},
+      {en:"PE teacher", ar:"مدرب تربية بدنية"},
+      {en:"Curriculum coordinator", ar:"منسق تربوي"},
+      {en:"School principal", ar:"مدير مدرسة"},
+      {en:"Teaching assistant", ar:"مساعد تربوي"},
+      {en:"Inclusion specialist", ar:"أخصائي دمج"},
+      {en:"Instructional designer", ar:"مصمم مناهج"},
+      {en:"Educational assessor", ar:"مقيّم تعليمي"},
+      {en:"Computer science teacher", ar:"مدرس حاسوب"},
+      {en:"Chemistry teacher", ar:"مدرس كيمياء"},
+      {en:"Physics teacher", ar:"مدرس فيزياء"},
+      {en:"Math teacher", ar:"مدرس رياضيات"},
+      {en:"History teacher", ar:"مدرس تاريخ"},
+      {en:"Geography teacher", ar:"مدرس جغرافيا"}
+    ]
+  },
+  {
+    name: "Engineering and Construction",
+    description: "Engineers, technicians and construction trades",
+    professions: [
+      {en:"Civil engineer", ar:"مهندس مدني"},
+      {en:"Mechanical engineer", ar:"مهندس ميكانيكي"},
+      {en:"Electrical engineer", ar:"مهندس كهربائي"},
+      {en:"Industrial engineer", ar:"مهندس صناعي"},
+      {en:"Chemical engineer", ar:"مهندس كيميائي"},
+      {en:"Telecommunications engineer", ar:"مهندس اتصالات"},
+      {en:"Architect", ar:"مهندس معماري"},
+      {en:"Surveyor", ar:"مسّاح أراضي"},
+      {en:"Construction manager", ar:"مدير مشروع بناء"},
+      {en:"Bricklayer", ar:"عامل بناء"},
+      {en:"Carpenter", ar:"نجار"},
+      {en:"Plumber", ar:"سباك"},
+      {en:"Electrician", ar:"كهربائي"},
+      {en:"Painter", ar:"دهان"},
+      {en:"Plasterer", ar:"عامل جبس"},
+      {en:"Welder", ar:"لحام"},
+      {en:"Crane operator", ar:"مشغل رافعة"},
+      {en:"Site supervisor", ar:"مشرف موقع"},
+      {en:"Safety engineer", ar:"مهندس سلامة"},
+      {en:"Quality inspector", ar:"مفتش جودة"},
+      {en:"Draftsman", ar:"رسام هندسي"},
+      {en:"HVAC technician", ar:"فني تكييف"},
+      {en:"Quantity surveyor", ar:"مقيّم تكاليف البناء"},
+      {en:"Industrial fitter", ar:"عامل تركيب صناعي"},
+      {en:"Construction worker", ar:"عامل موقع"}
+    ]
+  },
+  {
+    name: "Information Technology",
+    description: "IT, development and support",
+    professions: [
+      {en:"Programmer", ar:"مطور برمجيات"},
+      {en:"Web developer", ar:"مطور ويب"},
+      {en:"Mobile developer", ar:"مطور تطبيقات"},
+      {en:"Software engineer", ar:"مهندس برمجيات"},
+      {en:"Systems administrator", ar:"مدير أنظمة"},
+      {en:"Network administrator", ar:"مدير شبكات"},
+      {en:"DevOps engineer", ar:"مهندس ديف أوبس"},
+      {en:"Data engineer", ar:"مهندس بيانات"},
+      {en:"Data analyst", ar:"محلل بيانات"},
+      {en:"Data scientist", ar:"عالم بيانات"},
+      {en:"Cybersecurity specialist", ar:"أخصائي أمن سيبراني"},
+      {en:"Technical support", ar:"دعم فني"},
+      {en:"Software architect", ar:"مهندس معماري برمجيات"},
+      {en:"QA tester", ar:"مختبر جودة"},
+      {en:"AI engineer", ar:"مهندس ذكاء اصطناعي"},
+      {en:"Database administrator", ar:"مدير قواعد بيانات"},
+      {en:"Cloud engineer", ar:"مهندس سحابي"},
+      {en:"UX/UI designer", ar:"مصمم تجربة المستخدم"},
+      {en:"Product manager", ar:"مدير منتج"},
+      {en:"Functional analyst", ar:"محلل وظيفي"},
+      {en:"SEO specialist", ar:"أخصائي تحسين محركات البحث"},
+      {en:"Community manager", ar:"مدير مجتمع"},
+      {en:"Test engineer", ar:"مهندس اختبارات"},
+      {en:"Hardware technician", ar:"فني أجهزة"},
+      {en:"IT consultant", ar:"مستشار تكنولوجيا"}
+    ]
+  },
+  {
+    name: "Business and Finance",
+    description: "Management, finance and administration",
+    professions: [
+      {en:"Accountant", ar:"محاسب"},
+      {en:"Auditor", ar:"مدقق حسابات"},
+      {en:"Financial analyst", ar:"محلل مالي"},
+      {en:"Financial advisor", ar:"مستشار مالي"},
+      {en:"Cashier", ar:"أمين صندوق"},
+      {en:"Finance manager", ar:"مدير مالي"},
+      {en:"Chief executive officer", ar:"المدير التنفيذي"},
+      {en:"Chief operating officer", ar:"مدير العمليات"},
+      {en:"Marketing director", ar:"مدير تسويق"},
+      {en:"HR manager", ar:"مسؤول موارد بشرية"},
+      {en:"Recruiter", ar:"مجند موظفين"},
+      {en:"Administrative assistant", ar:"مساعد إداري"},
+      {en:"Secretary", ar:"سكرتير"},
+      {en:"Office clerk", ar:"موظف مكتب"},
+      {en:"Business consultant", ar:"مستشار أعمال"},
+      {en:"Risk analyst", ar:"محلل مخاطر"},
+      {en:"Project manager", ar:"مدير مشروع"},
+      {en:"Controller", ar:"مراقب مالي"},
+      {en:"Treasurer", ar:"أمين صندوق الشركة"},
+      {en:"Insurance broker", ar:"سمسار تأمين"},
+      {en:"Real estate agent", ar:"وكيل عقاري"},
+      {en:"Strategic planner", ar:"مخطط استراتيجي"},
+      {en:"Compliance officer", ar:"مسؤول امتثال"},
+      {en:"Purchasing specialist", ar:"أخصائي مشتريات"},
+      {en:"Business analyst", ar:"محلل أعمال"}
+    ]
+  },
+  {
+    name: "Sales and Retail",
+    description: "Sales, retail and customer service",
+    professions: [
+      {en:"Salesperson", ar:"بائع"},
+      {en:"Sales representative", ar:"مندوب مبيعات"},
+      {en:"Store cashier", ar:"أمين صندوق متجر"},
+      {en:"Shop assistant", ar:"بائع متجر"},
+      {en:"Store manager", ar:"مدير متجر"},
+      {en:"Merchandiser", ar:"منسق عرض منتجات"},
+      {en:"Call center agent", ar:"مشغل مركز اتصال"},
+      {en:"Customer service representative", ar:"خدمة العملاء"},
+      {en:"Account executive", ar:"مدير حسابات"},
+      {en:"Key account manager", ar:"مدير حسابات رئيسية"},
+      {en:"Commercial representative", ar:"مندوب تجاري"},
+      {en:"Promoter", ar:"مروج منتجات"},
+      {en:"Stock controller", ar:"مسؤول مخزون"},
+      {en:"Buyer", ar:"مشتري"},
+      {en:"Online seller", ar:"بائع عبر الإنترنت"},
+      {en:"Product advisor", ar:"مستشار منتج"},
+      {en:"Sales supervisor", ar:"مشرف مبيعات"},
+      {en:"Logistics coordinator", ar:"مشرف لوجستي"},
+      {en:"E-commerce manager", ar:"مدير تجارة إلكترونية"},
+      {en:"B2B representative", ar:"مندوب أعمال بين الشركات"},
+      {en:"Telemarketer", ar:"تسويق عبر الهاتف"},
+      {en:"Delivery agent", ar:"مندوب توصيل"},
+      {en:"Door-to-door salesperson", ar:"بائع متجول"},
+      {en:"Franchise consultant", ar:"مستشار امتيازات"},
+      {en:"Loyalty specialist", ar:"أخصائي ولاء العملاء"}
+    ]
+  },
+  {
+    name: "Hospitality and Tourism",
+    description: "Accommodation, food and tourism services",
+    professions: [
+      {en:"Cook", ar:"طباخ"},
+      {en:"Chef", ar:"شيف"},
+      {en:"Waiter", ar:"نادل"},
+      {en:"Barista", ar:"باريستا"},
+      {en:"Hotel receptionist", ar:"موظف استقبال فندق"},
+      {en:"Concierge", ar:"بواب"},
+      {en:"Hotel manager", ar:"مدير فندق"},
+      {en:"Tour guide", ar:"مرشد سياحي"},
+      {en:"Travel agent", ar:"وكيل سفر"},
+      {en:"Sommelier", ar:"سوملييه"},
+      {en:"Pastry chef", ar:"خباز حلويات"},
+      {en:"Events coordinator", ar:"منسق فعاليات"},
+      {en:"Banquet cook", ar:"طباخ حفلات"},
+      {en:"Hostess", ar:"مضيفة استقبال"},
+      {en:"Housekeeping supervisor", ar:"مشرف تنظيف"},
+      {en:"Reservations manager", ar:"مدير حجوزات"},
+      {en:"Entertainment host", ar:"منشط سياحي"},
+      {en:"Food and beverage manager", ar:"مدير مطعم"},
+      {en:"Catering manager", ar:"مدير تموين"},
+      {en:"Bartender", ar:"ساقي بار"},
+      {en:"Kitchen assistant", ar:"مساعد طباخ"},
+      {en:"Event receptionist", ar:"موظف استقبال فعاليات"},
+      {en:"Mountain guide", ar:"مرشد جبلي"},
+      {en:"Airline pilot", ar:"طيار"},
+      {en:"Flight attendant", ar:"طاقم الطائرة"}
+    ]
+  },
+  {
+    name: "Transport and Logistics",
+    description: "Driving, transport and supply chain",
+    professions: [
+      {en:"Truck driver", ar:"سائق شاحنة"},
+      {en:"Taxi driver", ar:"سائق تاكسي"},
+      {en:"Delivery driver", ar:"ساعي توصيل"},
+      {en:"Logistics operator", ar:"مشغل لوجستي"},
+      {en:"Warehouse manager", ar:"مدير مستودع"},
+      {en:"Warehouse worker", ar:"عامل مستودع"},
+      {en:"Transport supervisor", ar:"مشرف نقل"},
+      {en:"Helicopter pilot", ar:"طيار مروحية"},
+      {en:"Sailor", ar:"بحار"},
+      {en:"Ship captain", ar:"قائد سفينة"},
+      {en:"Air traffic controller", ar:"مراقب جوي"},
+      {en:"Terminal operator", ar:"مشغل محطة"},
+      {en:"Route planner", ar:"مخطط طرق"},
+      {en:"Fleet maintenance technician", ar:"فني صيانة أسطول"},
+      {en:"Bus driver", ar:"سائق حافلة"},
+      {en:"Forklift operator", ar:"مشغل رافعة شوكية"},
+      {en:"Dispatcher", ar:"منسق شحن"},
+      {en:"Customs agent", ar:"وكيل جمركي"},
+      {en:"Import/export coordinator", ar:"منسق استيراد وتصدير"},
+      {en:"Parcel manager", ar:"مشرف طرود"},
+      {en:"Reverse logistics technician", ar:"فني لوجستيات عكسية"},
+      {en:"Supply chain manager", ar:"مدير سلسلة التوريد"},
+      {en:"Rail operator", ar:"مشغل سكة حديد"},
+      {en:"Cargo seafarer", ar:"عامل شحن بحري"},
+      {en:"Private pilot", ar:"طيار خاص"}
+    ]
+  },
+  {
+    name: "Arts Media and Entertainment",
+    description: "Creative and production roles",
+    professions: [
+      {en:"Actor", ar:"ممثل"},
+      {en:"Musician", ar:"موسيقي"},
+      {en:"Singer", ar:"مغنٍ"},
+      {en:"Music producer", ar:"منتج موسيقي"},
+      {en:"Film director", ar:"مخرج سينمائي"},
+      {en:"Screenwriter", ar:"كاتب سيناريو"},
+      {en:"Photographer", ar:"مصور"},
+      {en:"Video editor", ar:"محرر فيديو"},
+      {en:"Graphic designer", ar:"مصمم جرافيك"},
+      {en:"Illustrator", ar:"رسام توضيحي"},
+      {en:"Animator", ar:"رسام متحرك"},
+      {en:"Sound designer", ar:"مصمم صوت"},
+      {en:"DJ", ar:"دي جي"},
+      {en:"Choreographer", ar:"مصمم رقص"},
+      {en:"Set designer", ar:"مصمم ديكور مسرحي"},
+      {en:"Professional makeup artist", ar:"خبير مكياج"},
+      {en:"Fashion stylist", ar:"مصمم أزياء"},
+      {en:"Director of photography", ar:"مدير تصوير"},
+      {en:"Lighting technician", ar:"فني إضاءة"},
+      {en:"Event producer", ar:"منتج فعاليات"},
+      {en:"Art critic", ar:"ناقد فني"},
+      {en:"Museum curator", ar:"قيّم متحف"},
+      {en:"Sculptor", ar:"نحات"},
+      {en:"Painter", ar:"رسام"},
+      {en:"Voice actor", ar:"مؤدي صوتي"}
+    ]
+  },
+  {
+    name: "Science and Environment",
+    description: "Scientific research and environment",
+    professions: [
+      {en:"Biologist", ar:"عالم أحياء"},
+      {en:"Chemist", ar:"كيميائي"},
+      {en:"Physicist", ar:"فيزيائي"},
+      {en:"Geologist", ar:"جيولوجي"},
+      {en:"Meteorologist", ar:"عالم أرصاد"},
+      {en:"Oceanographer", ar:"عالم محيطات"},
+      {en:"Ecologist", ar:"عالم بيئة"},
+      {en:"Researcher", ar:"باحث"},
+      {en:"Lab technician", ar:"فني مختبر"},
+      {en:"Environmental engineer", ar:"مهندس بيئي"},
+      {en:"Waste manager", ar:"مدير نفايات"},
+      {en:"Conservationist", ar:"حافظ بيئي"},
+      {en:"Energy specialist", ar:"أخصائي طاقة"},
+      {en:"Agricultural technician", ar:"فني زراعي"},
+      {en:"Agronomist", ar:"مهندس زراعي"},
+      {en:"Hydrologist", ar:"عالم هيدرولوجيا"},
+      {en:"Toxicologist", ar:"عالم سموم"},
+      {en:"Microbiologist", ar:"عالم أحياء دقيقة"},
+      {en:"Forest engineer", ar:"مهندس غابات"},
+      {en:"Zoologist", ar:"عالم حيوان"},
+      {en:"Botanist", ar:"عالم نبات"},
+      {en:"Climate change specialist", ar:"أخصائي تغير المناخ"},
+      {en:"Renewable energy technician", ar:"فني طاقة متجددة"},
+      {en:"Environmental analyst", ar:"محلل بيئي"},
+      {en:"Park manager", ar:"مدير محميات طبيعية"}
+    ]
+  },
+  {
+    name: "Personal and Social Services",
+    description: "Personal care and social services",
+    professions: [
+      {en:"Social worker", ar:"أخصائي اجتماعي"},
+      {en:"Psychologist", ar:"أخصائي نفسي"},
+      {en:"Counselor", ar:"مستشار"},
+      {en:"Family therapist", ar:"معالج أسري"},
+      {en:"Home care worker", ar:"مقدم رعاية منزلية"},
+      {en:"Personal assistant", ar:"مساعد شخصي"},
+      {en:"Beautician", ar:"أخصائي تجميل"},
+      {en:"Hairdresser", ar:"حلاق"},
+      {en:"Barber", ar:"حلاق رجالي"},
+      {en:"Masseuse", ar:"أخصائي تدليك"},
+      {en:"Personal trainer", ar:"مدرب شخصي"},
+      {en:"Yoga instructor", ar:"مدرب يوغا"},
+      {en:"Pilates instructor", ar:"مدرب بيلاتس"},
+      {en:"Leisure activities leader", ar:"مشرف أنشطة"},
+      {en:"Elderly caregiver", ar:"مقدم رعاية مسنين"},
+      {en:"Nanny", ar:"مربية أطفال"},
+      {en:"Social educator", ar:"مربي اجتماعي"},
+      {en:"Mediator", ar:"وسيط"},
+      {en:"Professional coach", ar:"مدرب مهني"},
+      {en:"Occupational therapist", ar:"أخصائي علاج وظيفي"},
+      {en:"Speech therapist", ar:"أخصائي نطق"},
+      {en:"Clinic assistant", ar:"مساعد عيادة"},
+      {en:"Pharmacy assistant", ar:"مساعد صيدلية"},
+      {en:"NGO volunteer", ar:"متطوع منظمة غير ربحية"},
+      {en:"Community interpreter", ar:"مترجم اجتماعي"}
+    ]
+  },
+  {
+    name: "Legal and Security",
+    description: "Law, security and enforcement",
+    professions: [
+      {en:"Lawyer", ar:"محامٍ"},
+      {en:"Prosecutor", ar:"مدعٍ عام"},
+      {en:"Judge", ar:"قاضٍ"},
+      {en:"Notary", ar:"كاتب عدل"},
+      {en:"Legal advisor", ar:"مستشار قانوني"},
+      {en:"Police officer", ar:"شرطي"},
+      {en:"Security guard", ar:"حارس أمن"},
+      {en:"Detective", ar:"محقق"},
+      {en:"Firefighter", ar:"رجل إطفاء"},
+      {en:"Prison officer", ar:"حارس سجن"},
+      {en:"Forensic expert", ar:"خبير جنائي"},
+      {en:"Legal mediator", ar:"وسيط قانوني"},
+      {en:"Employment lawyer", ar:"محامي عمل"},
+      {en:"Criminal lawyer", ar:"محامي جنائي"},
+      {en:"Civil lawyer", ar:"محامي مدني"},
+      {en:"Compliance consultant", ar:"مستشار امتثال"},
+      {en:"Customs officer", ar:"ضابط جمرك"},
+      {en:"Police inspector", ar:"مفتش شرطة"},
+      {en:"Forensic technician", ar:"فني جنائي"},
+      {en:"Intelligence analyst", ar:"محلل استخبارات"},
+      {en:"Protection officer", ar:"وكيل حماية"},
+      {en:"Family lawyer", ar:"محامي أسرة"},
+      {en:"Immigration lawyer", ar:"محامي هجرة"},
+      {en:"Legal assistant", ar:"مساعد قانوني"},
+      {en:"Valuation expert", ar:"خبير تقييم"}
+    ]
+  },
+  {
+    name: "Manufacturing and Production",
+    description: "Industrial operations and manufacturing",
+    professions: [
+      {en:"Production operator", ar:"عامل إنتاج"},
+      {en:"Plant supervisor", ar:"مشرف مصنع"},
+      {en:"Maintenance technician", ar:"فني صيانة"},
+      {en:"Production engineer", ar:"مهندس إنتاج"},
+      {en:"Machine operator", ar:"مشغل آلة"},
+      {en:"Assembler", ar:"عامل تركيب"},
+      {en:"Quality controller", ar:"مراقب جودة"},
+      {en:"Line supervisor", ar:"مشرف خط إنتاج"},
+      {en:"Welder", ar:"لحام"},
+      {en:"Turner", ar:"عامل مخرطة"},
+      {en:"Milling operator", ar:"عامل فريز"},
+      {en:"Press operator", ar:"عامل ثني"},
+      {en:"Packer", ar:"عامل تعبئة"},
+      {en:"Packaging operator", ar:"عامل تعبئة وتغليف"},
+      {en:"Instrumentation technician", ar:"فني أدوات قياس"},
+      {en:"Process engineer", ar:"مهندس عمليات"},
+      {en:"Production planner", ar:"مخطط إنتاج"},
+      {en:"Internal logistics", ar:"لوجستيات داخلية"},
+      {en:"CNC operator", ar:"مشغل سي إن سي"},
+      {en:"Industrial safety technician", ar:"فني سلامة صناعية"},
+      {en:"Maintenance supervisor", ar:"مشرف صيانة"},
+      {en:"Electronics assembler", ar:"عامل تجميع إلكتروني"},
+      {en:"Dimensional inspector", ar:"مفتش أبعاد"},
+      {en:"Industrial painter", ar:"عامل طلاء صناعي"},
+      {en:"Automation technician", ar:"فني أتمتة"}
+    ]
+  },
+  {
+    name: "Agriculture and Natural Resources",
+    description: "Farming and resource management",
+    professions: [
+      {en:"Farmer", ar:"مزارع"},
+      {en:"Livestock farmer", ar:"مربي مواشي"},
+      {en:"Agronomist", ar:"مهندس زراعي"},
+      {en:"Agricultural technician", ar:"فني زراعي"},
+      {en:"Gardener", ar:"بستاني"},
+      {en:"Landscape designer", ar:"مصمم مناظر طبيعية"},
+      {en:"Beekeeper", ar:"مربي نحل"},
+      {en:"Fisher", ar:"صياد"},
+      {en:"Forester", ar:"مهندس غابات"},
+      {en:"Greenhouse worker", ar:"عامل بيت زجاجي"},
+      {en:"Irrigation technician", ar:"فني ري"},
+      {en:"Water resources engineer", ar:"مهندس موارد مائية"},
+      {en:"Soil technician", ar:"فني تربة"},
+      {en:"Harvest worker", ar:"عامل حصاد"},
+      {en:"Farm manager", ar:"مدير مزرعة"},
+      {en:"Fertilization technician", ar:"فني تسميد"},
+      {en:"Plant health inspector", ar:"مفتش صحة نباتية"},
+      {en:"Agricultural machinery operator", ar:"مشغل معدات زراعية"},
+      {en:"Animal production technician", ar:"فني إنتاج حيواني"},
+      {en:"Seed specialist", ar:"أخصائي بذور"},
+      {en:"Agricultural consultant", ar:"مستشار زراعي"},
+      {en:"Agroindustry technician", ar:"فني صناعة زراعية"},
+      {en:"Agricultural packer", ar:"عامل تعبئة زراعية"},
+      {en:"Irrigation manager", ar:"مدير ري"},
+      {en:"Agricultural quality inspector", ar:"مفتش جودة زراعية"}
+    ]
+  },
+  {
+    name: "Beauty Fashion and Creative Trades",
+    description: "Beauty, fashion and creative crafts",
+    professions: [
+      {en:"Fashion designer", ar:"مصمم أزياء"},
+      {en:"Tailor", ar:"خياط"},
+      {en:"Seamstress", ar:"خياطة"},
+      {en:"Personal stylist", ar:"مصمم أزياء شخصي"},
+      {en:"Personal shopper", ar:"مشتري شخصي"},
+      {en:"Visual merchandiser", ar:"منسق عرض بصري"},
+      {en:"Makeup artist", ar:"خبير مكياج"},
+      {en:"Manicurist", ar:"أخصائي أظافر"},
+      {en:"Pedicurist", ar:"أخصائي أقدام"},
+      {en:"Fashion photographer", ar:"مصور أزياء"},
+      {en:"Model", ar:"عارض أزياء"},
+      {en:"Jewelry designer", ar:"مصمم مجوهرات"},
+      {en:"Upholsterer", ar:"مفروشات"},
+      {en:"Ceramist", ar:"صانع خزف"},
+      {en:"Craftsman", ar:"حرفي"},
+      {en:"Art restorer", ar:"مرمم أعمال فنية"},
+      {en:"Window dresser", ar:"مصمم واجهات عرض"},
+      {en:"Fabric cutter", ar:"قاطع أقمشة"},
+      {en:"Pattern maker", ar:"مصمم باترونات"},
+      {en:"Textile designer", ar:"مصمم أقمشة"},
+      {en:"Fashion production assistant", ar:"مساعد إنتاج أزياء"},
+      {en:"Model maker", ar:"صانع نماذج"},
+      {en:"Garment technician", ar:"فني خياطة صناعية"},
+      {en:"Colorist", ar:"أخصائي ألوان"},
+      {en:"Celebrity stylist", ar:"مصمم إطلالات مشاهير"}
+    ]
+  },
+  {
+    name: "Media and Communication",
+    description: "Journalism, PR and communications",
+    professions: [
+      {en:"Journalist", ar:"صحفي"},
+      {en:"Copywriter", ar:"كاتب"},
+      {en:"Editor", ar:"محرر"},
+      {en:"Presenter", ar:"مقدم برامج"},
+      {en:"Radio producer", ar:"منتج راديو"},
+      {en:"Community manager", ar:"مدير مجتمع"},
+      {en:"Public relations officer", ar:"علاقات عامة"},
+      {en:"Communications officer", ar:"مسؤول اتصالات"},
+      {en:"Proofreader", ar:"مدقق لغوي"},
+      {en:"Translator", ar:"مترجم"},
+      {en:"Interpreter", ar:"مترجم فوري"},
+      {en:"Announcer", ar:"مذيع صوتي"},
+      {en:"Media analyst", ar:"محلل إعلامي"},
+      {en:"Content producer", ar:"منتج محتوى"},
+      {en:"TV scriptwriter", ar:"كاتب سيناريو تلفزيوني"},
+      {en:"Sound technician", ar:"فني صوت"},
+      {en:"Camera operator", ar:"مشغل كاميرا"},
+      {en:"Editorial designer", ar:"مصمم مطبوعات"},
+      {en:"Press officer", ar:"أخصائي صحافة"},
+      {en:"Photojournalist", ar:"مصور صحفي"},
+      {en:"Communication analyst", ar:"محلل اتصالات"},
+      {en:"Content manager", ar:"مدير محتوى"},
+      {en:"Web editor", ar:"محرر ويب"},
+      {en:"Community strategist", ar:"استراتيجي مجتمع"},
+      {en:"Broadcast technician", ar:"فني بث"}
+    ]
+  },
+  {
+    name: "Sports and Leisure",
+    description: "Sports professionals and recreation",
+    professions: [
+      {en:"Sports coach", ar:"مدرب رياضي"},
+      {en:"Fitness trainer", ar:"مدرب لياقة"},
+      {en:"Swimming instructor", ar:"مدرب سباحة"},
+      {en:"Referee", ar:"حكم"},
+      {en:"Sports manager", ar:"مدير رياضي"},
+      {en:"Sports physiotherapist", ar:"أخصائي علاج طبيعي رياضي"},
+      {en:"Sports nutritionist", ar:"أخصائي تغذية رياضية"},
+      {en:"Gym instructor", ar:"مشرف صالة رياضية"},
+      {en:"Adventure guide", ar:"مرشد مغامرات"},
+      {en:"Climbing instructor", ar:"مدرب تسلق"},
+      {en:"Diving instructor", ar:"مدرب غوص"},
+      {en:"Technical director", ar:"مدير فني"},
+      {en:"Scout", ar:"كشاف مواهب"},
+      {en:"Sports agent", ar:"وكيل رياضي"},
+      {en:"Sports journalist", ar:"صحفي رياضي"},
+      {en:"Sports events organizer", ar:"منظم فعاليات رياضية"},
+      {en:"Equipment technician", ar:"فني معدات رياضية"},
+      {en:"Yoga instructor", ar:"مدرب يوغا"},
+      {en:"Pilates instructor", ar:"مدرب بيلاتس"},
+      {en:"Children activities leader", ar:"مشرف أنشطة أطفال"},
+      {en:"Facility manager", ar:"مدير منشآت رياضية"},
+      {en:"Personal trainer", ar:"مدرب شخصي"},
+      {en:"Rehabilitation technician", ar:"فني إعادة تأهيل"},
+      {en:"Surf instructor", ar:"مدرب ركوب الأمواج"},
+      {en:"Ski instructor", ar:"مدرب تزلج"}
+    ]
+  },
+  {
+    name: "Energy and Mining",
+    description: "Extraction, production and energy",
+    professions: [
+      {en:"Mining engineer", ar:"مهندس مناجم"},
+      {en:"Mine worker", ar:"عامل منجم"},
+      {en:"Mining geologist", ar:"جيولوجي مناجم"},
+      {en:"Petroleum technician", ar:"فني نفط"},
+      {en:"Petroleum engineer", ar:"مهندس نفط"},
+      {en:"Platform operator", ar:"عامل منصة نفط"},
+      {en:"Energy engineer", ar:"مهندس طاقة"},
+      {en:"Renewable energy technician", ar:"فني طاقة متجددة"},
+      {en:"Power plant operator", ar:"عامل محطة كهرباء"},
+      {en:"Nuclear engineer", ar:"مهندس نووي"},
+      {en:"Industrial maintenance technician", ar:"فني صيانة صناعية"},
+      {en:"Drilling supervisor", ar:"مشرف حفر"},
+      {en:"Resource analyst", ar:"محلل موارد"},
+      {en:"Reservoir engineer", ar:"مهندس مكامن"},
+      {en:"Refinery operator", ar:"عامل مصفاة"},
+      {en:"Industrial safety technician", ar:"فني سلامة صناعية"},
+      {en:"Process engineer", ar:"مهندس عمليات"},
+      {en:"Energy project manager", ar:"مدير مشاريع طاقة"},
+      {en:"Environmental control technician", ar:"فني مراقبة بيئية"},
+      {en:"Electrical maintenance worker", ar:"عامل صيانة كهربائية"},
+      {en:"Power grid engineer", ar:"مهندس شبكات كهربائية"},
+      {en:"Instrumentation technician", ar:"فني أدوات قياس"},
+      {en:"Energy efficiency specialist", ar:"أخصائي كفاءة طاقة"},
+      {en:"Solar plant operator", ar:"عامل محطة شمسية"},
+      {en:"Wind farm operator", ar:"عامل محطة رياح"}
+    ]
+  },
+  {
+    name: "Research and Development",
+    description: "R&D roles in companies and labs",
+    professions: [
+      {en:"Principal researcher", ar:"باحث رئيسي"},
+      {en:"R&D technician", ar:"فني بحث وتطوير"},
+      {en:"R&D engineer", ar:"مهندس بحث وتطوير"},
+      {en:"R&D project manager", ar:"مدير مشاريع بحث وتطوير"},
+      {en:"Innovation analyst", ar:"محلل ابتكار"},
+      {en:"Patent specialist", ar:"أخصائي براءات اختراع"},
+      {en:"Research scientist", ar:"عالم باحث"},
+      {en:"Test technician", ar:"فني اختبارات"},
+      {en:"Prototype engineer", ar:"مهندس نماذج أولية"},
+      {en:"Lab coordinator", ar:"منسق مختبر"},
+      {en:"Technology transfer specialist", ar:"أخصائي نقل تكنولوجيا"},
+      {en:"R&D quality manager", ar:"مدير جودة بحث وتطوير"},
+      {en:"Tech market analyst", ar:"محلل سوق تكنولوجي"},
+      {en:"Materials engineer", ar:"مهندس مواد"},
+      {en:"Characterization technician", ar:"فني توصيف"},
+      {en:"Biotechnology specialist", ar:"أخصائي بيوتكنولوجيا"},
+      {en:"R&D process engineer", ar:"مهندس عمليات بحث وتطوير"},
+      {en:"Advanced instrumentation technician", ar:"فني أدوات متقدمة"},
+      {en:"Nanotechnology specialist", ar:"أخصائي نانوتكنولوجيا"},
+      {en:"European projects manager", ar:"مدير مشاريع أوروبية"},
+      {en:"Research data analyst", ar:"محلل بيانات بحث"},
+      {en:"Clinical trials coordinator", ar:"منسق تجارب سريرية"},
+      {en:"Bioinformatics specialist", ar:"أخصائي معلومات حيوية"},
+      {en:"Robotics engineer", ar:"مهندس روبوتات"},
+      {en:"Automation technician", ar:"فني أتمتة"}
+    ]
+  },
+  {
+    name: "Public Services and Administration",
+    description: "Public sector and local administration",
+    professions: [
+      {en:"Public servant", ar:"موظف حكومي"},
+      {en:"Public administrator", ar:"إداري عام"},
+      {en:"Municipal technician", ar:"فني بلدي"},
+      {en:"Policy manager", ar:"مدير سياسات"},
+      {en:"Municipal inspector", ar:"مفتش بلدي"},
+      {en:"Procurement technician", ar:"فني مشتريات"},
+      {en:"Public communications officer", ar:"مسؤول اتصالات عامة"},
+      {en:"Social services manager", ar:"مدير خدمات اجتماعية"},
+      {en:"Urban planning technician", ar:"فني تخطيط عمراني"},
+      {en:"Municipal architect", ar:"مهندس معماري بلدي"},
+      {en:"Environmental technician", ar:"فني بيئة"},
+      {en:"Emergency manager", ar:"مدير طوارئ"},
+      {en:"Mobility technician", ar:"فني تنقل"},
+      {en:"Culture officer", ar:"مسؤول ثقافة"},
+      {en:"Heritage manager", ar:"مدير تراث"},
+      {en:"Employment technician", ar:"فني توظيف"},
+      {en:"Local tourism officer", ar:"مسؤول سياحة محلية"},
+      {en:"Education technician", ar:"فني تعليم"},
+      {en:"Public health officer", ar:"مسؤول صحة عامة"},
+      {en:"Grants manager", ar:"مدير منح"},
+      {en:"Statistics technician", ar:"فني إحصاء"},
+      {en:"Transparency officer", ar:"مسؤول شفافية"},
+      {en:"Municipal systems technician", ar:"فني نظم بلدية"},
+      {en:"Volunteer coordinator", ar:"منسق متطوعين"},
+      {en:"Public works inspector", ar:"مفتش أعمال عامة"}
+    ]
+  },
+  {
+    name: "Trades and Manual Work",
+    description: "Artisans and traditional trades",
+    professions: [
+      {en:"Locksmith", ar:"قفال"},
+      {en:"Upholsterer", ar:"مفروشات"},
+      {en:"Cabinetmaker", ar:"نجار أثاث"},
+      {en:"Blacksmith", ar:"حداد"},
+      {en:"Glazier", ar:"عامل زجاج"},
+      {en:"Bricklayer", ar:"عامل بناء"},
+      {en:"Plasterer", ar:"عامل جبس"},
+      {en:"Tiler", ar:"عامل بلاط"},
+      {en:"Shoe repairer", ar:"مصلح أحذية"},
+      {en:"Tailor", ar:"خياط"},
+      {en:"Restorer", ar:"مرمم"},
+      {en:"Ceramist", ar:"صانع خزف"},
+      {en:"Forgemaster", ar:"صانع حدادة"},
+      {en:"Marble worker", ar:"عامل رخام"},
+      {en:"Decorative painter", ar:"دهان زخرفي"},
+      {en:"Plumber", ar:"سباك"},
+      {en:"Domestic electrician", ar:"كهربائي منزلي"},
+      {en:"Furniture assembler", ar:"عامل تركيب أثاث"},
+      {en:"Appliance repairer", ar:"مصلح أجهزة منزلية"},
+      {en:"Boiler technician", ar:"فني غلايات"},
+      {en:"Floor installer", ar:"عامل تركيب أرضيات"},
+      {en:"Elevator technician", ar:"فني مصاعد"},
+      {en:"Bicycle repairer", ar:"مصلح دراجات"},
+      {en:"Marine upholsterer", ar:"مفروشات بحرية"},
+      {en:"Ship carpenter", ar:"نجار بحري"}
+    ]
+  },
+  {
+    name: "Quality and Environment",
+    description: "Quality control and environmental management",
+    professions: [
+      {en:"Quality inspector", ar:"مفتش جودة"},
+      {en:"Quality auditor", ar:"مدقق جودة"},
+      {en:"Quality manager", ar:"مسؤول جودة"},
+      {en:"Lab technician", ar:"فني مختبر"},
+      {en:"Sample analyst", ar:"محلل عينات"},
+      {en:"Environmental manager", ar:"مدير بيئي"},
+      {en:"Occupational safety technician", ar:"فني وقاية مهنية"},
+      {en:"HSE officer", ar:"مسؤول الصحة والسلامة والبيئة"},
+      {en:"Environmental auditor", ar:"مدقق بيئي"},
+      {en:"Sustainability consultant", ar:"مستشار استدامة"},
+      {en:"Waste technician", ar:"فني نفايات"},
+      {en:"Emissions analyst", ar:"محلل انبعاثات"},
+      {en:"Food quality manager", ar:"مدير جودة غذائية"},
+      {en:"Health inspector", ar:"مفتش صحي"},
+      {en:"Food safety technician", ar:"فني سلامة غذائية"},
+      {en:"ISO coordinator", ar:"منسق نظم إدارة"},
+      {en:"Audit manager", ar:"مسؤول تدقيقات"},
+      {en:"Pest control technician", ar:"فني مكافحة آفات"},
+      {en:"Chemical lab analyst", ar:"محلل مختبر كيميائي"},
+      {en:"Industrial waste manager", ar:"مدير نفايات صناعية"},
+      {en:"Energy efficiency technician", ar:"فني كفاءة طاقة"},
+      {en:"Safety inspector", ar:"مفتش سلامة"},
+      {en:"Recycling specialist", ar:"أخصائي إعادة تدوير"},
+      {en:"Sustainability coordinator", ar:"منسق استدامة"},
+      {en:"Environmental control technician", ar:"فني مراقبة بيئية"}
+    ]
+  },
+  {
+    name: "International Trade and Customs",
+    description: "Import/export, customs and trade",
+    professions: [
+      {en:"Customs agent", ar:"وكيل جمركي"},
+      {en:"Import/export manager", ar:"منسق استيراد وتصدير"},
+      {en:"Customs broker", ar:"مخلص جمركي"},
+      {en:"Freight forwarder", ar:"وسيط شحن"},
+      {en:"International logistics coordinator", ar:"منسق لوجستيات دولية"},
+      {en:"Foreign trade analyst", ar:"محلل تجارة خارجية"},
+      {en:"Documentation specialist", ar:"أخصائي وثائق"},
+      {en:"Goods inspector", ar:"مفتش بضائع"},
+      {en:"Customs manager", ar:"مدير جمركي"},
+      {en:"Cargo agent", ar:"وكيل شحن"},
+      {en:"Customs coordinator", ar:"منسق جمركي"},
+      {en:"Tariff specialist", ar:"أخصائي رسوم جمركية"},
+      {en:"Port operator", ar:"مشغل ميناء"},
+      {en:"Commercial risk analyst", ar:"محلل مخاطر تجارية"},
+      {en:"Customs compliance manager", ar:"مدير امتثال جمركي"},
+      {en:"International transport coordinator", ar:"منسق نقل دولي"},
+      {en:"Export agent", ar:"وكيل تصدير"},
+      {en:"Documentation manager", ar:"مدير وثائق"},
+      {en:"Maritime logistics specialist", ar:"أخصائي لوجستيات بحرية"},
+      {en:"Air logistics specialist", ar:"أخصائي لوجستيات جوية"},
+      {en:"Port terminal operator", ar:"مشغل محطة ميناء"},
+      {en:"Customs analyst", ar:"محلل جمركي"},
+      {en:"Foreign trade coordinator", ar:"منسق تجارة خارجية"},
+      {en:"Transport insurance specialist", ar:"أخصائي تأمين شحن"},
+      {en:"International operations manager", ar:"مدير عمليات دولية"}
+    ]
+  },
+  {
+    name: "Startups and Entrepreneurship",
+    description: "Common startup roles",
+    professions: [
+      {en:"Founder", ar:"مؤسس"},
+      {en:"Co-founder", ar:"شريك مؤسس"},
+      {en:"CEO", ar:"المدير التنفيذي"},
+      {en:"CTO", ar:"المدير التقني"},
+      {en:"CFO", ar:"المدير المالي"},
+      {en:"COO", ar:"مدير العمليات"},
+      {en:"Product owner", ar:"مالك المنتج"},
+      {en:"Growth hacker", ar:"مختص نمو"},
+      {en:"Full stack developer", ar:"مطور متعدد الطبقات"},
+      {en:"UX researcher", ar:"باحث تجربة المستخدم"},
+      {en:"Business developer", ar:"مطور أعمال"},
+      {en:"Fundraiser", ar:"جامع تبرعات"},
+      {en:"Mentor", ar:"مرشد أعمال"},
+      {en:"Incubator", ar:"حاضنة أعمال"},
+      {en:"Accelerator", ar:"مسرّع أعمال"},
+      {en:"Metrics analyst", ar:"محلل مقاييس"},
+      {en:"Product specialist", ar:"أخصائي منتج"},
+      {en:"Customer success", ar:"نجاح العملاء"},
+      {en:"Operations", ar:"عمليات"},
+      {en:"Startup legal advisor", ar:"مستشار قانوني للشركات الناشئة"},
+      {en:"UX specialist", ar:"أخصائي تجربة المستخدم"},
+      {en:"Reliability engineer", ar:"مهندس موثوقية"},
+      {en:"Payments specialist", ar:"أخصائي مدفوعات"},
+      {en:"Startup business analyst", ar:"محلل أعمال للشركات الناشئة"},
+      {en:"Community builder", ar:"باني مجتمع"}
+    ]
+  }
+];
+
+/* Render groups and cards */
+const main = document.getElementById('mainContent');
+
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function renderAll(){
+  main.innerHTML = '';
+  let globalIdx = 0;
+  groups.forEach(g => {
+    const section = document.createElement('section');
+    section.className = 'group';
+    const header = document.createElement('div');
+    header.className = 'group-header';
+    header.innerHTML = `<div>
+        <div class="group-title">${escapeHtml(g.name)}</div>
+        <div class="group-desc small">${escapeHtml(g.description)}</div>
+      </div>
+      <div class="small">Total: ${g.professions.length}</div>`;
+    section.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    grid.innerHTML = g.professions.map(p => {
+      const html = `
+        <article class="card" data-idx="${globalIdx}">
+          <div class="info">
+            <div class="nombre">${escapeHtml(p.en)}</div>
+            <div class="arab" lang="ar">${escapeHtml(p.ar)}</div>
+          </div>
+          <div class="actions">
+            <button class="speak" data-idx="${globalIdx}" aria-label="Play audio">🔊</button>
+          </div>
+        </article>`;
+      globalIdx++;
+      return html;
+    }).join('');
+    section.appendChild(grid);
+    main.appendChild(section);
+  });
+}
+renderAll();
+
+/* Density control */
+const density = document.getElementById('density');
+const densityVal = document.getElementById('densityVal');
+function applyDensity(n){
+  document.querySelectorAll('.grid').forEach(g => {
+    g.classList.remove('cols-1','cols-2','cols-3','cols-4','cols-5','cols-6');
+    g.classList.add('cols-' + n);
+  });
+  densityVal.textContent = n;
+}
+density.addEventListener('input', e => applyDensity(e.target.value));
+applyDensity(density.value);
+
+/* Web Speech API: load voices and play */
+const voiceSelect = document.getElementById('voiceSelect');
+const rateControl = document.getElementById('rate');
+let voices = [];
+
+function loadVoices(){
+  voices = speechSynthesis.getVoices().sort((a,b)=> a.name.localeCompare(b.name));
+  voiceSelect.innerHTML = voices.map((v,i)=>`<option value="${i}">${v.name} — ${v.lang}</option>`).join('');
+  // prefer English voice by default if available
+  const idxEn = voices.findIndex(v => v.lang && v.lang.startsWith('en'));
+  if(idxEn >= 0) voiceSelect.value = idxEn;
+}
+if('speechSynthesis' in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+/* Flatten professions for index lookup */
+function flatten(){
+  const arr = [];
+  groups.forEach(g => g.professions.forEach(p => arr.push(p)));
+  return arr;
+}
+
+/* Play English then Arabic for language learning */
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('button.speak');
+  if(!btn) return;
+  const idx = Number(btn.dataset.idx);
+  const flat = flatten();
+  const item = flat[idx];
+  if(!item) return;
+  // speak English first, then Arabic
+  speakText(item.en, {lang: 'en-US'});
+  setTimeout(()=> speakText(item.ar, {lang: 'ar'}), 700);
+});
+
+function speakText(text, opts = {}){
+  if(typeof speechSynthesis === 'undefined') {
+    alert('TTS not supported in this browser.');
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  const selectedIndex = Number(voiceSelect.value || 0);
+  if(voices[selectedIndex]) u.voice = voices[selectedIndex];
+  u.rate = Number(rateControl.value || 1);
+  if(opts.lang) u.lang = opts.lang;
+  speechSynthesis.speak(u);
+}
+
+/* Optional: add search/filter later for learners */
+</script>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>500 Profesiones por Grupos</title>
+<style>
+  :root{
+    --gap:12px;
+    --card-bg:#fff;
+    --card-border:#e6e9ef;
+    --accent:#0b6efd;
+    --text:#111;
+    --muted:#666;
+    --radius:10px;
+  }
+  body{
+    font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:#f5f7fb;
+    color:var(--text);
+    margin:18px;
+  }
+  header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .title{
+    display:flex;
+    flex-direction:column;
+  }
+  h1{margin:0;font-size:20px}
+  .subtitle{color:var(--muted);font-size:13px}
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .controls label{font-size:13px;color:var(--muted)}
+  .controls select, .controls input[type="range"]{height:32px}
+  main{display:flex;flex-direction:column;gap:18px}
+  .group{
+    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,252,0.9));
+    border-radius:var(--radius);
+    padding:12px;
+    border:1px solid rgba(0,0,0,0.03);
+  }
+  .group-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+  }
+  .group-title{font-weight:700;font-size:16px}
+  .group-desc{color:var(--muted);font-size:13px}
+  .grid{
+    display:grid;
+    gap:var(--gap);
+    grid-template-columns:repeat(4,1fr);
+  }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:8px;
+    padding:10px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    box-shadow:0 1px 2px rgba(16,24,40,0.03);
+  }
+  .info{flex:1;min-width:0}
+  .nombre{font-weight:600;font-size:14px;line-height:1.1}
+  .arab{color:var(--muted);font-size:13px;direction:rtl;unicode-bidi:isolate}
+  .actions{display:flex;gap:8px;align-items:center}
+  button.speak{
+    background:transparent;border:none;cursor:pointer;color:var(--accent);font-size:18px;padding:6px;
+  }
+  .small{font-size:13px;color:var(--muted)}
+  /* density helper classes applied by JS */
+  .cols-1{grid-template-columns:repeat(1,1fr) !important;}
+  .cols-2{grid-template-columns:repeat(2,1fr) !important;}
+  .cols-3{grid-template-columns:repeat(3,1fr) !important;}
+  .cols-4{grid-template-columns:repeat(4,1fr) !important;}
+  .cols-5{grid-template-columns:repeat(5,1fr) !important;}
+  .cols-6{grid-template-columns:repeat(6,1fr) !important;}
+  /* responsive */
+  @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:760px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:420px){ .grid{grid-template-columns:repeat(1,1fr);} }
+  footer{margin-top:18px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>500 Profesiones organizadas por grupos</h1>
+    <div class="subtitle">Traducción al árabe en cada tarjeta · Altavoz TTS por tarjeta · Densidad ajustable</div>
+  </div>
+
+  <div class="controls" aria-hidden="false">
+    <label for="density">Columnas</label>
+    <input id="density" type="range" min="1" max="6" value="4" />
+    <span id="densityVal" class="small">4</span>
+
+    <label for="voiceSelect">Voz</label>
+    <select id="voiceSelect" aria-label="Selector de voz"></select>
+
+    <label for="rate" class="small">Vel</label>
+    <input id="rate" type="range" min="0.6" max="1.6" step="0.1" value="1" />
+  </div>
+</header>
+
+<main id="mainContent">
+  <!-- Grupos serán renderizados aquí -->
+</main>
+
+<footer>
+  Consejo: para listas muy largas, la virtualización o paginación mejora el rendimiento en navegadores antiguos.
+</footer>
+
+<script>
+/* --- Datos: 20 grupos × 25 profesiones = 500 entradas --- */
+const grupos = [
+  {
+    nombre: "Salud y Medicina",
+    descripcion: "Profesionales del cuidado de la salud",
+    profesiones: [
+      {es:"Médico", ar:"طبيب"},
+      {es:"Enfermero", ar:"ممرض"},
+      {es:"Cirujano", ar:"جراح"},
+      {es:"Pediatra", ar:"طبيب أطفال"},
+      {es:"Ginecólogo", ar:"طبيب نسائي"},
+      {es:"Psiquiatra", ar:"طبيب نفسي"},
+      {es:"Dentista", ar:"طبيب أسنان"},
+      {es:"Higienista dental", ar:"أخصائي صحة الفم"},
+      {es:"Fisioterapeuta", ar:"أخصائي علاج طبيعي"},
+      {es:"Terapeuta ocupacional", ar:"أخصائي علاج وظيفي"},
+      {es:"Optometrista", ar:"أخصائي بصريات"},
+      {es:"Audiólogo", ar:"أخصائي سمع"},
+      {es:"Farmacéutico", ar:"صيدلي"},
+      {es:"Técnico de laboratorio", ar:"فني مختبر"},
+      {es:"Radiólogo", ar:"أخصائي أشعة"},
+      {es:"Paramédico", ar:"مسعف"},
+      {es:"Nutricionista", ar:"أخصائي تغذية"},
+      {es:"Epidemiólogo", ar:"عالم أوبئة"},
+      {es:"Veterinario", ar:"طبيب بيطري"},
+      {es:"Anestesiólogo", ar:"طبيب تخدير"},
+      {es:"Endocrinólogo", ar:"أخصائي غدد صماء"},
+      {es:"Cardiólogo", ar:"طبيب قلب"},
+      {es:"Dermatólogo", ar:"طبيب جلدية"},
+      {es:"Oncólogo", ar:"طبيب أورام"},
+      {es:"Neurólogo", ar:"طبيب أعصاب"}
+    ]
+  },
+  {
+    nombre: "Educación y Formación",
+    descripcion: "Docentes y formadores",
+    profesiones: [
+      {es:"Profesor de primaria", ar:"معلم ابتدائي"},
+      {es:"Profesor de secundaria", ar:"معلم ثانوي"},
+      {es:"Profesor universitario", ar:"أستاذ جامعي"},
+      {es:"Maestro de educación infantil", ar:"معلم رياض أطفال"},
+      {es:"Tutor", ar:"مدرس خصوصي"},
+      {es:"Formador profesional", ar:"مدرب مهني"},
+      {es:"Orientador educativo", ar:"مرشد تربوي"},
+      {es:"Bibliotecario", ar:"أمين مكتبة"},
+      {es:"Investigador académico", ar:"باحث أكاديمي"},
+      {es:"Profesor de idiomas", ar:"مدرس لغات"},
+      {es:"Profesor de música", ar:"مدرس موسيقى"},
+      {es:"Profesor de arte", ar:"مدرس فنون"},
+      {es:"Profesor de educación física", ar:"مدرب تربية بدنية"},
+      {es:"Coordinador pedagógico", ar:"منسق تربوي"},
+      {es:"Director de escuela", ar:"مدير مدرسة"},
+      {es:"Asistente educativo", ar:"مساعد تربوي"},
+      {es:"Especialista en inclusión", ar:"أخصائي دمج"},
+      {es:"Diseñador instruccional", ar:"مصمم مناهج"},
+      {es:"Evaluador educativo", ar:"مقيّم تعليمي"},
+      {es:"Profesor de informática", ar:"مدرس حاسوب"},
+      {es:"Profesor de química", ar:"مدرس كيمياء"},
+      {es:"Profesor de física", ar:"مدرس فيزياء"},
+      {es:"Profesor de matemáticas", ar:"مدرس رياضيات"},
+      {es:"Profesor de historia", ar:"مدرس تاريخ"},
+      {es:"Profesor de geografía", ar:"مدرس جغرافيا"}
+    ]
+  },
+  {
+    nombre: "Ingeniería y Construcción",
+    descripcion: "Ingenieros, técnicos y oficios de obra",
+    profesiones: [
+      {es:"Ingeniero civil", ar:"مهندس مدني"},
+      {es:"Ingeniero mecánico", ar:"مهندس ميكانيكي"},
+      {es:"Ingeniero eléctrico", ar:"مهندس كهربائي"},
+      {es:"Ingeniero industrial", ar:"مهندس صناعي"},
+      {es:"Ingeniero químico", ar:"مهندس كيميائي"},
+      {es:"Ingeniero de telecomunicaciones", ar:"مهندس اتصالات"},
+      {es:"Arquitecto", ar:"مهندس معماري"},
+      {es:"Topógrafo", ar:"مسّاح أراضي"},
+      {es:"Gerente de obra", ar:"مدير مشروع بناء"},
+      {es:"Albañil", ar:"عامل بناء"},
+      {es:"Carpintero", ar:"نجار"},
+      {es:"Fontanero / Plomero", ar:"سباك"},
+      {es:"Electricista", ar:"كهربائي"},
+      {es:"Pintor", ar:"دهان"},
+      {es:"Yesero", ar:"عامل جبس"},
+      {es:"Soldador", ar:"لحام"},
+      {es:"Operador de grúa", ar:"مشغل رافعة"},
+      {es:"Encargado de obra", ar:"مشرف موقع"},
+      {es:"Ingeniero de seguridad", ar:"مهندس سلامة"},
+      {es:"Inspector de calidad", ar:"مفتش جودة"},
+      {es:"Delineante", ar:"رسام هندسي"},
+      {es:"Técnico en climatización", ar:"فني تكييف"},
+      {es:"Aparejador", ar:"مقيّم تكاليف البناء"},
+      {es:"Montador industrial", ar:"عامل تركيب صناعي"},
+      {es:"Operario de obra", ar:"عامل موقع"}
+    ]
+  },
+  {
+    nombre: "Tecnologías de la Información",
+    descripcion: "TI, desarrollo y soporte",
+    profesiones: [
+      {es:"Programador", ar:"مطور برمجيات"},
+      {es:"Desarrollador web", ar:"مطور ويب"},
+      {es:"Desarrollador móvil", ar:"مطور تطبيقات"},
+      {es:"Ingeniero de software", ar:"مهندس برمجيات"},
+      {es:"Administrador de sistemas", ar:"مدير أنظمة"},
+      {es:"Administrador de redes", ar:"مدير شبكات"},
+      {es:"DevOps", ar:"مهندس ديف أوبس"},
+      {es:"Ingeniero de datos", ar:"مهندس بيانات"},
+      {es:"Analista de datos", ar:"محلل بيانات"},
+      {es:"Científico de datos", ar:"عالم بيانات"},
+      {es:"Especialista en ciberseguridad", ar:"أخصائي أمن سيبراني"},
+      {es:"Soporte técnico", ar:"دعم فني"},
+      {es:"Arquitecto de software", ar:"مهندس معماري برمجيات"},
+      {es:"QA / Tester", ar:"مختبر جودة"},
+      {es:"Ingeniero de IA", ar:"مهندس ذكاء اصطناعي"},
+      {es:"Administrador de bases de datos", ar:"مدير قواعد بيانات"},
+      {es:"Ingeniero de cloud", ar:"مهندس سحابي"},
+      {es:"Diseñador UX/UI", ar:"مصمم تجربة المستخدم"},
+      {es:"Product manager", ar:"مدير منتج"},
+      {es:"Analista funcional", ar:"محلل وظيفي"},
+      {es:"Especialista en SEO", ar:"أخصائي تحسين محركات البحث"},
+      {es:"Community manager", ar:"مدير مجتمع"},
+      {es:"Ingeniero de pruebas", ar:"مهندس اختبارات"},
+      {es:"Técnico de hardware", ar:"فني أجهزة"},
+      {es:"Consultor TI", ar:"مستشار تكنولوجيا"}
+    ]
+  },
+  {
+    nombre: "Negocios y Finanzas",
+    descripcion: "Gestión, finanzas y administración",
+    profesiones: [
+      {es:"Contador", ar:"محاسب"},
+      {es:"Auditor", ar:"مدقق حسابات"},
+      {es:"Analista financiero", ar:"محلل مالي"},
+      {es:"Asesor financiero", ar:"مستشار مالي"},
+      {es:"Cajero", ar:"أمين صندوق"},
+      {es:"Gerente de finanzas", ar:"مدير مالي"},
+      {es:"Director ejecutivo (CEO)", ar:"المدير التنفيذي"},
+      {es:"Director de operaciones (COO)", ar:"مدير العمليات"},
+      {es:"Director de marketing", ar:"مدير تسويق"},
+      {es:"Responsable de recursos humanos", ar:"مسؤول موارد بشرية"},
+      {es:"Reclutador", ar:"مجند موظفين"},
+      {es:"Asistente administrativo", ar:"مساعد إداري"},
+      {es:"Secretario", ar:"سكرتير"},
+      {es:"Oficinista", ar:"موظف مكتب"},
+      {es:"Consultor de negocio", ar:"مستشار أعمال"},
+      {es:"Analista de riesgos", ar:"محلل مخاطر"},
+      {es:"Gestor de proyectos", ar:"مدير مشروع"},
+      {es:"Controller", ar:"مراقب مالي"},
+      {es:"Tesorero", ar:"أمين صندوق الشركة"},
+      {es:"Corredor de seguros", ar:"سمسار تأمين"},
+      {es:"Agente inmobiliario", ar:"وكيل عقاري"},
+      {es:"Planificador estratégico", ar:"مخطط استراتيجي"},
+      {es:"Oficial de cumplimiento", ar:"مسؤول امتثال"},
+      {es:"Especialista en compras", ar:"أخصائي مشتريات"},
+      {es:"Analista de negocio", ar:"محلل أعمال"}
+    ]
+  },
+  {
+    nombre: "Comercio y Ventas",
+    descripcion: "Ventas, retail y atención al cliente",
+    profesiones: [
+      {es:"Vendedor", ar:"بائع"},
+      {es:"Representante de ventas", ar:"مندوب مبيعات"},
+      {es:"Cajero de tienda", ar:"أمين صندوق متجر"},
+      {es:"Dependiente", ar:"بائع متجر"},
+      {es:"Gerente de tienda", ar:"مدير متجر"},
+      {es:"Merchandiser", ar:"منسق عرض منتجات"},
+      {es:"Teleoperador", ar:"مشغل مركز اتصال"},
+      {es:"Atención al cliente", ar:"خدمة العملاء"},
+      {es:"Ejecutivo de cuentas", ar:"مدير حسابات"},
+      {es:"Key account manager", ar:"مدير حسابات رئيسية"},
+      {es:"Representante comercial", ar:"مندوب تجاري"},
+      {es:"Promotor", ar:"مروج منتجات"},
+      {es:"Encargado de stock", ar:"مسؤول مخزون"},
+      {es:"Comprador", ar:"مشتري"},
+      {es:"Vendedor online", ar:"بائع عبر الإنترنت"},
+      {es:"Asesor de producto", ar:"مستشار منتج"},
+      {es:"Supervisor de ventas", ar:"مشرف مبيعات"},
+      {es:"Encargado de logística", ar:"مشرف لوجستي"},
+      {es:"Gestor de e-commerce", ar:"مدير تجارة إلكترونية"},
+      {es:"Representante B2B", ar:"مندوب أعمال بين الشركات"},
+      {es:"Telemarketing", ar:"تسويق عبر الهاتف"},
+      {es:"Cartero comercial", ar:"مندوب توصيل"},
+      {es:"Vendedor puerta a puerta", ar:"بائع متجول"},
+      {es:"Asesor de franquicias", ar:"مستشار امتيازات"},
+      {es:"Especialista en fidelización", ar:"أخصائي ولاء العملاء"}
+    ]
+  },
+  {
+    nombre: "Hostelería y Turismo",
+    descripcion: "Servicios de alojamiento, restauración y turismo",
+    profesiones: [
+      {es:"Cocinero", ar:"طباخ"},
+      {es:"Chef", ar:"شيف"},
+      {es:"Camarero", ar:"نادل"},
+      {es:"Barista", ar:"باريستا"},
+      {es:"Recepcionista de hotel", ar:"موظف استقبال فندق"},
+      {es:"Conserje", ar:"بواب"},
+      {es:"Director de hotel", ar:"مدير فندق"},
+      {es:"Guía turístico", ar:"مرشد سياحي"},
+      {es:"Agente de viajes", ar:"وكيل سفر"},
+      {es:"Sommelier", ar:"سوملييه"},
+      {es:"Pastelero", ar:"خباز حلويات"},
+      {es:"Encargado de eventos", ar:"منسق فعاليات"},
+      {es:"Cocinero de banquetes", ar:"طباخ حفلات"},
+      {es:"Hostess", ar:"مضيفة استقبال"},
+      {es:"Encargado de limpieza", ar:"مشرف تنظيف"},
+      {es:"Gestor de reservas", ar:"مدير حجوزات"},
+      {es:"Animador turístico", ar:"منشط سياحي"},
+      {es:"Director de restauración", ar:"مدير مطعم"},
+      {es:"Catering manager", ar:"مدير تموين"},
+      {es:"Barman", ar:"ساقي بار"},
+      {es:"Ayudante de cocina", ar:"مساعد طباخ"},
+      {es:"Recepcionista de eventos", ar:"موظف استقبال فعاليات"},
+      {es:"Guía de montaña", ar:"مرشد جبلي"},
+      {es:"Piloto de avión", ar:"طيار"},
+      {es:"Tripulante de cabina", ar:"طاقم الطائرة"}
+    ]
+  },
+  {
+    nombre: "Transporte y Logística",
+    descripcion: "Conducción, transporte y cadena de suministro",
+    profesiones: [
+      {es:"Conductor de camión", ar:"سائق شاحنة"},
+      {es:"Taxista", ar:"سائق تاكسي"},
+      {es:"Repartidor", ar:"ساعي توصيل"},
+      {es:"Operador logístico", ar:"مشغل لوجستي"},
+      {es:"Gestor de almacén", ar:"مدير مستودع"},
+      {es:"Mozo de almacén", ar:"عامل مستودع"},
+      {es:"Encargado de transporte", ar:"مشرف نقل"},
+      {es:"Piloto de helicóptero", ar:"طيار مروحية"},
+      {es:"Marinero", ar:"بحار"},
+      {es:"Capitán de barco", ar:"قائد سفينة"},
+      {es:"Controlador aéreo", ar:"مراقب جوي"},
+      {es:"Operador de terminal", ar:"مشغل محطة"},
+      {es:"Planificador de rutas", ar:"مخطط طرق"},
+      {es:"Técnico de mantenimiento de flota", ar:"فني صيانة أسطول"},
+      {es:"Conductor de autobús", ar:"سائق حافلة"},
+      {es:"Operador de carretilla", ar:"مشغل رافعة شوكية"},
+      {es:"Despachador", ar:"منسق شحن"},
+      {es:"Agente de aduanas", ar:"وكيل جمركي"},
+      {es:"Coordinador de import/export", ar:"منسق استيراد وتصدير"},
+      {es:"Encargado de paquetería", ar:"مشرف طرود"},
+      {es:"Técnico en logística inversa", ar:"فني لوجستيات عكسية"},
+      {es:"Gestor de cadena de suministro", ar:"مدير سلسلة التوريد"},
+      {es:"Operador ferroviario", ar:"مشغل سكة حديد"},
+      {es:"Marítimo de carga", ar:"عامل شحن بحري"},
+      {es:"Piloto privado", ar:"طيار خاص"}
+    ]
+  },
+  {
+    nombre: "Artes, Medios y Entretenimiento",
+    descripcion: "Creativos, producción y entretenimiento",
+    profesiones: [
+      {es:"Actor", ar:"ممثل"},
+      {es:"Músico", ar:"موسيقي"},
+      {es:"Cantante", ar:"مغنٍ"},
+      {es:"Productor musical", ar:"منتج موسيقي"},
+      {es:"Director de cine", ar:"مخرج سينمائي"},
+      {es:"Guionista", ar:"كاتب سيناريو"},
+      {es:"Fotógrafo", ar:"مصور"},
+      {es:"Editor de vídeo", ar:"محرر فيديو"},
+      {es:"Diseñador gráfico", ar:"مصمم جرافيك"},
+      {es:"Ilustrador", ar:"رسام توضيحي"},
+      {es:"Animador", ar:"رسام متحرك"},
+      {es:"Diseñador de sonido", ar:"مصمم صوت"},
+      {es:"DJ", ar:"دي جي"},
+      {es:"Coreógrafo", ar:"مصمم رقص"},
+      {es:"Escenógrafo", ar:"مصمم ديكور مسرحي"},
+      {es:"Maquillador profesional", ar:"خبير مكياج"},
+      {es:"Estilista", ar:"مصمم أزياء"},
+      {es:"Director de fotografía", ar:"مدير تصوير"},
+      {es:"Técnico de iluminación", ar:"فني إضاءة"},
+      {es:"Productor de eventos", ar:"منتج فعاليات"},
+      {es:"Crítico de arte", ar:"ناقد فني"},
+      {es:"Curador de museo", ar:"قيّم متحف"},
+      {es:"Escultor", ar:"نحات"},
+      {es:"Pintor", ar:"رسام"},
+      {es:"Actor de doblaje", ar:"مؤدي صوتي"}
+    ]
+  },
+  {
+    nombre: "Ciencias y Medio Ambiente",
+    descripcion: "Investigación científica y medioambiental",
+    profesiones: [
+      {es:"Biólogo", ar:"عالم أحياء"},
+      {es:"Químico", ar:"كيميائي"},
+      {es:"Físico", ar:"فيزيائي"},
+      {es:"Geólogo", ar:"جيولوجي"},
+      {es:"Meteorólogo", ar:"عالم أرصاد"},
+      {es:"Oceanógrafo", ar:"عالم محيطات"},
+      {es:"Ecólogo", ar:"عالم بيئة"},
+      {es:"Investigador", ar:"باحث"},
+      {es:"Técnico de laboratorio", ar:"فني مختبر"},
+      {es:"Ingeniero ambiental", ar:"مهندس بيئي"},
+      {es:"Gestor de residuos", ar:"مدير نفايات"},
+      {es:"Conservacionista", ar:"حافظ بيئي"},
+      {es:"Especialista en energía", ar:"أخصائي طاقة"},
+      {es:"Técnico agrícola", ar:"فني زراعي"},
+      {es:"Agrónomo", ar:"مهندس زراعي"},
+      {es:"Hidrólogo", ar:"عالم هيدرولوجيا"},
+      {es:"Toxicólogo", ar:"عالم سموم"},
+      {es:"Microbiólogo", ar:"عالم أحياء دقيقة"},
+      {es:"Ingeniero forestal", ar:"مهندس غابات"},
+      {es:"Zoologo", ar:"عالم حيوان"},
+      {es:"Botánico", ar:"عالم نبات"},
+      {es:"Especialista en cambio climático", ar:"أخصائي تغير المناخ"},
+      {es:"Técnico en energías renovables", ar:"فني طاقة متجددة"},
+      {es:"Analista ambiental", ar:"محلل بيئي"},
+      {es:"Gestor de parques naturales", ar:"مدير محميات طبيعية"}
+    ]
+  },
+  {
+    nombre: "Servicios Personales y Sociales",
+    descripcion: "Atención personal y servicios sociales",
+    profesiones: [
+      {es:"Trabajador social", ar:"أخصائي اجتماعي"},
+      {es:"Psicólogo", ar:"أخصائي نفسي"},
+      {es:"Consejero", ar:"مستشار"},
+      {es:"Terapeuta familiar", ar:"معالج أسري"},
+      {es:"Cuidado domiciliario", ar:"مقدم رعاية منزلية"},
+      {es:"Asistente personal", ar:"مساعد شخصي"},
+      {es:"Esteticista", ar:"أخصائي تجميل"},
+      {es:"Peluquero", ar:"حلاق"},
+      {es:"Barbero", ar:"حلاق رجالي"},
+      {es:"Masajista", ar:"أخصائي تدليك"},
+      {es:"Entrenador personal", ar:"مدرب شخصي"},
+      {es:"Instructor de yoga", ar:"مدرب يوغا"},
+      {es:"Instructor de pilates", ar:"مدرب بيلاتس"},
+      {es:"Monitor de tiempo libre", ar:"مشرف أنشطة"},
+      {es:"Cuidador de ancianos", ar:"مقدم رعاية مسنين"},
+      {es:"Niñera", ar:"مربية أطفال"},
+      {es:"Educador social", ar:"مربي اجتماعي"},
+      {es:"Mediador", ar:"وسيط"},
+      {es:"Coaching profesional", ar:"مدرب مهني"},
+      {es:"Terapeuta ocupacional", ar:"أخصائي علاج وظيفي"},
+      {es:"Logopeda", ar:"أخصائي نطق"},
+      {es:"Auxiliar de clínica", ar:"مساعد عيادة"},
+      {es:"Auxiliar de farmacia", ar:"مساعد صيدلية"},
+      {es:"Voluntario ONG", ar:"متطوع منظمة غير ربحية"},
+      {es:"Interprete social", ar:"مترجم اجتماعي"}
+    ]
+  },
+  {
+    nombre: "Legal y Seguridad",
+    descripcion: "Derecho, seguridad y fuerzas del orden",
+    profesiones: [
+      {es:"Abogado", ar:"محامٍ"},
+      {es:"Fiscal", ar:"مدعٍ عام"},
+      {es:"Juez", ar:"قاضٍ"},
+      {es:"Notario", ar:"كاتب عدل"},
+      {es:"Asesor legal", ar:"مستشار قانوني"},
+      {es:"Policía", ar:"شرطي"},
+      {es:"Guardia de seguridad", ar:"حارس أمن"},
+      {es:"Detective", ar:"محقق"},
+      {es:"Bombero", ar:"رجل إطفاء"},
+      {es:"Agente penitenciario", ar:"حارس سجن"},
+      {es:"Perito forense", ar:"خبير جنائي"},
+      {es:"Mediador legal", ar:"وسيط قانوني"},
+      {es:"Abogado laboral", ar:"محامي عمل"},
+      {es:"Abogado penalista", ar:"محامي جنائي"},
+      {es:"Abogado civil", ar:"محامي مدني"},
+      {es:"Consultor de cumplimiento", ar:"مستشار امتثال"},
+      {es:"Oficial de aduanas", ar:"ضابط جمرك"},
+      {es:"Inspector de policía", ar:"مفتش شرطة"},
+      {es:"Técnico forense", ar:"فني جنائي"},
+      {es:"Analista de inteligencia", ar:"محلل استخبارات"},
+      {es:"Agente de protección", ar:"وكيل حماية"},
+      {es:"Abogado de familia", ar:"محامي أسرة"},
+      {es:"Abogado de inmigración", ar:"محامي هجرة"},
+      {es:"Asistente jurídico", ar:"مساعد قانوني"},
+      {es:"Perito tasador", ar:"خبير تقييم"}
+    ]
+  },
+  {
+    nombre: "Manufactura y Producción",
+    descripcion: "Operaciones industriales y fabricación",
+    profesiones: [
+      {es:"Operario de producción", ar:"عامل إنتاج"},
+      {es:"Supervisor de planta", ar:"مشرف مصنع"},
+      {es:"Técnico de mantenimiento", ar:"فني صيانة"},
+      {es:"Ingeniero de producción", ar:"مهندس إنتاج"},
+      {es:"Operador de máquina", ar:"مشغل آلة"},
+      {es:"Montador", ar:"عامل تركيب"},
+      {es:"Control de calidad", ar:"مراقب جودة"},
+      {es:"Encargado de línea", ar:"مشرف خط إنتاج"},
+      {es:"Soldador", ar:"لحام"},
+      {es:"Tornero", ar:"عامل مخرطة"},
+      {es:"Fresador", ar:"عامل فريز"},
+      {es:"Plegador", ar:"عامل ثني"},
+      {es:"Empaquetador", ar:"عامل تعبئة"},
+      {es:"Operario de envasado", ar:"عامل تعبئة وتغليف"},
+      {es:"Técnico de instrumentación", ar:"فني أدوات قياس"},
+      {es:"Ingeniero de procesos", ar:"مهندس عمليات"},
+      {es:"Planificador de producción", ar:"مخطط إنتاج"},
+      {es:"Logística interna", ar:"لوجستيات داخلية"},
+      {es:"Operario CNC", ar:"مشغل سي إن سي"},
+      {es:"Técnico de seguridad industrial", ar:"فني سلامة صناعية"},
+      {es:"Encargado de mantenimiento", ar:"مشرف صيانة"},
+      {es:"Operario de montaje electrónico", ar:"عامل تجميع إلكتروني"},
+      {es:"Inspector dimensional", ar:"مفتش أبعاد"},
+      {es:"Operario de pintura industrial", ar:"عامل طلاء صناعي"},
+      {es:"Técnico de automatización", ar:"فني أتمتة"}
+    ]
+  },
+  {
+    nombre: "Agricultura y Recursos Naturales",
+    descripcion: "Producción agrícola y gestión de recursos",
+    profesiones: [
+      {es:"Agricultor", ar:"مزارع"},
+      {es:"Ganadero", ar:"مربي مواشي"},
+      {es:"Agrónomo", ar:"مهندس زراعي"},
+      {es:"Técnico agrícola", ar:"فني زراعي"},
+      {es:"Jardinero", ar:"بستاني"},
+      {es:"Paisajista", ar:"مصمم مناظر طبيعية"},
+      {es:"Apicultor", ar:"مربي نحل"},
+      {es:"Pescador", ar:"صياد"},
+      {es:"Silvicultor", ar:"مهندس غابات"},
+      {es:"Operario de invernadero", ar:"عامل بيت زجاجي"},
+      {es:"Técnico en riego", ar:"فني ري"},
+      {es:"Ingeniero de recursos hídricos", ar:"مهندس موارد مائية"},
+      {es:"Técnico en suelos", ar:"فني تربة"},
+      {es:"Operario de cosecha", ar:"عامل حصاد"},
+      {es:"Gestor de finca", ar:"مدير مزرعة"},
+      {es:"Técnico en fertilización", ar:"فني تسميد"},
+      {es:"Inspector fitosanitario", ar:"مفتش صحة نباتية"},
+      {es:"Operario de maquinaria agrícola", ar:"مشغل معدات زراعية"},
+      {es:"Técnico en producción animal", ar:"فني إنتاج حيواني"},
+      {es:"Especialista en semillas", ar:"أخصائي بذور"},
+      {es:"Consultor agrícola", ar:"مستشار زراعي"},
+      {es:"Técnico en agroindustria", ar:"فني صناعة زراعية"},
+      {es:"Operario de empaquetado agrícola", ar:"عامل تعبئة زراعية"},
+      {es:"Gestor de riego", ar:"مدير ري"},
+      {es:"Inspector de calidad agrícola", ar:"مفتش جودة زراعية"}
+    ]
+  },
+  {
+    nombre: "Belleza, Moda y Comercio Creativo",
+    descripcion: "Estética, moda y oficios creativos",
+    profesiones: [
+      {es:"Diseñador de moda", ar:"مصمم أزياء"},
+      {es:"Sastre", ar:"خياط"},
+      {es:"Modista", ar:"خياطة"},
+      {es:"Estilista de moda", ar:"مصمم أزياء شخصي"},
+      {es:"Personal shopper", ar:"مشتري شخصي"},
+      {es:"Visual merchandiser", ar:"منسق عرض بصري"},
+      {es:"Maquillador", ar:"خبير مكياج"},
+      {es:"Manicurista", ar:"أخصائي أظافر"},
+      {es:"Pedicurista", ar:"أخصائي أقدام"},
+      {es:"Fotógrafo de moda", ar:"مصور أزياء"},
+      {es:"Model", ar:"عارض أزياء"},
+      {es:"Diseñador de joyería", ar:"مصمم مجوهرات"},
+      {es:"Tapicero", ar:"مفروشات"},
+      {es:"Ceramista", ar:"صانع خزف"},
+      {es:"Artesano", ar:"حرفي"},
+      {es:"Restaurador de arte", ar:"مرمم أعمال فنية"},
+      {es:"Escaparatista", ar:"مصمم واجهات عرض"},
+      {es:"Cortador de telas", ar:"قاطع أقمشة"},
+      {es:"Patronista", ar:"مصمم باترونات"},
+      {es:"Diseñador textil", ar:"مصمم أقمشة"},
+      {es:"Asistente de producción de moda", ar:"مساعد إنتاج أزياء"},
+      {es:"Modelista", ar:"صانع نماذج"},
+      {es:"Técnico de confección", ar:"فني خياطة صناعية"},
+      {es:"Colorista", ar:"أخصائي ألوان"},
+      {es:"Estilista de celebridades", ar:"مصمم إطلالات مشاهير"}
+    ]
+  },
+  {
+    nombre: "Medios y Comunicación",
+    descripcion: "Periodismo, comunicación y relaciones públicas",
+    profesiones: [
+      {es:"Periodista", ar:"صحفي"},
+      {es:"Redactor", ar:"كاتب"},
+      {es:"Editor", ar:"محرر"},
+      {es:"Presentador", ar:"مقدم برامج"},
+      {es:"Productor de radio", ar:"منتج راديو"},
+      {es:"Community manager", ar:"مدير مجتمع"},
+      {es:"Relaciones públicas", ar:"علاقات عامة"},
+      {es:"Responsable de comunicación", ar:"مسؤول اتصالات"},
+      {es:"Corrector", ar:"مدقق لغوي"},
+      {es:"Traductor", ar:"مترجم"},
+      {es:"Intérprete", ar:"مترجم فوري"},
+      {es:"Locutor", ar:"مذيع صوتي"},
+      {es:"Analista de medios", ar:"محلل إعلامي"},
+      {es:"Productor de contenidos", ar:"منتج محتوى"},
+      {es:"Guionista de TV", ar:"كاتب سيناريو تلفزيوني"},
+      {es:"Técnico de sonido", ar:"فني صوت"},
+      {es:"Operador de cámara", ar:"مشغل كاميرا"},
+      {es:"Diseñador editorial", ar:"مصمم مطبوعات"},
+      {es:"Especialista en prensa", ar:"أخصائي صحافة"},
+      {es:"Fotoperiodista", ar:"مصور صحفي"},
+      {es:"Analista de comunicación", ar:"محلل اتصالات"},
+      {es:"Responsable de contenidos", ar:"مدير محتوى"},
+      {es:"Editor web", ar:"محرر ويب"},
+      {es:"Community strategist", ar:"استراتيجي مجتمع"},
+      {es:"Técnico de transmisión", ar:"فني بث"}
+    ]
+  },
+  {
+    nombre: "Deportes y Ocio",
+    descripcion: "Profesionales del deporte y actividades recreativas",
+    profesiones: [
+      {es:"Entrenador deportivo", ar:"مدرب رياضي"},
+      {es:"Preparador físico", ar:"مدرب لياقة"},
+      {es:"Instructor de natación", ar:"مدرب سباحة"},
+      {es:"Árbitro", ar:"حكم"},
+      {es:"Gestor deportivo", ar:"مدير رياضي"},
+      {es:"Fisioterapeuta deportivo", ar:"أخصائي علاج طبيعي رياضي"},
+      {es:"Nutricionista deportivo", ar:"أخصائي تغذية رياضية"},
+      {es:"Monitor de gimnasio", ar:"مشرف صالة رياضية"},
+      {es:"Guía de aventura", ar:"مرشد مغامرات"},
+      {es:"Instructor de escalada", ar:"مدرب تسلق"},
+      {es:"Instructor de buceo", ar:"مدرب غوص"},
+      {es:"Director técnico", ar:"مدير فني"},
+      {es:"Scout deportivo", ar:"كشاف مواهب"},
+      {es:"Agente deportivo", ar:"وكيل رياضي"},
+      {es:"Periodista deportivo", ar:"صحفي رياضي"},
+      {es:"Organizador de eventos deportivos", ar:"منظم فعاليات رياضية"},
+      {es:"Técnico de material deportivo", ar:"فني معدات رياضية"},
+      {es:"Instructor de yoga", ar:"مدرب يوغا"},
+      {es:"Instructor de pilates", ar:"مدرب بيلاتس"},
+      {es:"Monitor de actividades infantiles", ar:"مشرف أنشطة أطفال"},
+      {es:"Gestor de instalaciones deportivas", ar:"مدير منشآت رياضية"},
+      {es:"Entrenador personal", ar:"مدرب شخصي"},
+      {es:"Técnico de rehabilitación", ar:"فني إعادة تأهيل"},
+      {es:"Instructor de surf", ar:"مدرب ركوب الأمواج"},
+      {es:"Instructor de esquí", ar:"مدرب تزلج"}
+    ]
+  },
+  {
+    nombre: "Energía y Minería",
+    descripcion: "Extracción, producción y energía",
+    profesiones: [
+      {es:"Ingeniero de minas", ar:"مهندس مناجم"},
+      {es:"Operario de mina", ar:"عامل منجم"},
+      {es:"Geólogo de minas", ar:"جيولوجي مناجم"},
+      {es:"Técnico en petróleo", ar:"فني نفط"},
+      {es:"Ingeniero petrolero", ar:"مهندس نفط"},
+      {es:"Operario de plataforma", ar:"عامل منصة نفط"},
+      {es:"Ingeniero de energía", ar:"مهندس طاقة"},
+      {es:"Técnico en energías renovables", ar:"فني طاقة متجددة"},
+      {es:"Operario de central eléctrica", ar:"عامل محطة كهرباء"},
+      {es:"Ingeniero nuclear", ar:"مهندس نووي"},
+      {es:"Técnico de mantenimiento industrial", ar:"فني صيانة صناعية"},
+      {es:"Supervisor de perforación", ar:"مشرف حفر"},
+      {es:"Analista de recursos", ar:"محلل موارد"},
+      {es:"Ingeniero de yacimientos", ar:"مهندس مكامن"},
+      {es:"Operario de refinería", ar:"عامل مصفاة"},
+      {es:"Técnico en seguridad industrial", ar:"فني سلامة صناعية"},
+      {es:"Ingeniero de procesos", ar:"مهندس عمليات"},
+      {es:"Gestor de proyectos energéticos", ar:"مدير مشاريع طاقة"},
+      {es:"Técnico en control ambiental", ar:"فني مراقبة بيئية"},
+      {es:"Operario de mantenimiento eléctrico", ar:"عامل صيانة كهربائية"},
+      {es:"Ingeniero de redes eléctricas", ar:"مهندس شبكات كهربائية"},
+      {es:"Técnico en instrumentación", ar:"فني أدوات قياس"},
+      {es:"Especialista en eficiencia energética", ar:"أخصائي كفاءة طاقة"},
+      {es:"Operario de planta solar", ar:"عامل محطة شمسية"},
+      {es:"Operario de planta eólica", ar:"عامل محطة رياح"}
+    ]
+  },
+  {
+    nombre: "Investigación y Desarrollo",
+    descripcion: "I+D en empresas y centros tecnológicos",
+    profesiones: [
+      {es:"Investigador principal", ar:"باحث رئيسي"},
+      {es:"Técnico de I+D", ar:"فني بحث وتطوير"},
+      {es:"Ingeniero de I+D", ar:"مهندس بحث وتطوير"},
+      {es:"Gestor de proyectos I+D", ar:"مدير مشاريع بحث وتطوير"},
+      {es:"Analista de innovación", ar:"محلل ابتكار"},
+      {es:"Especialista en patentes", ar:"أخصائي براءات اختراع"},
+      {es:"Científico investigador", ar:"عالم باحث"},
+      {es:"Técnico de ensayos", ar:"فني اختبارات"},
+      {es:"Ingeniero de prototipos", ar:"مهندس نماذج أولية"},
+      {es:"Coordinador de laboratorio", ar:"منسق مختبر"},
+      {es:"Especialista en transferencia tecnológica", ar:"أخصائي نقل تكنولوجيا"},
+      {es:"Gestor de calidad I+D", ar:"مدير جودة بحث وتطوير"},
+      {es:"Analista de mercado tecnológico", ar:"محلل سوق تكنولوجي"},
+      {es:"Ingeniero de materiales", ar:"مهندس مواد"},
+      {es:"Técnico de caracterización", ar:"فني توصيف"},
+      {es:"Especialista en biotecnología", ar:"أخصائي بيوتكنولوجيا"},
+      {es:"Ingeniero de procesos R&D", ar:"مهندس عمليات بحث وتطوير"},
+      {es:"Técnico de instrumentación avanzada", ar:"فني أدوات متقدمة"},
+      {es:"Especialista en nanotecnología", ar:"أخصائي نانوتكنولوجيا"},
+      {es:"Gestor de proyectos europeos", ar:"مدير مشاريع أوروبية"},
+      {es:"Analista de datos de investigación", ar:"محلل بيانات بحث"},
+      {es:"Coordinador de ensayos clínicos", ar:"منسق تجارب سريرية"},
+      {es:"Especialista en bioinformática", ar:"أخصائي معلومات حيوية"},
+      {es:"Ingeniero de robótica", ar:"مهندس روبوتات"},
+      {es:"Técnico de automatización", ar:"فني أتمتة"}
+    ]
+  },
+  {
+    nombre: "Servicios Públicos y Administración",
+    descripcion: "Empleo público y administración local",
+    profesiones: [
+      {es:"Funcionario público", ar:"موظف حكومي"},
+      {es:"Administrador público", ar:"إداري عام"},
+      {es:"Técnico municipal", ar:"فني بلدي"},
+      {es:"Gestor de políticas", ar:"مدير سياسات"},
+      {es:"Inspector municipal", ar:"مفتش بلدي"},
+      {es:"Técnico de contratación", ar:"فني مشتريات"},
+      {es:"Responsable de comunicación pública", ar:"مسؤول اتصالات عامة"},
+      {es:"Gestor de servicios sociales", ar:"مدير خدمات اجتماعية"},
+      {es:"Técnico de urbanismo", ar:"فني تخطيط عمراني"},
+      {es:"Arquitecto municipal", ar:"مهندس معماري بلدي"},
+      {es:"Técnico de medio ambiente", ar:"فني بيئة"},
+      {es:"Gestor de emergencias", ar:"مدير طوارئ"},
+      {es:"Técnico de movilidad", ar:"فني تنقل"},
+      {es:"Responsable de cultura", ar:"مسؤول ثقافة"},
+      {es:"Gestor de patrimonio", ar:"مدير تراث"},
+      {es:"Técnico de empleo", ar:"فني توظيف"},
+      {es:"Responsable de turismo local", ar:"مسؤول سياحة محلية"},
+      {es:"Técnico de educación", ar:"فني تعليم"},
+      {es:"Responsable de salud pública", ar:"مسؤول صحة عامة"},
+      {es:"Gestor de subvenciones", ar:"مدير منح"},
+      {es:"Técnico de estadística", ar:"فني إحصاء"},
+      {es:"Responsable de transparencia", ar:"مسؤول شفافية"},
+      {es:"Técnico de sistemas municipales", ar:"فني نظم بلدية"},
+      {es:"Coordinador de voluntariado", ar:"منسق متطوعين"},
+      {es:"Inspector de obras públicas", ar:"مفتش أعمال عامة"}
+    ]
+  },
+  {
+    nombre: "Oficios y Trabajos Manuales",
+    descripcion: "Artesanos y oficios tradicionales",
+    profesiones: [
+      {es:"Cerrajero", ar:"قفال"},
+      {es:"Tapicero", ar:"مفروشات"},
+      {es:"Ebanista", ar:"نجار أثاث"},
+      {es:"Herrero", ar:"حداد"},
+      {es:"Vidriero", ar:"عامل زجاج"},
+      {es:"Albañil", ar:"عامل بناء"},
+      {es:"Yesero", ar:"عامل جبس"},
+      {es:"Alicatador", ar:"عامل بلاط"},
+      {es:"Reparador de calzado", ar:"مصلح أحذية"},
+      {es:"Sastre", ar:"خياط"},
+      {es:"Restaurador", ar:"مرمم"},
+      {es:"Ceramista", ar:"صانع خزف"},
+      {es:"Forjador", ar:"صانع حدادة"},
+      {es:"Marmolista", ar:"عامل رخام"},
+      {es:"Pintor decorador", ar:"دهان زخرفي"},
+      {es:"Fontanero", ar:"سباك"},
+      {es:"Electricista doméstico", ar:"كهربائي منزلي"},
+      {es:"Montador de muebles", ar:"عامل تركيب أثاث"},
+      {es:"Reparador de electrodomésticos", ar:"مصلح أجهزة منزلية"},
+      {es:"Técnico de calderas", ar:"فني غلايات"},
+      {es:"Instalador de suelos", ar:"عامل تركيب أرضيات"},
+      {es:"Técnico de ascensores", ar:"فني مصاعد"},
+      {es:"Reparador de bicicletas", ar:"مصلح دراجات"},
+      {es:"Tapicero naval", ar:"مفروشات بحرية"},
+      {es:"Carpintero naval", ar:"نجار بحري"}
+    ]
+  },
+  {
+    nombre: "Calidad y Medioambiente",
+    descripcion: "Control de calidad y gestión ambiental",
+    profesiones: [
+      {es:"Inspector de calidad", ar:"مفتش جودة"},
+      {es:"Auditor de calidad", ar:"مدقق جودة"},
+      {es:"Responsable de calidad", ar:"مسؤول جودة"},
+      {es:"Técnico de laboratorio", ar:"فني مختبر"},
+      {es:"Analista de muestras", ar:"محلل عينات"},
+      {es:"Gestor ambiental", ar:"مدير بيئي"},
+      {es:"Técnico en prevención de riesgos", ar:"فني وقاية مهنية"},
+      {es:"Responsable HSE", ar:"مسؤول الصحة والسلامة والبيئة"},
+      {es:"Auditor ambiental", ar:"مدقق بيئي"},
+      {es:"Consultor en sostenibilidad", ar:"مستشار استدامة"},
+      {es:"Técnico en residuos", ar:"فني نفايات"},
+      {es:"Analista de emisiones", ar:"محلل انبعاثات"},
+      {es:"Gestor de calidad alimentaria", ar:"مدير جودة غذائية"},
+      {es:"Inspector sanitario", ar:"مفتش صحي"},
+      {es:"Técnico en seguridad alimentaria", ar:"فني سلامة غذائية"},
+      {es:"Coordinador de ISO", ar:"منسق نظم إدارة"},
+      {es:"Responsable de auditorías", ar:"مسؤول تدقيقات"},
+      {es:"Técnico en control de plagas", ar:"فني مكافحة آفات"},
+      {es:"Analista de laboratorio químico", ar:"محلل مختبر كيميائي"},
+      {es:"Gestor de residuos industriales", ar:"مدير نفايات صناعية"},
+      {es:"Técnico en eficiencia energética", ar:"فني كفاءة طاقة"},
+      {es:"Inspector de seguridad", ar:"مفتش سلامة"},
+      {es:"Especialista en reciclaje", ar:"أخصائي إعادة تدوير"},
+      {es:"Coordinador de sostenibilidad", ar:"منسق استدامة"},
+      {es:"Técnico en control ambiental", ar:"فني مراقبة بيئية"}
+    ]
+  },
+  {
+    nombre: "Comercio Internacional y Aduanas",
+    descripcion: "Import/export, aduanas y comercio exterior",
+    profesiones: [
+      {es:"Agente de aduanas", ar:"وكيل جمركي"},
+      {es:"Gestor de import/export", ar:"منسق استيراد وتصدير"},
+      {es:"Despachante", ar:"مخلص جمركي"},
+      {es:"Transitario", ar:"وسيط شحن"},
+      {es:"Coordinador de logística internacional", ar:"منسق لوجستيات دولية"},
+      {es:"Analista de comercio exterior", ar:"محلل تجارة خارجية"},
+      {es:"Especialista en documentación", ar:"أخصائي وثائق"},
+      {es:"Inspector de mercancías", ar:"مفتش بضائع"},
+      {es:"Gestor de aduanas", ar:"مدير جمركي"},
+      {es:"Agente de carga", ar:"وكيل شحن"},
+      {es:"Coordinador de aduanas", ar:"منسق جمركي"},
+      {es:"Especialista en aranceles", ar:"أخصائي رسوم جمركية"},
+      {es:"Operador de puerto", ar:"مشغل ميناء"},
+      {es:"Analista de riesgos comerciales", ar:"محلل مخاطر تجارية"},
+      {es:"Gestor de compliance aduanero", ar:"مدير امتثال جمركي"},
+      {es:"Coordinador de transporte internacional", ar:"منسق نقل دولي"},
+      {es:"Agente de exportación", ar:"وكيل تصدير"},
+      {es:"Gestor de documentación", ar:"مدير وثائق"},
+      {es:"Especialista en logística marítima", ar:"أخصائي لوجستيات بحرية"},
+      {es:"Especialista en logística aérea", ar:"أخصائي لوجستيات جوية"},
+      {es:"Operador de terminal portuaria", ar:"مشغل محطة ميناء"},
+      {es:"Analista de aduanas", ar:"محلل جمركي"},
+      {es:"Coordinador de comercio exterior", ar:"منسق تجارة خارجية"},
+      {es:"Especialista en seguros de transporte", ar:"أخصائي تأمين شحن"},
+      {es:"Gestor de operaciones internacionales", ar:"مدير عمليات دولية"}
+    ]
+  },
+  {
+    nombre: "Startups y Emprendimiento",
+    descripcion: "Roles habituales en empresas emergentes",
+    profesiones: [
+      {es:"Fundador", ar:"مؤسس"},
+      {es:"Cofundador", ar:"شريك مؤسس"},
+      {es:"CEO", ar:"المدير التنفيذي"},
+      {es:"CTO", ar:"المدير التقني"},
+      {es:"CFO", ar:"المدير المالي"},
+      {es:"COO", ar:"مدير العمليات"},
+      {es:"Product owner", ar:"مالك المنتج"},
+      {es:"Growth hacker", ar:"مختص نمو"},
+      {es:"Full stack developer", ar:"مطور متعدد الطبقات"},
+      {es:"UX researcher", ar:"باحث تجربة المستخدم"},
+      {es:"Business developer", ar:"مطور أعمال"},
+      {es:"Fundraiser", ar:"جامع تبرعات"},
+      {es:"Mentor", ar:"مرشد أعمال"},
+      {es:"Incubador", ar:"حاضنة أعمال"},
+      {es:"Acelerador", ar:"مسرّع أعمال"},
+      {es:"Analista de métricas", ar:"محلل مقاييس"},
+      {es:"Especialista en producto", ar:"أخصائي منتج"},
+      {es:"Customer success", ar:"نجاح العملاء"},
+      {es:"Operaciones", ar:"عمليات"},
+      {es:"Legal startup", ar:"مستشار قانوني للشركات الناشئة"},
+      {es:"Especialista en UX", ar:"أخصائي تجربة المستخدم"},
+      {es:"Ingeniero de fiabilidad", ar:"مهندس موثوقية"},
+      {es:"Especialista en pagos", ar:"أخصائي مدفوعات"},
+      {es:"Analista de negocio startup", ar:"محلل أعمال للشركات الناشئة"},
+      {es:"Community builder", ar:"باني مجتمع"}
+    ]
+  }
+];
+
+/* --- Renderizado de grupos y tarjetas --- */
+const main = document.getElementById('mainContent');
+
+function createCardHTML(p, idxGlobal){
+  return `
+    <article class="card" data-idx="${idxGlobal}">
+      <div class="info">
+        <div class="nombre">${escapeHtml(p.es)}</div>
+        <div class="arab" lang="ar">${escapeHtml(p.ar)}</div>
+      </div>
+      <div class="actions">
+        <button class="speak" data-idx="${idxGlobal}" aria-label="Reproducir audio">🔊</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderAll(){
+  main.innerHTML = '';
+  let globalIdx = 0;
+  grupos.forEach((g, gi) => {
+    const groupEl = document.createElement('section');
+    groupEl.className = 'group';
+    const header = document.createElement('div');
+    header.className = 'group-header';
+    header.innerHTML = `<div>
+        <div class="group-title">${escapeHtml(g.nombre)}</div>
+        <div class="group-desc small">${escapeHtml(g.descripcion)}</div>
+      </div>
+      <div class="small">Total: ${g.profesiones.length}</div>`;
+    groupEl.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    // construir innerHTML con las tarjetas del grupo
+    grid.innerHTML = g.profesiones.map(p => {
+      const html = `
+        <article class="card" data-idx="${globalIdx}">
+          <div class="info">
+            <div class="nombre">${escapeHtml(p.es)}</div>
+            <div class="arab" lang="ar">${escapeHtml(p.ar)}</div>
+          </div>
+          <div class="actions">
+            <button class="speak" data-idx="${globalIdx}" aria-label="Reproducir audio">🔊</button>
+          </div>
+        </article>`;
+      globalIdx++;
+      return html;
+    }).join('');
+    groupEl.appendChild(grid);
+    main.appendChild(groupEl);
+  });
+}
+renderAll();
+
+/* --- Densidad (columnas) --- */
+const density = document.getElementById('density');
+const densityVal = document.getElementById('densityVal');
+function applyDensity(n){
+  // aplicar a todos los grids
+  document.querySelectorAll('.grid').forEach(g => {
+    g.classList.remove('cols-1','cols-2','cols-3','cols-4','cols-5','cols-6');
+    g.classList.add('cols-' + n);
+  });
+  densityVal.textContent = n;
+}
+density.addEventListener('input', e => applyDensity(e.target.value));
+applyDensity(density.value);
+
+/* --- Web Speech API: cargar voces y reproducir --- */
+const voiceSelect = document.getElementById('voiceSelect');
+const rateControl = document.getElementById('rate');
+let voices = [];
+
+function loadVoices(){
+  voices = speechSynthesis.getVoices().sort((a,b)=> a.name.localeCompare(b.name));
+  voiceSelect.innerHTML = voices.map((v,i)=>`<option value="${i}">${v.name} — ${v.lang}</option>`).join('');
+  // intentar seleccionar una voz en español por defecto si existe
+  const idxEs = voices.findIndex(v => v.lang && v.lang.startsWith('es'));
+  if(idxEs >= 0) voiceSelect.value = idxEs;
+}
+if('speechSynthesis' in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+/* Reproducción: al hacer click en cualquier botón de la cuadrícula */
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('button.speak');
+  if(!btn) return;
+  const idx = Number(btn.dataset.idx);
+  // localizar la profesión por índice global
+  const flat = flattenProfesiones();
+  const item = flat[idx];
+  if(!item) return;
+  // reproducir: primero español, luego árabe (dos encolados)
+  speakText(item.es, {lang: 'es'});
+  // pequeña pausa entre frases
+  setTimeout(()=> speakText(item.ar, {lang: 'ar'}), 600);
+});
+
+/* Flatten de profesiones para indexado */
+function flattenProfesiones(){
+  const arr = [];
+  grupos.forEach(g => g.profesiones.forEach(p => arr.push(p)));
+  return arr;
+}
+
+/* Función de TTS */
+function speakText(text, opts = {}){
+  if(typeof speechSynthesis === 'undefined') {
+    alert('TTS no soportado en este navegador.');
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  const selectedIndex = Number(voiceSelect.value || 0);
+  if(voices[selectedIndex]) u.voice = voices[selectedIndex];
+  u.rate = Number(rateControl.value || 1);
+  if(opts.lang) u.lang = opts.lang;
+  speechSynthesis.speak(u);
+}
+
+/* --- Utilidades --- */
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/* --- Mejora opcional: búsqueda rápida (no solicitada) ---
+   Puedes añadir un input para filtrar por texto y mostrar/ocultar tarjetas.
+   Para rendimiento con 500 tarjetas, la DOM actual es manejable en navegadores modernos.
+*/
+</script>
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sports Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg:#f7f7f9; --card:#fff; --text:#111; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(0,0,0,0.06); --chip:#eef6ff;
+      --tile-min:160px; --tile-padding:10px; --word-size:0.98rem; --trans-size:0.86rem; --btn-size:44px;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#0b0d10; --card:#0f1317; --text:#e6eef8; --muted:#9aa6b2; --accent:#4ea1ff;
+        --accent-contrast:#07101a; --border:#1f2429; --shadow:0 2px 8px rgba(0,0,0,0.45); --chip:#12202b;
+      }
+    }
+
+    /* Dense mode variables */
+    .dense {
+      --tile-min:120px;
+      --tile-padding:8px;
+      --word-size:0.92rem;
+      --trans-size:0.78rem;
+      --btn-size:36px;
+    }
+
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:0 0 8px;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:0.95rem;outline:none;}
+    main{margin-top:12px;}
+    .category{margin:12px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:var(--chip);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--tile-padding);display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;box-shadow:var(--shadow);min-height:48px;}
+    .word{font-size:var(--word-size);font-weight:600;line-height:1.15;}
+    .translation{font-size:var(--trans-size);color:var(--muted);margin-top:4px;display:block;line-height:1.1;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px 12px;border-radius:999px;font-size:0.9rem;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow);}
+    .speak-btn:active{transform:translateY(1px);filter:brightness(0.96);}
+    .footer{margin:14px 0 30px;color:var(--muted);text-align:center;font-size:0.92rem;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .grid{gap:6px;} .item{padding:6px;} .word{font-size:0.98rem;} .speak-btn{padding:8px 10px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Sports vocabulary with Arabic translations and pronunciation">
+    <header>
+      <h1>Sports Vocabulary — English with Arabic translations</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter terms (English or Arabic)..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);white-space:nowrap;">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <div class="footer">
+      Tip: Pronunciations use your device's speech synthesis voices. If a voice is missing, try switching the accent or device.
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // DATA: Sports vocabulary grouped with Arabic translations
+    // Categories: Sports types, Equipment, Venues, Positions & Roles, Rules & Scoring, Officials, Training & Fitness,
+    // Injuries & Medical, Tactics & Formations, Competitions & Events, Organizations & Governing Bodies, Terms by sport
+    // =========================
+    const DATA = {
+      "General Sports Types": [
+        {en:"team sport", ar:"رياضة جماعية"},
+        {en:"individual sport", ar:"رياضة فردية"},
+        {en:"combat sport", ar:"رياضة قتالية"},
+        {en:"racquet sport", ar:"رياضة مضرب"},
+        {en:"water sport", ar:"رياضة مائية"},
+        {en:"winter sport", ar:"رياضة شتوية"},
+        {en:"motor sport", ar:"رياضة محركات"},
+        {en:"extreme sport", ar:"رياضة متطرفة"},
+        {en:"paralympic sport", ar:"رياضة بارالمبية"},
+        {en:"indoor sport", ar:"رياضة داخلية"},
+        {en:"outdoor sport", ar:"رياضة خارجية"},
+        {en:"endurance sport", ar:"رياضة التحمل"},
+        {en:"precision sport", ar:"رياضة الدقة"},
+        {en:"strength sport", ar:"رياضة القوة"},
+        {en:"recreational sport", ar:"رياضة ترفيهية"},
+        {en:"professional sport", ar:"رياضة احترافية"},
+        {en:"amateur sport", ar:"رياضة هاوية"},
+        {en:"youth sport", ar:"رياضة شبابية"},
+        {en:"school sport", ar:"رياضة مدرسية"},
+        {en:"adaptive sport", ar:"رياضة متكيفة"}
+      ],
+
+      "Popular Sports (general)": [
+        {en:"football (soccer)", ar:"كرة القدم"},
+        {en:"basketball", ar:"كرة السلة"},
+        {en:"tennis", ar:"تنس"},
+        {en:"cricket", ar:"الكريكيت"},
+        {en:"rugby", ar:"الرجبي"},
+        {en:"baseball", ar:"البيسبول"},
+        {en:"volleyball", ar:"الكرة الطائرة"},
+        {en:"handball", ar:"اليد"},
+        {en:"hockey", ar:"هوكي"},
+        {en:"golf", ar:"غولف"},
+        {en:"boxing", ar:"ملاكمة"},
+        {en:"mixed martial arts", ar:"فنون قتالية مختلطة"},
+        {en:"swimming", ar:"سباحة"},
+        {en:"athletics", ar:"ألعاب القوى"},
+        {en:"cycling", ar:"دراجات"},
+        {en:"table tennis", ar:"تنس الطاولة"},
+        {en:"badminton", ar:"بادمنتون"},
+        {en:"skiing", ar:"تزلج"},
+        {en:"snowboarding", ar:"تزلج على اللوح"},
+        {en:"surfing", ar:"ركوب الأمواج"}
+      ],
+
+      "Equipment & Gear": [
+        {en:"ball", ar:"كرة"},
+        {en:"bat", ar:"مضرب/مِضرب"},
+        {en:"racket", ar:"مضرب (راكت)"},
+        {en:"helmet", ar:"خوذة"},
+        {en:"gloves", ar:"قفازات"},
+        {en:"cleats", ar:"أحذية بمسامير"},
+        {en:"shin guard", ar:"واقي ساق"},
+        {en:"mouthguard", ar:"واقي فم"},
+        {en:"protective pad", ar:"واقي حماية"},
+        {en:"goal", ar:"مرمى"},
+        {en:"net", ar:"شبكة"},
+        {en:"hoop", ar:"طوق (سلة)"},
+        {en:"puck", ar:"قرص هوكي"},
+        {en:"skates", ar:"زلاجات"},
+        {en:"bike", ar:"دراجة"},
+        {en:"kayak", ar:"كاياك"},
+        {en:"surfboard", ar:"لوح ركوب الأمواج"},
+        {en:"goggles", ar:"نظارات واقية"},
+        {en:"swimsuit", ar:"مايوه"},
+        {en:"weight", ar:"وزن/دمبل"}
+      ],
+
+      "Venues & Facilities": [
+        {en:"stadium", ar:"استاد"},
+        {en:"arena", ar:"صالة"},
+        {en:"pitch", ar:"ملعب"},
+        {en:"court", ar:"ملعب (مضرب/سلة)"},
+        {en:"track", ar:"مضمار"},
+        {en:"field", ar:"ميدان"},
+        {en:"gymnasium", ar:"صالة ألعاب رياضية"},
+        {en:"swimming pool", ar:"مسبح"},
+        {en:"velodrome", ar:"حلبة الدراجات"},
+        {en:"rink", ar:"حلبة (تزلج/هوكي)"},
+        {en:"course", ar:"مسار (غولف/سباق)"},
+        {en:"dojo", ar:"دويو (صالة فنون قتالية)"},
+        {en:"boxing ring", ar:"حلبة ملاكمة"},
+        {en:"training ground", ar:"ملعب تدريب"},
+        {en:"sports complex", ar:"مجمّع رياضي"},
+        {en:"clubhouse", ar:"نادي/بيت النادي"},
+        {en:"locker room", ar:"غرفة تبديل الملابس"},
+        {en:"press box", ar:"منطقة الصحافة"},
+        {en:"grandstand", ar:"منصة الجمهور"},
+        {en:"finish line", ar:"خط النهاية"}
+      ],
+
+      "Positions & Roles": [
+        {en:"coach", ar:"مدرب"},
+        {en:"player", ar:"لاعب"},
+        {en:"captain", ar:"قائد الفريق"},
+        {en:"substitute", ar:"بديل"},
+        {en:"striker", ar:"مهاجم"},
+        {en:"goalkeeper", ar:"حارس المرمى"},
+        {en:"defender", ar:"مدافع"},
+        {en:"midfielder", ar:"لاعب وسط"},
+        {en:"forward", ar:"مهاجم/مقدّم"},
+        {en:"referee", ar:"حكم"},
+        {en:"umpire", ar:"حكم (بيسبول/تنس)"},
+        {en:"linesman", ar:"حكم مساعد"},
+        {en:"trainer", ar:"مدرّب بدني/معالج"},
+        {en:"physio", ar:"أخصائي علاج طبيعي"},
+        {en:"manager", ar:"مدير الفريق"},
+        {en:"owner", ar:"مالك"},
+        {en:"scout", ar:"كشاف مواهب"},
+        {en:"analyst", ar:"محلل أداء"},
+        {en:"goalie coach", ar:"مدرب حراس المرمى"},
+        {en:"team doctor", ar:"طبيب الفريق"}
+      ],
+
+      "Rules & Scoring": [
+        {en:"goal", ar:"هدف"},
+        {en:"point", ar:"نقطة"},
+        {en:"try", ar:"تراي (ركبي)"},
+        {en:"touchdown", ar:"تاتشداون"},
+        {en:"foul", ar:"خطأ"},
+        {en:"penalty", ar:"ركلة جزاء / عقوبة"},
+        {en:"offside", ar:"تسلل"},
+        {en:"corner", ar:"ركنية"},
+        {en:"free kick", ar:"ركلة حرة"},
+        {en:"yellow card", ar:"بطاقة صفراء"},
+        {en:"red card", ar:"بطاقة حمراء"},
+        {en:"timeout", ar:"وقت مستقطع"},
+        {en:"overtime", ar:"وقت إضافي"},
+        {en:"draw", ar:"تعادل"},
+        {en:"win", ar:"فوز"},
+        {en:"loss", ar:"خسارة"},
+        {en:"aggregate", ar:"المجموع الكلي"},
+        {en:"penalty shootout", ar:"ركلات ترجيح"},
+        {en:"handicap", ar:"تعادل/هاندكاب"},
+        {en:"scoreboard", ar:"لوحة النتائج"}
+      ],
+
+      "Officials & Governance": [
+        {en:"referee", ar:"حكم"},
+        {en:"assistant referee", ar:"حكم مساعد"},
+        {en:"umpire", ar:"حكم (بيسبول/تنس)"},
+        {en:"linesman", ar:"حكم خط"},
+        {en:"match commissioner", ar:"مفوض المباراة"},
+        {en:"technical delegate", ar:"مندوب فني"},
+        {en:"governing body", ar:"هيئة إدارية"},
+        {en:"federation", ar:"اتحاد"},
+        {en:"association", ar:"جمعية"},
+        {en:"league", ar:"دوري"},
+        {en:"committee", ar:"لجنة"},
+        {en:"anti-doping agency", ar:"وكالة مكافحة المنشطات"},
+        {en:"disciplinary panel", ar:"لجنة تأديبية"},
+        {en:"match official", ar:"مسؤول المباراة"},
+        {en:"video assistant referee (VAR)", ar:"حكم الفيديو المساعد"},
+        {en:"timekeeper", ar:"حافظ الوقت"},
+        {en:"scorekeeper", ar:"مسجل النتائج"},
+        {en:"steward", ar:"مشرف/حارس"},
+        {en:"event organizer", ar:"منظم الحدث"},
+        {en:"sports lawyer", ar:"محامي رياضي"}
+      ],
+
+      "Training & Fitness": [
+        {en:"warm-up", ar:"إحماء"},
+        {en:"cool-down", ar:"تبريد/تهدئة"},
+        {en:"stretching", ar:"تمارين تمدد"},
+        {en:"strength training", ar:"تدريب قوة"},
+        {en:"cardio", ar:"تمارين قلبية/تحمل"},
+        {en:"interval training", ar:"تدريب متقطع"},
+        {en:"plyometrics", ar:"تمارين قفز"},
+        {en:"endurance", ar:"تحمل"},
+        {en:"speed work", ar:"تدريبات السرعة"},
+        {en:"agility", ar:"رشاقة"},
+        {en:"conditioning", ar:"تهيئة بدنية"},
+        {en:"recovery", ar:"استشفاء"},
+        {en:"periodization", ar:"تخطيط فترات التدريب"},
+        {en:"cross-training", ar:"تدريب متقاطع"},
+        {en:"functional training", ar:"تدريب وظيفي"},
+        {en:"resistance band", ar:"شريط مقاومة"},
+        {en:"personal trainer", ar:"مدرب شخصي"},
+        {en:"sports nutrition", ar:"تغذية رياضية"},
+        {en:"hydration", ar:"ترطيب"},
+        {en:"VO2 max", ar:"أقصى استهلاك للأكسجين"}
+      ],
+
+      "Tactics & Formations": [
+        {en:"formation", ar:"تشكيلة"},
+        {en:"strategy", ar:"استراتيجية"},
+        {en:"pressing", ar:"ضغط (تكتيكي)"},
+        {en:"counter-attack", ar:"هجمة مرتدة"},
+        {en:"possession", ar:"استحواذ"},
+        {en:"man-marking", ar:"تغطية فردية"},
+        {en:"zonal marking", ar:"تغطية منطقة"},
+        {en:"set piece", ar:"ركلة ثابتة"},
+        {en:"offensive", ar:"هجومي"},
+        {en:"defensive", ar:"دفاعي"},
+        {en:"high press", ar:"ضغط عالي"},
+        {en:"low block", ar:"كتلة دفاعية منخفضة"},
+        {en:"overload", ar:"زيادة عددية"},
+        {en:"switch play", ar:"تغيير جهة اللعب"},
+        {en:"overlap", ar:"تداخل (جناح)"},
+        {en:"through ball", ar:"تمريرة بينية"},
+        {en:"counter-press", ar:"ضغط معاكس"},
+        {en:"rotation", ar:"تدوير المراكز"},
+        {en:"false nine", ar:"مهاجم وهمي"},
+        {en:"wing-back", ar:"ظهير جناح"}
+      ],
+
+      "Injuries & Medical": [
+        {en:"sprain", ar:"التواء"},
+        {en:"strain", ar:"شد عضلي"},
+        {en:"fracture", ar:"كسر"},
+        {en:"concussion", ar:"ارتجاج دماغي"},
+        {en:"dislocation", ar:"خلع"},
+        {en:"tendonitis", ar:"التهاب الأوتار"},
+        {en:"ACL tear", ar:"تمزق الرباط الصليبي الأمامي"},
+        {en:"hamstring injury", ar:"إصابة أوتار الفخذ"},
+        {en:"shin splints", ar:"آلام قصبة الساق"},
+        {en:"muscle cramp", ar:"تشنج عضلي"},
+        {en:"heat exhaustion", ar:"إرهاق حراري"},
+        {en:"dehydration", ar:"جفاف"},
+        {en:"first aid", ar:"إسعافات أولية"},
+        {en:"physiotherapy", ar:"علاج طبيعي"},
+        {en:"rehabilitation", ar:"تأهيل"},
+        {en:"taping", ar:"تثبيت بالشريط"},
+        {en:"ice pack", ar:"كمادة ثلج"},
+        {en:"compression", ar:"ضغط"},
+        {en:"rest", ar:"راحة"},
+        {en:"return-to-play", ar:"العودة للعب"}
+      ],
+
+      "Competitions & Events": [
+        {en:"match", ar:"مباراة"},
+        {en:"tournament", ar:"بطولة"},
+        {en:"league", ar:"دوري"},
+        {en:"cup", ar:"كأس"},
+        {en:"friendly", ar:"مباراة ودية"},
+        {en:"qualifier", ar:"تصفيات"},
+        {en:"final", ar:"نهائي"},
+        {en:"semi-final", ar:"نصف نهائي"},
+        {en:"quarter-final", ar:"ربع نهائي"},
+        {en:"group stage", ar:"مرحلة المجموعات"},
+        {en:"knockout stage", ar:"مرحلة خروج المغلوب"},
+        {en:"season", ar:"موسم"},
+        {en:"playoffs", ar:"بلاي أوف/تصفيات نهائية"},
+        {en:"championship", ar:"بطولة/بطولة رئيسية"},
+        {en:"opening ceremony", ar:"حفل الافتتاح"},
+        {en:"closing ceremony", ar:"حفل الختام"},
+        {en:"medal", ar:"ميدالية"},
+        {en:"podium", ar:"منصة التتويج"},
+        {en:"record", ar:"رقم قياسي"},
+        {en:"world championship", ar:"بطولة العالم"}
+      ],
+
+      "Organizations & Governing Bodies": [
+        {en:"International Olympic Committee (IOC)", ar:"اللجنة الأولمبية الدولية"},
+        {en:"FIFA", ar:"الاتحاد الدولي لكرة القدم"},
+        {en:"UEFA", ar:"الاتحاد الأوروبي لكرة القدم"},
+        {en:"IOC", ar:"اللجنة الأولمبية الدولية"},
+        {en:"World Athletics", ar:"الاتحاد الدولي لألعاب القوى"},
+        {en:"FIBA", ar:"الاتحاد الدولي لكرة السلة"},
+        {en:"ICC", ar:"المجلس الدولي للكريكيت"},
+        {en:"IRB / World Rugby", ar:"الاتحاد الدولي للرجبي"},
+        {en:"ATP", ar:"رابطة محترفي التنس"},
+        {en:"WTA", ar:"رابطة محترفات التنس"},
+        {en:"UCI", ar:"الاتحاد الدولي للدراجات"},
+        {en:"IAAF", ar:"الاتحاد الدولي لألعاب القوى (سابق)"},
+        {en:"National federation", ar:"الاتحاد الوطني"},
+        {en:"sports club", ar:"نادي رياضي"},
+        {en:"league office", ar:"مكتب الدوري"},
+        {en:"anti-doping agency", ar:"وكالة مكافحة المنشطات"},
+        {en:"sports commission", ar:"لجنة الرياضة"},
+        {en:"athlete union", ar:"نقابة الرياضيين"},
+        {en:"sports academy", ar:"أكاديمية رياضية"},
+        {en:"sports foundation", ar:"مؤسسة رياضية"}
+      ],
+
+      "Sport-specific Terms — Football": [
+        {en:"penalty area", ar:"منطقة الجزاء"},
+        {en:"goal kick", ar:"ركلة مرمى"},
+        {en:"corner kick", ar:"ركنية"},
+        {en:"free kick", ar:"ركلة حرة"},
+        {en:"offside trap", ar:"فخ التسلل"},
+        {en:"hat-trick", ar:"هاتريك"},
+        {en:"assist", ar:"تمريرة حاسمة"},
+        {en:"clean sheet", ar:"شباك نظيفة"},
+        {en:"own goal", ar:"هدف في مرمى الفريق"},
+        {en:"yellow card", ar:"بطاقة صفراء"},
+        {en:"red card", ar:"بطاقة حمراء"},
+        {en:"substitution", ar:"تبديل"},
+        {en:"extra time", ar:"وقت إضافي"},
+        {en:"aggregate score", ar:"النتيجة الإجمالية"},
+        {en:"away goals", ar:"أهداف خارج الأرض"},
+        {en:"penalty shootout", ar:"ركلات الترجيح"},
+        {en:"formation 4-4-2", ar:"تشكيلة 4-4-2"},
+        {en:"counter-attack", ar:"هجمة مرتدة"},
+        {en:"set piece", ar:"ركلة ثابتة"},
+        {en:"man of the match", ar:"أفضل لاعب في المباراة"}
+      ],
+
+      "Sport-specific Terms — Basketball": [
+        {en:"dribble", ar:"مراوغة/تنطيط الكرة"},
+        {en:"layup", ar:"لي أب"},
+        {en:"three-pointer", ar:"رمية ثلاثية"},
+        {en:"free throw", ar:"رمية حرة"},
+        {en:"rebound", ar:"استرجاع الكرة"},
+        {en:"assist", ar:"تمريرة حاسمة"},
+        {en:"block", ar:"صد/تصدي"},
+        {en:"steal", ar:"سرقة الكرة"},
+        {en:"turnover", ar:"فقدان الكرة"},
+        {en:"foul", ar:"خطأ"},
+        {en:"technical foul", ar:"خطأ فني"},
+        {en:"double dribble", ar:"مراوغة مزدوجة"},
+        {en:"shot clock", ar:"ساعة التسديد"},
+        {en:"jump ball", ar:"كرة القفز"},
+        {en:"alley-oop", ar:"ألي-أوب"},
+        {en:"pick and roll", ar:"بيك آند رول"},
+        {en:"zone defense", ar:"دفاع منطقة"},
+        {en:"man-to-man", ar:"دفاع فردي"},
+        {en:"fast break", ar:"هجمة مرتدة سريعة"},
+        {en:"bench", ar:"دكة البدلاء"}
+      ],
+
+      "Sport-specific Terms — Tennis": [
+        {en:"serve", ar:"إرسال"},
+        {en:"ace", ar:"إرسال ساحق"},
+        {en:"double fault", ar:"خطأ مزدوج"},
+        {en:"break point", ar:"نقطة كسر الإرسال"},
+        {en:"deuce", ar:"تعادل (ديوس)"},
+        {en:"advantage", ar:"أفضلية"},
+        {en:"rally", ar:"تبادل الضربات"},
+        {en:"backhand", ar:"ضربة خلفية"},
+        {en:"forehand", ar:"ضربة أمامية"},
+        {en:"volley", ar:"ضربة طائرة"},
+        {en:"lob", ar:"لوب"},
+        {en:"slice", ar:"سلايس"},
+        {en:"match point", ar:"نقطة الفوز"},
+        {en:"tiebreak", ar:"فاصل كسر التعادل"},
+        {en:"baseline", ar:"خط الأساس"},
+        {en:"net cord", ar:"حبل الشبكة"},
+        {en:"let", ar:"ليت (إعادة الإرسال)"},
+        {en:"grand slam", ar:"غراند سلام"},
+        {en:"seed", ar:"تصنيف اللاعب"},
+        {en:"wild card", ar:"بطاقة دعوة"}
+      ],
+
+      "Sport-specific Terms — Athletics": [
+        {en:"sprint", ar:"سباق سريع"},
+        {en:"middle distance", ar:"مسافة متوسطة"},
+        {en:"long distance", ar:"مسافة طويلة"},
+        {en:"hurdles", ar:"حواجز"},
+        {en:"relay", ar:"تتابع"},
+        {en:"marathon", ar:"ماراثون"},
+        {en:"shot put", ar:"رمي الجلة"},
+        {en:"discus", ar:"رمي القرص"},
+        {en:"javelin", ar:"رمي الرمح"},
+        {en:"high jump", ar:"قفز عالي"},
+        {en:"long jump", ar:"قفز طويل"},
+        {en:"triple jump", ar:"قفز ثلاثي"},
+        {en:"pole vault", ar:"قفز بالزانة"},
+        {en:"heptathlon", ar:"سباعي"},
+        {en:"decathlon", ar:"عشاري"},
+        {en:"starting blocks", ar:"كتل الانطلاق"},
+        {en:"photo finish", ar:"نهاية بالتصوير"},
+        {en:"personal best", ar:"أفضل رقم شخصي"},
+        {en:"season best", ar:"أفضل رقم في الموسم"},
+        {en:"world record", ar:"رقم قياسي عالمي"}
+      ],
+
+      "Sport-specific Terms — Swimming & Water Sports": [
+        {en:"freestyle", ar:"سباحة حرة"},
+        {en:"backstroke", ar:"سباحة على الظهر"},
+        {en:"breaststroke", ar:"سباحة صدرية"},
+        {en:"butterfly", ar:"سباحة فراشة"},
+        {en:"medley", ar:"تتابع أنواع السباحة"},
+        {en:"relay", ar:"تتابع"},
+        {en:"lane", ar:"حارة"},
+        {en:"heat", ar:"جولة"},
+        {en:"final", ar:"نهائي"},
+        {en:"dive", ar:"غوص"},
+        {en:"synchronized swimming", ar:"سباحة إيقاعية"},
+        {en:"water polo", ar:"كرة الماء"},
+        {en:"open water", ar:"مياه مفتوحة"},
+        {en:"flip turn", ar:"انعطاف خلفي"},
+        {en:"touchpad", ar:"لوحة لمس"},
+        {en:"goggles", ar:"نظارات سباحة"},
+        {en:"cap", ar:"قبعة سباحة"},
+        {en:"kickboard", ar:"لوح ركل"},
+        {en:"pull buoy", ar:"عوامة سحب"},
+        {en:"wetsuit", ar:"بدلة غوص"}
+      ],
+
+      "Sports Analytics & Media": [
+        {en:"statistic", ar:"إحصائية"},
+        {en:"analytics", ar:"تحليلات"},
+        {en:"performance metric", ar:"مقياس الأداء"},
+        {en:"heat map", ar:"خريطة حرارية"},
+        {en:"expected goals (xG)", ar:"الأهداف المتوقعة"},
+        {en:"video analysis", ar:"تحليل الفيديو"},
+        {en:"broadcast", ar:"بث"},
+        {en:"commentator", ar:"معلق"},
+        {en:"play-by-play", ar:"وصف لحظة بلحظة"},
+        {en:"highlight", ar:"ملخص/أبرز اللقطات"},
+        {en:"instant replay", ar:"إعادة فورية"},
+        {en:"stats sheet", ar:"ورقة إحصائيات"},
+        {en:"performance index", ar:"مؤشر الأداء"},
+        {en:"scouting report", ar:"تقرير كشاف"},
+        {en:"data feed", ar:"تغذية بيانات"},
+        {en:"live stream", ar:"بث مباشر"},
+        {en:"podcast", ar:"بودكاست"},
+        {en:"press conference", ar:"مؤتمر صحفي"},
+        {en:"post-match interview", ar:"مقابلة بعد المباراة"},
+        {en:"social media", ar:"وسائل التواصل الاجتماعي"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // speech synthesis
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if (preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // initial render (start in dense mode)
+    renderCategories();
+
+    // ensure voices loaded
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // accessibility: Enter focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak-btn');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

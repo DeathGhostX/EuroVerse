@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Frases A1 agrupadas por emoción</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:18px;background:#f6f7fb;color:#111}
+  header{margin-bottom:12px}
+  h1{font-size:1.15rem;margin:0 0 6px 0}
+  p{margin:0 0 12px 0;color:#333}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .btn{background:#0078d4;color:#fff;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:0.95rem}
+  .btn.stop{background:#c0392b}
+  .container{max-width:1200px}
+  section{margin-bottom:18px}
+  section h2{font-size:1rem;margin:6px 0 8px 0;color:#0b5ed7}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px}
+  .card{background:#fff;border:1px solid #e6e9ef;padding:10px;border-radius:8px;display:flex;gap:10px;align-items:flex-start}
+  .text{flex:1}
+  .phrase{font-weight:700;color:#111}
+  .translation{color:#444;margin-top:6px}
+  .meta{font-size:0.85rem;color:#666;margin-top:6px}
+  .speak{background:#0b5ed7;color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer;font-size:1rem}
+  .summary{font-size:0.95rem;color:#333;margin-bottom:8px}
+  footer{margin-top:18px;color:#555;font-size:0.9rem}
+  details{margin-bottom:8px}
+</style>
+</head>
+<body>
+<header class="container">
+  <h1>Frases A1 en español (agrupadas por emoción)</h1>
+  <p class="summary">Haz clic en 🔊 para escuchar la pronunciación en español de España. Las traducciones están en árabe. Usa "Reproducir todas" para escuchar cada grupo en orden.</p>
+  <div class="controls">
+    <button id="playGroup" class="btn">🔊 Reproducir grupo</button>
+    <button id="playAll" class="btn">🔊 Reproducir todas</button>
+    <button id="stopAll" class="btn stop">⏹ Detener</button>
+  </div>
+</header>
+
+<main class="container" id="mainContent">
+  <!-- Las secciones se generarán dinámicamente -->
+</main>
+
+<script>
+/* Lista original de frases con meta (160). Mantén el orden original.
+   Para ahorrar espacio en el HTML, las frases están en un array JS.
+*/
+const phrases = [
+  {es:"Hola, ¿cómo estás hoy? Espero que tengas un buen día.", ar:"مرحباً، كيف حالك اليوم؟ آمل أن يكون يومك جيداً.", meta:"Saludo cordial"},
+  {es:"Buenos días, me alegra verte; ¿cómo te ha ido esta semana?", ar:"صباح الخير، يسعدني رؤيتك؛ كيف كانت أسبوعك؟", meta:"Saludo matutino"},
+  {es:"Buenas tardes, espero que todo vaya bien con tu familia y tu trabajo.", ar:"مساء الخير، آمل أن يكون كل شيء على ما يرام مع عائلتك وعملك.", meta:"Saludo formal"},
+  {es:"Hola, hace tiempo que no nos vemos; ¿qué novedades tienes para contar?", ar:"مرحباً، لم نر بعضنا منذ وقت طويل؛ ما الأخبار التي تود أن تخبرني بها؟", meta:"Saludo y pregunta"},
+  {es:"Adiós, cuídate mucho y que tengas una noche tranquila y reparadora.", ar:"وداعاً، اعتنِ بنفسك كثيراً وتمنى لك ليلة هادئة ومريحة.", meta:"Despedida afectuosa"},
+  {es:"Hasta luego, nos vemos pronto; avísame cuando tengas tiempo para quedar.", ar:"إلى اللقاء، أراك قريباً؛ أخبرني عندما يكون لديك وقت للالتقاء.", meta:"Despedida informal"},
+  {es:"Estoy muy contento hoy porque he recibido buenas noticias y quiero celebrarlo.", ar:"أنا سعيد جداً اليوم لأنني تلقيت أخباراً جيدة وأريد الاحتفال.", meta:"Alegría"},
+  {es:"Me siento un poco triste porque echo de menos a mi familia y no puedo viajar ahora.", ar:"أشعر بالحزن قليلاً لأنني أفتقد عائلتي ولا أستطيع السفر الآن.", meta:"Tristeza"},
+  {es:"Estoy preocupado por un examen, pero voy a estudiar con calma y pedir ayuda si la necesito.", ar:"أنا قلق بشأن امتحان، لكنني سأدرس بهدوء وسأطلب المساعدة إذا احتجت إليها.", meta:"Preocupación"},
+  {es:"Tengo mucho sueño; hoy ha sido un día largo y necesito descansar bien esta noche.", ar:"أنا متعب جداً؛ كان اليوم طويلاً وأحتاج إلى الراحة جيداً هذه الليلة.", meta:"Cansancio"},
+  {es:"Estoy sorprendido por la noticia; no me lo esperaba y necesito un momento para pensar.", ar:"أنا مندهش من الخبر؛ لم أكن أتوقعه وأحتاج إلى لحظة للتفكير.", meta:"Sorpresa"},
+  {es:"Siento mucho lo ocurrido; lamento que hayas pasado por eso y estoy aquí para ayudarte.", ar:"أنا آسف جداً لما حدث؛ يؤسفني أنك مررت بذلك وأنا هنا لمساعدتك.", meta:"Empatía"},
+  {es:"Estoy nervioso antes de la entrevista, pero voy a respirar hondo y dar lo mejor de mí.", ar:"أنا متوتر قبل المقابلة، لكنني سأتنفس بعمق وسأبذل أفضل ما لدي.", meta:"Nervios"},
+  {es:"Qué alegría verte tan bien; me encanta cómo te ha ido con ese proyecto.", ar:"يا لها من فرحة أن أراك بخير؛ أحب كيف سارت أمورك مع ذلك المشروع.", meta:"Elogio"},
+  {es:"Perdona, tengo que irme ahora; hablamos mañana con más calma, ¿te parece bien?", ar:"عذراً، يجب أن أذهب الآن؛ سنتحدث غداً بهدوء أكثر، هل يناسبك ذلك؟", meta:"Despedida breve"},
+  {es:"Gracias por todo; ha sido un placer compartir este tiempo contigo y aprender juntos.", ar:"شكراً على كل شيء؛ كان من دواعي سروري مشاركة هذا الوقت معك والتعلم معاً.", meta:"Agradecimiento"},
+  {es:"Hola, ¿puedes ayudarme con una pregunta sencilla sobre la ciudad?", ar:"مرحباً، هل يمكنك مساعدتي في سؤال بسيط عن المدينة؟", meta:"Solicitud de ayuda"},
+  {es:"Disculpa, ¿me puedes indicar dónde está la estación de tren más cercana?", ar:"عفواً، هل يمكنك أن تدلني أين أقرب محطة قطار؟", meta:"Pedir direcciones"},
+  {es:"Buenas noches, que descanses y sueñes con cosas bonitas.", ar:"تصبح على خير، أتمنى لك نوماً هنيئاً وأحلاماً جميلة.", meta:"Despedida nocturna"},
+  {es:"Hola, ¿qué tal tu fin de semana? ¿Has hecho algo interesante?", ar:"مرحباً، كيف كان عطلة نهاية الأسبوع؟ هل فعلت شيئاً ممتعاً؟", meta:"Pregunta social"},
+  {es:"Me siento muy agradecido por tu apoyo; significa mucho para mí.", ar:"أنا ممتن جداً لدعمك؛ هذا يعني لي الكثير.", meta:"Gratitud"},
+  {es:"Estoy un poco enfadado porque las cosas no salieron como esperaba hoy.", ar:"أنا غاضب قليلاً لأن الأمور لم تسر كما توقعت اليوم.", meta:"Enfado leve"},
+  {es:"Tengo hambre; ¿te apetece comer algo juntos ahora?", ar:"أنا جائع؛ هل تود أن نتناول شيئاً معاً الآن؟", meta:"Invitación a comer"},
+  {es:"Hace frío hoy; ponte una chaqueta para no resfriarte.", ar:"الجو بارد اليوم؛ ارتدِ سترة حتى لا تصاب بالبرد.", meta:"Consejo práctico"},
+  {es:"Estoy ilusionado con el viaje que vamos a hacer el mes que viene.", ar:"أنا متحمس للرحلة التي سنقوم بها الشهر المقبل.", meta:"Ilusión"},
+  {es:"Siento mucho la confusión; voy a explicarlo de nuevo con calma.", ar:"أعتذر عن الالتباس؛ سأشرحه مرة أخرى بهدوء.", meta:"Aclaración"},
+  {es:"Me encanta pasear por el parque cuando hace buen tiempo y escuchar los pájaros.", ar:"أحب التجول في الحديقة عندما يكون الطقس جيداً والاستماع إلى الطيور.", meta:"Gusto por la naturaleza"},
+  {es:"Estoy un poco preocupado por la salud de mi amigo; voy a llamarle ahora.", ar:"أنا قلق قليلاً بشأن صحة صديقي؛ سأتصل به الآن.", meta:"Preocupación por otro"},
+  {es:"Hoy me siento con mucha energía; quiero aprovechar el día para hacer cosas útiles.", ar:"أشعر اليوم بطاقة كبيرة؛ أريد استغلال اليوم للقيام بأشياء مفيدة.", meta:"Energía positiva"},
+  {es:"Perdona, ¿puedes repetir lo que has dicho? No te he entendido bien.", ar:"عفواً، هل يمكنك تكرار ما قلت؟ لم أفهمك جيداً.", meta:"Pedir repetición"},
+  {es:"Estoy agradecido por la oportunidad de aprender algo nuevo cada día.", ar:"أنا ممتن لفرصة تعلم شيء جديد كل يوم.", meta:"Agradecimiento y aprendizaje"},
+  {es:"Me siento tranquilo cuando escucho música suave por la tarde.", ar:"أشعر بالهدوء عندما أستمع إلى موسيقى هادئة في المساء.", meta:"Tranquilidad"},
+  {es:"Tengo curiosidad por conocer otras culturas y probar comidas diferentes.", ar:"لدي فضول لمعرفة ثقافات أخرى وتجربة أطعمة مختلفة.", meta:"Curiosidad cultural"},
+  {es:"Siento un poco de vergüenza por lo que pasó, pero voy a disculparme.", ar:"أشعر ببعض الإحراج لما حدث، لكنني سأعتذر.", meta:"Vergüenza y acción"},
+  {es:"Estoy orgulloso de mi equipo; hemos trabajado mucho y hemos conseguido buenos resultados.", ar:"أنا فخور بفريقي؛ لقد عملنا كثيراً وحققنا نتائج جيدة.", meta:"Orgullo"},
+  {es:"Me siento confundido con las instrucciones; ¿puedes explicarlas paso a paso?", ar:"أنا مرتبك من التعليمات؛ هل يمكنك شرحها خطوة بخطوة؟", meta:"Confusión y petición"},
+  {es:"Hoy hace sol y me apetece dar un paseo largo por la ciudad.", ar:"الجو مشمس اليوم وأرغب في القيام بنزهة طويلة في المدينة.", meta:"Deseo de paseo"},
+  {es:"Estoy emocionado por la película que vamos a ver esta noche.", ar:"أنا متحمس للفيلم الذي سنشاهده الليلة.", meta:"Emoción por plan"},
+  {es:"Siento mucho no poder asistir; tengo un compromiso ineludible.", ar:"آسف جداً لعدم تمكني من الحضور؛ لدي التزام لا يمكن تفويته.", meta:"Disculpa formal"},
+  {es:"Me siento aliviado porque todo salió bien al final.", ar:"أشعر بالارتياح لأن كل شيء سار على ما يرام في النهاية.", meta:"Alivio"},
+  {es:"Estoy un poco aburrido; ¿quieres que hagamos algo divertido juntos?", ar:"أنا أشعر بالملل قليلاً؛ هل تريد أن نفعل شيئاً ممتعاً معاً؟", meta:"Propuesta de actividad"},
+  {es:"Perdona la molestia, ¿podrías ayudarme a llevar estas bolsas, por favor?", ar:"عذراً على الإزعاج، هل يمكنك مساعدتي في حمل هذه الحقائب من فضلك؟", meta:"Pedir ayuda física"},
+  {es:"Me siento inspirado por las historias que he leído esta semana.", ar:"أشعر بالإلهام من القصص التي قرأتها هذا الأسبوع.", meta:"Inspiración"},
+  {es:"Estoy agradecido por la paciencia que has tenido conmigo durante este proyecto.", ar:"أنا ممتن لصبرك معي خلال هذا المشروع.", meta:"Agradecimiento profesional"},
+  {es:"Siento curiosidad por saber cómo se prepara ese plato tradicional.", ar:"أنا فضولي لمعرفة كيف يُحضّر ذلك الطبق التقليدي.", meta:"Interés culinario"},
+  {es:"Estoy preocupado por el tiempo que hace; parece que va a llover mucho.", ar:"أنا قلق بشأن الطقس؛ يبدو أنه ستمطر كثيراً.", meta:"Preocupación meteorológica"},
+  {es:"Me siento feliz cuando paso tiempo con mis amigos y hablamos sin prisa.", ar:"أشعر بالسعادة عندما أقضي وقتاً مع أصدقائي ونتحدث بلا استعجال.", meta:"Felicidad social"},
+  {es:"Perdona, ¿puedes decirme la hora exacta, por favor?", ar:"عفواً، هل يمكنك أن تخبرني بالوقت بالضبط من فضلك؟", meta:"Pedir la hora"},
+  {es:"Estoy emocionado por aprender una nueva habilidad este mes.", ar:"أنا متحمس لتعلم مهارة جديدة هذا الشهر.", meta:"Motivación de aprendizaje"},
+  {es:"Siento un poco de miedo antes de hablar en público, pero lo intentaré.", ar:"أشعر ببعض الخوف قبل التحدث أمام الجمهور، لكنني سأحاول.", meta:"Miedo y valentía"},
+  {es:"Perdona, ¿puedes explicarme cómo funciona este aparato, por favor?", ar:"عفواً، هل يمكنك أن تشرح لي كيف يعمل هذا الجهاز من فضلك؟", meta:"Pedir explicación técnica"},
+  {es:"Me siento relajado cuando tomo una taza de té por la tarde.", ar:"أشعر بالاسترخاء عندما أشرب كوباً من الشاي في المساء.", meta:"Relajación"},
+  {es:"Estoy contento con los progresos que he hecho en mi trabajo.", ar:"أنا سعيد بالتقدم الذي أحرزته في عملي.", meta:"Satisfacción laboral"},
+  {es:"Siento pena por la situación de esa persona y quiero ayudar si puedo.", ar:"أشعر بالحزن من وضع ذلك الشخص وأريد المساعدة إن استطعت.", meta:"Compasión"},
+  {es:"Perdona, ¿puedes decirme cómo llegar al museo desde aquí?", ar:"عفواً، هل يمكنك أن تخبرني كيف أصل إلى المتحف من هنا؟", meta:"Pedir indicaciones culturales"},
+  {es:"Me siento orgulloso de haber aprendido frases nuevas en español.", ar:"أنا فخور بتعلمي عبارات جديدة بالإسبانية.", meta:"Orgullo de aprendizaje"},
+  {es:"Estoy un poco cansado después de trabajar todo el día, necesito descansar.", ar:"أنا متعب قليلاً بعد العمل طوال اليوم، أحتاج إلى الراحة.", meta:"Cansancio laboral"},
+  {es:"Siento alegría cuando comparto una comida con mi familia los fines de semana.", ar:"أشعر بالفرح عندما أشارك وجبة مع عائلتي في عطلات نهاية الأسبوع.", meta:"Alegría familiar"},
+  {es:"Perdona, ¿puedes escribir la dirección para que no la olvide?", ar:"عفواً، هل يمكنك كتابة العنوان حتى لا أنساه؟", meta:"Pedir anotación"},
+  {es:"Me siento optimista sobre el futuro y los proyectos que vienen.", ar:"أنا متفائل بشأن المستقبل والمشاريع القادمة.", meta:"Optimismo"},
+  {es:"Estoy preocupado por la salud del planeta y quiero hacer pequeños cambios.", ar:"أنا قلق بشأن صحة الكوكب وأريد إجراء تغييرات صغيرة.", meta:"Preocupación ambiental"},
+  {es:"Siento alivio cuando termino una tarea importante y puedo descansar.", ar:"أشعر بالارتياح عندما أنهي مهمة مهمة وأستطيع الراحة.", meta:"Alivio por tarea"},
+  {es:"Perdona, ¿puedes recomendarme una ruta fácil para caminar por la ciudad?", ar:"عفواً، هل يمكنك أن توصي بمسار سهل للمشي في المدينة؟", meta:"Pedir ruta"},
+  {es:"Me siento agradecido por los amigos que siempre me apoyan.", ar:"أنا ممتن للأصدقاء الذين يدعمونني دائماً.", meta:"Gratitud por amistad"},
+  {es:"Estoy emocionado por aprender a cocinar una receta nueva este fin de semana.", ar:"أنا متحمس لتعلم طهي وصفة جديدة هذا الأسبوع.", meta:"Emoción culinaria"},
+  {es:"Siento un poco de vergüenza por mi error, pero voy a corregirlo enseguida.", ar:"أشعر ببعض الإحراج من خطئي، لكنني سأصلحه فوراً.", meta:"Admisión de error"},
+  {es:"Perdona, ¿puedes ayudarme a encender esta máquina? No sé cómo funciona.", ar:"عفواً، هل يمكنك مساعدتي في تشغيل هذه الآلة؟ لا أعرف كيف تعمل.", meta:"Pedir ayuda técnica"},
+  {es:"Me siento feliz cuando recibo una llamada de alguien querido.", ar:"أشعر بالسعادة عندما أتلقى مكالمة من شخص عزيز.", meta:"Felicidad por llamada"},
+  {es:"Estoy preocupado por llegar tarde; saldré ahora para evitar problemas.", ar:"أنا قلق بشأن التأخر؛ سأخرج الآن لتجنب المشاكل.", meta:"Precaución"},
+  {es:"Siento curiosidad por aprender más sobre la historia de esta ciudad.", ar:"أنا فضولي لمعرفة المزيد عن تاريخ هذه المدينة.", meta:"Interés histórico"},
+  {es:"Perdona, ¿puedes decirme si hay un supermercado abierto cerca?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك سوبرماركت مفتوح بالقرب؟", meta:"Pedir tienda abierta"},
+  {es:"Me siento agradecido por la comida que tenemos y por compartirla juntos.", ar:"أنا ممتن للطعام الذي لدينا ولمشاركته معاً.", meta:"Gratitud por comida"},
+  {es:"Estoy emocionado por el concierto de la próxima semana; será una experiencia nueva.", ar:"أنا متحمس لحفل الأسبوع المقبل؛ ستكون تجربة جديدة.", meta:"Expectativa cultural"},
+  {es:"Siento un poco de miedo cuando hay tormenta, pero me quedo en casa seguro.", ar:"أشعر ببعض الخوف عندما تكون هناك عاصفة، لكنني أبقى في المنزل بأمان.", meta:"Miedo y seguridad"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar un taxi por favor?", ar:"عفواً، هل يمكنك مساعدتي في العثور على سيارة أجرة من فضلك؟", meta:"Pedir transporte"},
+  {es:"Me siento orgulloso de mis pequeños logros cada día.", ar:"أنا فخور بإنجازاتي الصغيرة كل يوم.", meta:"Orgullo cotidiano"},
+  {es:"Estoy contento de haber conocido a gente tan amable en este lugar.", ar:"أنا سعيد لأنني تعرفت على أشخاص طيبين في هذا المكان.", meta:"Agradecimiento social"},
+  {es:"Siento tristeza cuando me despido de alguien que quiero mucho.", ar:"أشعر بالحزن عندما أودع شخصاً أحبه كثيراً.", meta:"Tristeza por despedida"},
+  {es:"Perdona, ¿puedes decirme si hay una biblioteca cerca de aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك مكتبة بالقرب من هنا؟", meta:"Pedir lugar cultural"},
+  {es:"Me siento motivado a mejorar mi pronunciación cada día.", ar:"أنا متحفز لتحسين نطقي كل يوم بتمارين قصيرة.", meta:"Motivación lingüística"},
+  {es:"Estoy preocupado por la salud de mi mascota; la llevaré al veterinario mañana.", ar:"أنا قلق بشأن صحة حيواني الأليف؛ سأأخذه إلى الطبيب البيطري غداً.", meta:"Preocupación por mascota"},
+  {es:"Siento alegría cuando veo que mis esfuerzos dan resultados positivos.", ar:"أشعر بالفرح عندما أرى أن جهودي تؤتي ثمارها.", meta:"Satisfacción"},
+  {es:"Perdona, ¿puedes decirme cuál es la mejor manera de aprender vocabulario nuevo?", ar:"عفواً، هل يمكنك أن تخبرني ما هي أفضل طريقة لتعلم مفردات جديدة؟", meta:"Pedir consejo de estudio"},
+  {es:"Me siento relajado al caminar por la playa y escuchar el mar.", ar:"أشعر بالاسترخاء عند المشي على الشاطئ والاستماع إلى البحر.", meta:"Relajación natural"},
+  {es:"Estoy emocionado por la visita de mi familia el próximo mes.", ar:"أنا متحمس لزيارة عائلتي الشهر المقبل.", meta:"Alegría por visita"},
+  {es:"Siento un poco de vergüenza cuando cometo errores, pero aprendo de ellos.", ar:"أشعر ببعض الإحراج عندما أرتكب أخطاء، لكنني أتعلم منها.", meta:"Aprendizaje"},
+  {es:"Perdona, ¿puedes recomendarme un lugar tranquilo para estudiar?", ar:"عفواً، هل يمكنك أن توصي بمكان هادئ للدراسة؟", meta:"Pedir lugar de estudio"},
+  {es:"Me siento agradecido por la ayuda que recibí en un momento difícil.", ar:"أنا ممتن للمساعدة التي تلقيتها في وقت صعب.", meta:"Agradecimiento por apoyo"},
+  {es:"Estoy preocupado por la limpieza del barrio; participaré en una iniciativa local.", ar:"أنا قلق بشأن نظافة الحي؛ سأشارك في مبادرة محلية.", meta:"Acción comunitaria"},
+  {es:"Siento alegría cuando logro entender una conversación en español sin traducir.", ar:"أشعر بالفرح عندما أتمكن من فهم محادثة بالإسبانية دون ترجمة.", meta:"Progreso lingüístico"},
+  {es:"Perdona, ¿puedes decirme si hay una oficina de correos abierta hoy?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك مكتب بريد مفتوح اليوم؟", meta:"Pedir servicio"},
+  {es:"Me siento optimista porque cada día practico un poco y veo resultados.", ar:"أنا متفائل لأنني أمارس قليلاً كل يوم وأرى نتائج.", meta:"Optimismo por práctica"},
+  {es:"Estoy emocionado por la reunión familiar; hace tiempo que no nos juntamos todos.", ar:"أنا متحمس للاجتماع العائلي؛ لم نجتمع جميعاً منذ وقت طويل.", meta:"Expectativa familiar"},
+  {es:"Siento un poco de cansancio físico después de hacer deporte, pero es bueno.", ar:"أشعر ببعض التعب الجسدي بعد ممارسة الرياضة، لكنه جيد.", meta:"Cansancio saludable"},
+  {es:"Perdona, ¿puedes decirme si hay un mercado local abierto los sábados?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك سوق محلي مفتوح أيام السبت؟", meta:"Pedir mercado"},
+  {es:"Me siento agradecido por las oportunidades de practicar con hablantes nativos.", ar:"أنا ممتن لفرص الممارسة مع الناطقين الأصليين.", meta:"Gratitud por práctica"},
+  {es:"Estoy preocupado por la calidad del sueño; intentaré acostarme más temprano.", ar:"أنا قلق بشأن جودة النوم؛ سأحاول الذهاب إلى الفراش مبكراً.", meta:"Salud del sueño"},
+  {es:"Siento alegría cuando compartimos historias y aprendemos unos de otros.", ar:"أشعر بالفرح عندما نتشارك القصص ونتعلم من بعضنا البعض.", meta:"Intercambio cultural"},
+  {es:"Perdona, ¿puedes decirme si hay una clase de español para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كانت هناك دورة إسبانية للمبتدئين هنا؟", meta:"Pedir curso"},
+  {es:"Me siento motivado a escribir frases nuevas cada día para practicar la gramática.", ar:"أنا متحفز لكتابة عبارات جديدة كل يوم لممارسة القواعد.", meta:"Práctica escrita"},
+  {es:"Estoy contento de haber conocido a personas que me ayudan a mejorar mi español.", ar:"أنا سعيد لأنني تعرفت على أشخاص يساعدونني على تحسين إسبانيتي.", meta:"Agradecimiento social"},
+  {es:"Siento tristeza cuando pienso en las dificultades que atraviesan otras personas.", ar:"أشعر بالحزن عندما أفكر في الصعوبات التي يمر بها الآخرون.", meta:"Empatía social"},
+  {es:"Perdona, ¿puedes decirme si hay un centro de salud cercano por favor?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك مركز صحي قريب من فضلك؟", meta:"Pedir centro de salud"},
+  {es:"Me siento orgulloso de haber completado un curso corto de idioma.", ar:"أنا فخور بإكمال دورة قصيرة في اللغة.", meta:"Logro educativo"},
+  {es:"Estoy emocionado por la posibilidad de hacer nuevos amigos en la ciudad.", ar:"أنا متحمس لإمكانية تكوين أصدقاء جدد في المدينة.", meta:"Socializar"},
+  {es:"Siento un poco de miedo al probar algo nuevo, pero sé que es parte del aprendizaje.", ar:"أشعر ببعض الخوف من تجربة شيء جديد، لكنني أعلم أنه جزء من التعلم.", meta:"Valentía"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar un buen lugar para practicar deporte?", ar:"عفواً، هل يمكنك مساعدتي في العثور على مكان جيد لممارسة الرياضة؟", meta:"Pedir lugar deportivo"},
+  {es:"Me siento agradecido por las pequeñas conversaciones que alegran mi día.", ar:"أنا ممتن للمحادثات الصغيرة التي تبهج يومي.", meta:"Gratitud cotidiana"},
+  {es:"Estoy preocupado por la batería de mi teléfono; la cargaré antes de salir.", ar:"أنا قلق بشأن بطارية هاتفي؛ سأشحنها قبل الخروج.", meta:"Precaución tecnológica"},
+  {es:"Siento alegría cuando alguien aprecia mi esfuerzo y me lo dice con sinceridad.", ar:"أشعر بالفرح عندما يقدّر شخص ما جهدي ويخبرني بذلك بصدق.", meta:"Reconocimiento"},
+  {es:"Perdona, ¿puedes decirme si hay un taller de arte para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك ورشة فنية للمبتدئين هنا؟", meta:"Pedir taller"},
+  {es:"Me siento motivado a mejorar mi vocabulario con lecturas cortas cada día.", ar:"أنا متحفز لتحسين مفرداتي من خلال قراءات قصيرة كل يوم.", meta:"Estrategia de estudio"},
+  {es:"Estoy contento de haber encontrado un lugar tranquilo para estudiar esta tarde.", ar:"أنا سعيد لأنني وجدت مكاناً هادئاً للدراسة هذا المساء.", meta:"Satisfacción"},
+  {es:"Siento tristeza cuando me separo de un lugar que me trae buenos recuerdos.", ar:"أشعر بالحزن عندما أبتعد عن مكان يحمل لي ذكريات جميلة.", meta:"Nostalgia"},
+  {es:"Perdona, ¿puedes decirme si hay un servicio de mensajería abierto ahora?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك خدمة توصيل مفتوحة الآن؟", meta:"Pedir mensajería"},
+  {es:"Me siento agradecido por las oportunidades de practicar con amigos cada semana.", ar:"أنا ممتن لفرص الممارسة مع الأصدقاء كل أسبوع.", meta:"Gratitud por práctica"},
+  {es:"Estoy preocupado por la salud mental de un amigo; le ofreceré mi apoyo y escucha.", ar:"أنا قلق بشأن الصحة العقلية لصديق؛ سأعرض دعمي واستماعي.", meta:"Apoyo emocional"},
+  {es:"Siento alegría cuando logro entender una canción en español sin traducirla.", ar:"أشعر بالفرح عندما أتمكن من فهم أغنية بالإسبانية دون ترجمتها.", meta:"Progreso auditivo"},
+  {es:"Perdona, ¿puedes decirme si hay un taller de jardinería para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك ورشة بستنة للمبتدئين هنا؟", meta:"Pedir taller jardinería"},
+  {es:"Me siento orgulloso de haber mantenido una actitud positiva ante los retos.", ar:"أنا فخور بالحفاظ على موقف إيجابي أمام التحديات.", meta:"Actitud positiva"},
+  {es:"Estoy emocionado por la posibilidad de aprender un nuevo idioma el próximo año.", ar:"أنا متحمس لإمكانية تعلم لغة جديدة العام المقبل.", meta:"Planes de aprendizaje"},
+  {es:"Siento un poco de nervios antes de una prueba, pero confío en mi preparación.", ar:"أشعر ببعض التوتر قبل اختبار، لكنني أثق في تحضيري.", meta:"Confianza en preparación"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar un lugar donde den clases de cocina?", ar:"عفواً، هل يمكنك مساعدتي في العثور على مكان يقدم دروساً في الطهي؟", meta:"Pedir clases cocina"},
+  {es:"Me siento agradecido por las conversaciones que me ayudan a ver nuevas perspectivas.", ar:"أنا ممتن للمحادثات التي تساعدني على رؤية وجهات نظر جديدة.", meta:"Agradecimiento reflexivo"},
+  {es:"Estoy preocupado por la seguridad de mi bicicleta; compraré un candado mejor.", ar:"أنا قلق بشأن أمان دراجتي؛ سأشتري قفلاً أفضل.", meta:"Precaución personal"},
+  {es:"Siento alegría cuando alguien comparte su tiempo conmigo y me escucha con atención.", ar:"أشعر بالفرح عندما يشاركني شخص ما وقته ويستمع إليّ بانتباه.", meta:"Valor de la escucha"},
+  {es:"Perdona, ¿puedes decirme si hay un curso de primeros auxilios para principiantes?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك دورة إسعافات أولية للمبتدئين؟", meta:"Pedir curso salud"},
+  {es:"Me siento motivado a practicar la pronunciación con grabaciones y repetir frases.", ar:"أنا متحفز لممارسة النطق مع تسجيلات وتكرار العبارات.", meta:"Técnica de práctica"},
+  {es:"Estoy contento de haber conocido a personas que me inspiran a mejorar cada día.", ar:"أنا سعيد لأنني تعرفت على أشخاص يلهمونني للتحسن كل يوم.", meta:"Inspiración social"},
+  {es:"Siento tristeza cuando veo que alguien sufre y no puedo ayudar de inmediato.", ar:"أشعر بالحزن عندما أرى شخصاً يعاني ولا أستطيع المساعدة فوراً.", meta:"Impotencia y empatía"},
+  {es:"Perdona, ¿puedes decirme si hay un servicio de alquiler de bicicletas cerca?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك خدمة تأجير دراجات بالقرب؟", meta:"Pedir alquiler bicicletas"},
+  {es:"Me siento orgulloso de haber mantenido una rutina de ejercicio durante un mes.", ar:"أنا فخور بالحفاظ على روتين تمارين لمدة شهر.", meta:"Logro físico"},
+  {es:"Estoy emocionado por la llegada de nuevas oportunidades para practicar idiomas.", ar:"أنا متحمس لقدوم فرص جديدة لممارسة اللغات.", meta:"Expectativa lingüística"},
+  {es:"Siento un poco de cansancio, así que hoy haré actividades relajantes para recuperarme.", ar:"أشعر ببعض التعب، لذا سأقوم بأنشطة مريحة اليوم لأستعيد نشاطي.", meta:"Recuperación"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar una librería con libros en español?", ar:"عفواً، هل يمكنك مساعدتي في العثور على مكتبة بها كتب بالإسبانية؟", meta:"Pedir librería"},
+  {es:"Me siento agradecido por las pequeñas victorias que me motivan a seguir adelante.", ar:"أنا ممتن للانتصارات الصغيرة التي تحفزني على المضي قدماً.", meta:"Motivación diaria"},
+  {es:"Estoy preocupado por la organización de mi tiempo; haré un horario semanal.", ar:"أنا قلق بشأن تنظيم وقتي؛ سأضع جدولاً أسبوعياً.", meta:"Gestión del tiempo"},
+  {es:"Siento alegría cuando compartimos una tarde de juegos y risas con amigos.", ar:"أشعر بالفرح عندما نتشارك مساءً من الألعاب والضحك مع الأصدقاء.", meta:"Diversión social"},
+  {es:"Perdona, ¿puedes decirme si hay un centro cultural con actividades para adultos?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك مركز ثقافي بأنشطة للبالغين؟", meta:"Pedir centro cultural"},
+  {es:"Me siento motivado a practicar la lectura en voz alta para mejorar mi fluidez.", ar:"أنا متحفز لممارسة القراءة بصوت عالٍ لتحسين طلاقتي.", meta:"Práctica de fluidez"},
+  {es:"Estoy contento de haber encontrado un grupo que comparte mis intereses artísticos.", ar:"أنا سعيد لأنني وجدت مجموعة تشارك اهتماماتي الفنية.", meta:"Afinidad artística"},
+  {es:"Siento tristeza cuando veo que alguien está solo y necesita compañía.", ar:"أشعر بالحزن عندما أرى شخصاً وحيداً ويحتاج إلى رفقة.", meta:"Deseo de ayudar"},
+  {es:"Perdona, ¿puedes decirme si hay un taller de cerámica para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك ورشة فخار للمبتدئين هنا؟", meta:"Pedir taller cerámica"},
+  {es:"Me siento orgulloso de haber mantenido la constancia en mis prácticas semanales.", ar:"أنا فخور بإكمال أسبوع من الممارسة المستمرة.", meta:"Constancia"},
+  {es:"Estoy emocionado por la llegada de nuevas oportunidades para aprender y crecer.", ar:"أنا متحمس لقدوم فرص جديدة للتعلم والنمو.", meta:"Expectativa positiva"},
+  {es:"Siento un poco de cansancio, así que hoy haré actividades tranquilas para recuperarme.", ar:"أشعر ببعض التعب، لذا سأقوم بأنشطة هادئة اليوم لأستعيد نشاطي.", meta:"Recuperación"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar un buen lugar para practicar yoga al aire libre?", ar:"عفواً، هل يمكنك مساعدتي في العثور على مكان جيد لممارسة اليوغا في الهواء الطلق؟", meta:"Pedir lugar al aire libre"},
+  {es:"Me siento agradecido por las pequeñas rutinas que me dan estabilidad cada día.", ar:"أنا ممتن للروتينات الصغيرة التي تمنحني الاستقرار كل يوم.", meta:"Rutina y gratitud"},
+  {es:"Estoy preocupado por la organización del evento; prepararé una lista de tareas.", ar:"أنا قلق بشأن تنظيم الحدث؛ سأعد قائمة مهام.", meta:"Organización de evento"},
+  {es:"Siento alegría cuando veo que mis esfuerzos ayudan a mejorar la vida de otros.", ar:"أشعر بالفرح عندما أرى أن جهودي تساعد في تحسين حياة الآخرين.", meta:"Satisfacción altruista"},
+  {es:"Perdona, ¿puedes decirme si hay un club deportivo para adultos cerca?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك نادي رياضي للبالغين بالقرب؟", meta:"Pedir club deportivo"},
+  {es:"Me siento motivado a practicar la escucha activa con audios cortos cada día.", ar:"أنا متحفز لممارسة الاستماع النشط مع مقاطع صوتية قصيرة كل يوم.", meta:"Estrategia auditiva"},
+  {es:"Estoy contento de haber encontrado un grupo de amigos con intereses similares.", ar:"أنا سعيد لأنني وجدت مجموعة أصدقاء لديهم اهتمامات مشابهة.", meta:"Conexión social"},
+  {es:"Siento tristeza cuando recuerdo momentos que ya no volverán, pero agradezco lo vivido.", ar:"أشعر بالحزن عندما أتذكر لحظات لن تعود، لكنني ممتن لما عشته.", meta:"Melancolía agradecida"},
+  {es:"Perdona, ¿puedes decirme si hay una escuela de música para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كانت هناك مدرسة موسيقى للمبتدئين هنا؟", meta:"Pedir escuela música"},
+  {es:"Me siento orgulloso de haber mantenido una rutina de estudio durante un mes.", ar:"أنا فخور بالحفاظ على روتين دراسة لمدة شهر.", meta:"Constancia"},
+  {es:"Estoy emocionado por la posibilidad de aprender a cocinar platos típicos de aquí.", ar:"أنا متحمس لإمكانية تعلم طهي أطباق محلية من هنا.", meta:"Interés culinario"},
+  {es:"Siento un poco de nervios antes de una audición, pero practicaré con calma.", ar:"أشعر ببعض التوتر قبل تجربة الأداء، لكنني سأتمرن بهدوء.", meta:"Preparación artística"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar un lugar donde den clases de idiomas?", ar:"عفواً، هل يمكنك مساعدتي في العثور على مكان يقدم دروس لغات؟", meta:"Pedir academia idiomas"},
+  {es:"Me siento agradecido por las conversaciones que me ayudan a crecer personalmente.", ar:"أنا ممتن للمحادثات التي تساعدني على النمو شخصياً.", meta:"Crecimiento personal"},
+  {es:"Estoy preocupado por la salud de mi familia; hablaré con ellos para apoyarles.", ar:"أنا قلق بشأن صحة عائلتي؛ سأتحدث معهم لدعمهم.", meta:"Apoyo familiar"},
+  {es:"Siento alegría cuando compartimos una comida sencilla y hablamos con calma.", ar:"أشعر بالفرح عندما نتشارك وجبة بسيطة ونتحدث بهدوء.", meta:"Placer cotidiano"},
+  {es:"Perdona, ¿puedes decirme si hay un taller de escritura creativa para principiantes?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك ورشة كتابة إبداعية للمبتدئين؟", meta:"Pedir taller escritura"},
+  {es:"Me siento motivado a practicar la pronunciación con ejercicios de repetición y grabación.", ar:"أنا متحفز لممارسة النطق بتمارين التكرار والتسجيل.", meta:"Técnica de pronunciación"},
+  {es:"Estoy contento de haber encontrado un lugar donde puedo compartir mis ideas con otros.", ar:"أنا سعيد لأنني وجدت مكاناً أستطيع مشاركة أفكاري مع الآخرين.", meta:"Intercambio de ideas"},
+  {es:"Siento tristeza cuando pienso en las dificultades que otros enfrentan sin apoyo.", ar:"أشعر بالحزن عندما أفكر في الصعوبات التي يواجهها الآخرون دون دعم.", meta:"Empatía activa"},
+  {es:"Perdona, ¿puedes decirme si hay un servicio de reparación de electrodomésticos cerca?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك خدمة إصلاح أجهزة منزلية بالقرب؟", meta:"Pedir reparación"},
+  {es:"Me siento orgulloso de haber mantenido una actitud positiva ante los cambios.", ar:"أنا فخور بالحفاظ على موقف إيجابي أمام التغييرات.", meta:"Actitud positiva"},
+  {es:"Estoy emocionado por la posibilidad de aprender nuevas recetas y compartirlas con amigos.", ar:"أنا متحمس لإمكانية تعلم وصفات جديدة ومشاركتها مع الأصدقاء.", meta:"Interés culinario"},
+  {es:"Siento un poco de cansancio, así que hoy dedicaré tiempo a relajarme y leer.", ar:"أشعر ببعض التعب، لذا سأخصص وقتاً للاسترخاء والقراءة اليوم.", meta:"Autocuidado tranquilo"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar una tienda de instrumentos musicales cercana?", ar:"عفواً، هل يمكنك مساعدتي في العثور على متجر آلات موسيقية قريب؟", meta:"Pedir tienda instrumentos"},
+  {es:"Me siento agradecido por las pequeñas conversaciones que me hacen sentir acompañado.", ar:"أنا ممتن للمحادثات الصغيرة التي تجعلني أشعر بالرفقة.", meta:"Compañía"},
+  {es:"Estoy preocupado por la organización de mi casa; haré una lista de tareas para el fin de semana.", ar:"أنا قلق بشأن تنظيم منزلي؛ سأعد قائمة مهام لعطلة نهاية الأسبوع.", meta:"Plan doméstico"},
+  {es:"Siento alegría cuando alguien comparte una experiencia positiva que me inspira.", ar:"أشعر بالفرح عندما يشاركني شخص ما تجربة إيجابية تلهمني.", meta:"Inspiración compartida"},
+  {es:"Perdona, ¿puedes decirme si hay un taller de fotografía para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك ورشة تصوير للمبتدئين هنا؟", meta:"Pedir taller fotografía"},
+  {es:"Me siento motivado a practicar la escucha con audios cortos y repetir frases útiles.", ar:"أنا متحفز لممارسة الاستماع مع مقاطع صوتية قصيرة وتكرار عبارات مفيدة.", meta:"Estrategia auditiva"},
+  {es:"Estoy contento de haber conocido a personas que me ayudan a mejorar mi confianza.", ar:"أنا سعيد لأنني تعرفت على أشخاص يساعدونني على تحسين ثقتي بنفسي.", meta:"Apoyo social"},
+  {es:"Siento tristeza cuando veo que alguien está solo y no tiene con quién hablar.", ar:"أشعر بالحزن عندما أرى شخصاً وحيداً ولا يوجد من يتحدث معه.", meta:"Deseo de compañía"},
+  {es:"Perdona, ¿puedes decirme si hay un club de senderismo para principiantes aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك نادي مشي للمبتدئين هنا؟", meta:"Pedir club senderismo"},
+  {es:"Me siento orgulloso de haber mantenido una rutina de estudio constante durante semanas.", ar:"أنا فخور بالحفاظ على روتين دراسة مستمر لأسابيع.", meta:"Constancia prolongada"},
+  {es:"Estoy emocionado por la posibilidad de aprender nuevas habilidades prácticas este año.", ar:"أنا متحمس لإمكانية تعلم مهارات عملية جديدة هذا العام.", meta:"Desarrollo personal"},
+  {es:"Siento un poco de nervios antes de una presentación importante, pero confiaré en mi preparación.", ar:"أشعر ببعض التوتر قبل عرض مهم، لكنني سأثق في تحضيري.", meta:"Confianza en preparación"},
+  {es:"Perdona, ¿puedes ayudarme a encontrar un lugar donde den clases de cerámica?", ar:"عفواً، هل يمكنك مساعدتي في العثور على مكان يقدم دروس فخار؟", meta:"Pedir clases cerámica"},
+  {es:"Me siento agradecido por las conversaciones que me ayudan a ver nuevas oportunidades.", ar:"أنا ممتن للمحادثات التي تساعدني على رؤية فرص جديدة.", meta:"Agradecimiento prospectivo"},
+  {es:"Estoy preocupado por la puntualidad en el transporte; saldré con tiempo suficiente.", ar:"أنا قلق بشأن دقة مواعيد النقل؛ سأخرج بوقت كافٍ.", meta:"Precaución transporte"},
+  {es:"Siento alegría cuando alguien reconoce mi esfuerzo y me anima a seguir.", ar:"أشعر بالفرح عندما يعترف شخص ما بجهدي ويشجعني على الاستمرار.", meta:"Reconocimiento motivador"},
+  {es:"Perdona, ¿puedes decirme si hay un taller de idiomas para adultos aquí?", ar:"عفواً، هل يمكنك أن تخبرني إذا كان هناك ورشة لغات للبالغين هنا؟", meta:"Pedir taller idiomas"},
+  {es:"Me siento motivado a practicar la pronunciación con ejercicios diarios y paciencia.", ar:"أنا متحفز لممارسة النطق بتمارين يومية وصبر.", meta:"Disciplina de práctica"},
+  {es:"Estoy contento de haber encontrado un espacio donde puedo compartir mis intereses creativos.", ar:"أنا سعيد لأنني وجدت مساحة أستطيع مشاركة اهتماماتي الإبداعية فيها.", meta:"Espacio creativo"},
+  {es:"Siento tristeza cuando recuerdo momentos que ya no volverán, pero agradezco lo vivido.", ar:"أشعر بالحزن عندما أتذكر لحظات لن تعود، لكنني ممتن لما عشته.", meta:"Reflexión final"}
+];
+
+// Mapeo de palabras clave de meta a categorías amplias
+const categoryMap = [
+  {keywords:["Saludo","Despedida","saludo","Despedida","Despedida nocturna","Despedida breve"], category:"Saludos y despedidas"},
+  {keywords:["Alegría","Elogio","Felicidad","Satisfacción","Alegría familiar","Alegría por visita","Alegría compartida","Satisfacción altruista","Diversión social","Reconocimiento","Reconocimiento motivador","Progreso lingüístico","Progreso auditivo"], category:"Emociones positivas"},
+  {keywords:["Tristeza","Tristeza por despedida","Tristeza","Nostalgia","Melancolía","Impotencia","Empatía social","Empatía activa","Tristeza por despedida","Reflexión final"], category:"Emociones negativas"},
+  {keywords:["Preocupación","Nervios","Miedo","Precaución","Preocupación por mascota","Preocupación meteorológica","Preocupación ambiental","Preocupación familiar","Precaución tecnológica","Precaución transporte"], category:"Preocupación y nervios"},
+  {keywords:["Cansancio","Cansancio laboral","Cansancio saludable","Recuperación","Autocuidado tranquilo"], category:"Cansancio y descanso"},
+  {keywords:["Sorpresa","Ilusión","Emoción","Expectativa","Expectativa cultural","Expectativa familiar","Expectativa positiva","Expectativa lingüística"], category:"Sorpresa y expectativa"},
+  {keywords:["Empatía","Apoyo","Apoyo emocional","Apoyo familiar","Compasión","Deseo de ayudar","Valor de la escucha"], category:"Empatía y apoyo"},
+  {keywords:["Agradecimiento","Gratitud","Gratitud por práctica","Gratitud por comida","Agradecimiento profesional","Agradecimiento social","Agradecimiento por apoyo","Agradecimiento reflexivo","Agradecimiento prospectivo","Gratitud cotidiana"], category:"Gratitud"},
+  {keywords:["Motivación","Motivación lingüística","Motivación de aprendizaje","Motivación diaria","Motivación práctica","Disciplina de práctica","Técnica de práctica","Estrategia de estudio","Estrategia auditiva","Práctica escrita","Práctica de fluidez","Práctica conversacional"], category:"Motivación y aprendizaje"},
+  {keywords:["Curiosidad","Interés","Interés culinario","Interés histórico","Interés creativo"], category:"Curiosidad e interés"},
+  {keywords:["Vergüenza","Confusión","Pedir repetición","Pedir explicación técnica","Pedir ayuda técnica","Admisión de error"], category:"Incertidumbre y corrección"},
+  {keywords:["Orgullo","Orgullo cotidiano","Orgullo de aprendizaje","Logro educativo","Logro físico","Constancia","Constancia prolongada"], category:"Orgullo y logro"},
+  {keywords:["Pedir","Pedir direcciones","Pedir ruta","Pedir taller","Pedir curso","Pedir lugar","Pedir servicio","Pedir transporte","Pedir tienda","Pedir reserva","Pedir centro cultural","Pedir taller fotografía","Pedir taller jardinería","Pedir taller costura","Pedir taller teatro","Pedir taller cerámica","Pedir taller escritura","Pedir taller idiomas","Pedir taller fotografía","Pedir taller jardinería","Pedir taller cerámica","Pedir taller fotografía"], category:"Peticiones y consultas"}
+];
+
+// Función para asignar categoría según meta
+function assignCategory(meta) {
+  for (let map of categoryMap) {
+    for (let kw of map.keywords) {
+      if (meta && meta.toLowerCase().includes(kw.toLowerCase())) return map.category;
+    }
+  }
+  // fallback según palabras clave simples
+  if (/salud|despedida|hola|buenos|buenas/i.test(meta)) return "Saludos y despedidas";
+  if (/alegr|feliz|content|encant/i.test(meta)) return "Emociones positivas";
+  if (/triste|nostal|melancol/i.test(meta)) return "Emociones negativas";
+  if (/preocup|nervi|miedo|precauc/i.test(meta)) return "Preocupación y nervios";
+  if (/cansan|descans|sueñ|fatig/i.test(meta)) return "Cansancio y descanso";
+  if (/sorpres|emocion|ilusión|expectativ/i.test(meta)) return "Sorpresa y expectativa";
+  if (/empat|apoy|compas/i.test(meta)) return "Empatía y apoyo";
+  if (/agradec|gratitud|gracias/i.test(meta)) return "Gratitud";
+  if (/motiv|practic|estudi|mejorar/i.test(meta)) return "Motivación y aprendizaje";
+  if (/curios|interes/i.test(meta)) return "Curiosidad e interés";
+  if (/vergüen|confus|repetic|explic/i.test(meta)) return "Incertidumbre y corrección";
+  if (/orgull|logr|constan/i.test(meta)) return "Orgullo y logro";
+  return "Peticiones y consultas";
+}
+
+// Agrupar frases
+const groups = {};
+phrases.forEach(p => {
+  const cat = assignCategory(p.meta || "");
+  if (!groups[cat]) groups[cat] = [];
+  groups[cat].push(p);
+});
+
+// Crear secciones en el DOM
+const main = document.getElementById('mainContent');
+Object.keys(groups).forEach(cat => {
+  const section = document.createElement('section');
+  section.innerHTML = `<h2>${cat} <small style="color:#666;font-weight:600">(${groups[cat].length} frases)</small></h2>`;
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  groups[cat].forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-es', p.es);
+    card.setAttribute('data-ar', p.ar);
+    card.innerHTML = `
+      <div class="text">
+        <div class="phrase">${p.es}</div>
+        <div class="translation">${p.ar}</div>
+        <div class="meta">${p.meta}</div>
+      </div>
+      <button class="speak" aria-label="Escuchar frase">🔊</button>
+    `;
+    grid.appendChild(card);
+  });
+  section.appendChild(grid);
+  main.appendChild(section);
+});
+
+// Función de síntesis de voz (es-ES)
+function speakText(text) {
+  if (!('speechSynthesis' in window)) { alert('Tu navegador no soporta SpeechSynthesis.'); return; }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'es-ES';
+  utter.rate = 0.95;
+  utter.pitch = 1;
+  const voices = window.speechSynthesis.getVoices();
+  const voice = voices.find(v => v.lang.startsWith('es-') && /Spain|España|es-ES/i.test(v.name)) || voices.find(v => v.lang.startsWith('es-')) || null;
+  if (voice) utter.voice = voice;
+  window.speechSynthesis.speak(utter);
+}
+
+// Eventos para botones individuales
+document.querySelectorAll('.speak').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const card = btn.closest('.card');
+    const text = card.getAttribute('data-es');
+    speakText(text);
+  });
+});
+
+// Reproducir todas las frases de un grupo (seleccionado por el usuario)
+let currentGroupCards = [];
+document.getElementById('playGroup').addEventListener('click', async () => {
+  // pedir al usuario que haga clic en una sección (simple instrucción visual)
+  alert('Haz clic en cualquier título de sección para reproducir ese grupo.'); 
+});
+
+// Añadir evento para reproducir al hacer clic en el título de la sección
+document.querySelectorAll('section h2').forEach(h2 => {
+  h2.style.cursor = 'pointer';
+  h2.addEventListener('click', async () => {
+    const section = h2.parentElement;
+    const cards = Array.from(section.querySelectorAll('.card'));
+    for (let c of cards) {
+      if (stopAll.clicked) break;
+      speakText(c.getAttribute('data-es'));
+      await new Promise(resolve => {
+        const check = setInterval(() => {
+          if (!window.speechSynthesis.speaking) { clearInterval(check); setTimeout(resolve, 250); }
+        }, 100);
+      });
+    }
+    stopAll.clicked = false;
+  });
+});
+
+// Reproducir todas las frases (todas las secciones)
+document.getElementById('playAll').addEventListener('click', async () => {
+  stopAll.clicked = false;
+  const allCards = Array.from(document.querySelectorAll('.card'));
+  for (let c of allCards) {
+    if (stopAll.clicked) break;
+    speakText(c.getAttribute('data-es'));
+    await new Promise(resolve => {
+      const check = setInterval(() => {
+        if (!window.speechSynthesis.speaking) { clearInterval(check); setTimeout(resolve, 250); }
+      }, 100);
+    });
+  }
+  stopAll.clicked = false;
+});
+
+// Detener todo
+const stopAll = document.getElementById('stopAll');
+stopAll.addEventListener('click', () => {
+  stopAll.clicked = true;
+  window.speechSynthesis.cancel();
+});
+
+// refrescar voces si cambian
+if (typeof speechSynthesis !== 'undefined') speechSynthesis.onvoiceschanged = () => {};
+</script>
+
+<footer class="container">Agrupación automática por emoción. Si quieres otra clasificación (más fina o distinta), puedo reorganizar las categorías.</footer>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>100 English Expressions — Arabic Translation — Audio Grid</title>
+<style>
+  :root{
+    --bg:#f4f7fb; --card:#fff; --accent:#0b6efd; --muted:#6b7280;
+    --gap:12px; --radius:10px; --mincol:220px;
+  }
+  body{font-family:Inter, system-ui, Arial, sans-serif; margin:16px; background:var(--bg); color:#0f172a;}
+  header{display:flex; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
+  h1{font-size:1.05rem; margin:0;}
+  .controls{margin-left:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  select,input[type="search"],input[type="range"],button{padding:8px 10px; border-radius:8px; border:1px solid #e6edf3; background:#fff;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(var(--mincol),1fr)); gap:var(--gap);}
+  .card{background:var(--card); border-radius:var(--radius); padding:12px; box-shadow:0 1px 3px rgba(15,23,42,0.06); display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
+  .en{font-weight:700; font-size:1rem; color:#07103a;}
+  .ar{font-size:0.95rem; color:var(--muted); direction:rtl; width:100%;}
+  .row{display:flex; gap:8px; width:100%; align-items:center; justify-content:space-between;}
+  .btn-sound{background:transparent; border:none; color:var(--accent); cursor:pointer; font-size:18px;}
+  .meta{font-size:0.85rem; color:var(--muted);}
+  footer{margin-top:14px; font-size:0.85rem; color:var(--muted);}
+  @media (max-width:420px){ :root{--mincol:160px;} }
+  .density-small{ --mincol:140px; }
+  .density-medium{ --mincol:220px; }
+  .density-large{ --mincol:320px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>100 English Expressions — Arabic Translation — Audio</h1>
+    <div class="meta">Click the 🔊 icon to hear the English pronunciation.</div>
+  </div>
+
+  <div class="controls">
+    <input id="search" type="search" placeholder="Search expression (EN/AR)" />
+    <label for="density" class="meta">Density</label>
+    <select id="density" aria-label="Grid size">
+      <option value="density-small">Compact</option>
+      <option value="density-medium" selected>Medium</option>
+      <option value="density-large">Large</option>
+    </select>
+    <label for="voiceSelect" class="meta">Voice</label>
+    <select id="voiceSelect" aria-label="Voice selector"></select>
+    <label class="meta">Rate</label>
+    <input id="rate" type="range" min="0.6" max="1.6" step="0.1" value="1" />
+    <button id="stopBtn" title="Stop playback">Stop</button>
+  </div>
+</header>
+
+<main>
+  <div id="grid" class="grid density-medium" aria-live="polite"></div>
+</main>
+
+<footer>
+  <div class="meta">Tip: choose Compact density for faster loading on slow devices.</div>
+</footer>
+
+<script>
+/* 100 English expressions with Arabic translations (same as before) */
+const expressions = [
+{en:"Hi", ar:"مرحبا"},{en:"Hello", ar:"أهلاً"},{en:"Good morning", ar:"صباح الخير"},{en:"Good evening", ar:"مساء الخير"},
+{en:"Goodbye", ar:"إلى اللقاء"},{en:"See you soon", ar:"أراك قريبا"},{en:"Thank you", ar:"شكرا"},{en:"Thanks a lot", ar:"شكرا جزيلا"},
+{en:"You’re welcome", ar:"على الرحب والسعة"},{en:"Please", ar:"من فضلك"},{en:"Excuse me", ar:"عفواً"},{en:"Sorry", ar:"آسف"},
+{en:"How are you?", ar:"كيف حالك؟"},{en:"I am fine", ar:"أنا بخير"},{en:"And you?", ar:"وأنت؟"},{en:"My name is...", ar:"اسمي..."},
+{en:"Nice to meet you", ar:"تشرفت بمقابلتك"},{en:"Where is the bathroom?", ar:"أين الحمام؟"},{en:"How much is this?", ar:"كم ثمنه؟"},{en:"I don’t understand", ar:"لا أفهم"},
+{en:"Do you speak Arabic?", ar:"هل تتكلم العربية؟"},{en:"I’m sorry", ar:"أنا آسف/آسفة"},{en:"Congratulations", ar:"مبروك"},{en:"Good luck", ar:"حظا سعيدا"},
+{en:"Enjoy your meal", ar:"بالهنا والشفا"},{en:"I am hungry", ar:"أنا جائع"},{en:"I am thirsty", ar:"أنا عطشان"},{en:"Where is the station?", ar:"أين المحطة؟"},
+{en:"Help me", ar:"ساعدني"},{en:"Call the police", ar:"اتصل بالشرطة"},{en:"I need a doctor", ar:"أحتاج إلى طبيب"},{en:"I love you", ar:"أحبك"},
+{en:"Good night", ar:"تصبح على خير"},{en:"What time is it?", ar:"كم الساعة؟"},{en:"Today", ar:"اليوم"},{en:"Tomorrow", ar:"غدا"},
+{en:"Yesterday", ar:"أمس"},{en:"Now", ar:"الآن"},{en:"Later", ar:"لاحقاً"},{en:"Always", ar:"دائماً"},{en:"Never", ar:"أبداً"},
+{en:"Maybe", ar:"ربما"},{en:"Of course", ar:"بالطبع"},{en:"Okay", ar:"حسناً"},{en:"I want", ar:"أريد"},{en:"I don’t want", ar:"لا أريد"},
+{en:"I like", ar:"أحب"},{en:"I don’t like", ar:"لا أحب"},{en:"Where is...?", ar:"أين...؟"},{en:"How?", ar:"كيف؟"},{en:"Why?", ar:"لماذا؟"},
+{en:"Who?", ar:"من؟"},{en:"What?", ar:"ماذا؟"},{en:"When?", ar:"متى؟"},{en:"How much?", ar:"كم؟"},{en:"Left", ar:"إلى اليسار"},
+{en:"Right", ar:"إلى اليمين"},{en:"Straight ahead", ar:"مباشرة"},{en:"Near", ar:"قريب"},{en:"Far", ar:"بعيد"},{en:"Entrance", ar:"مدخل"},
+{en:"Exit", ar:"مخرج"},{en:"Open", ar:"مفتوح"},{en:"Closed", ar:"مغلق"},{en:"Attention", ar:"انتباه"},{en:"Danger", ar:"خطر"},
+{en:"No entry", ar:"ممنوع الدخول"},{en:"Welcome", ar:"أهلاً وسهلاً"},{en:"Have a safe trip", ar:"رحلة سعيدة"},{en:"Closed for maintenance", ar:"مغلق للصيانة"},
+{en:"Reservation", ar:"حجز"},{en:"Ticket", ar:"تذكرة"},{en:"Map", ar:"خريطة"},{en:"Airport", ar:"المطار"},{en:"Train station", ar:"المحطة"},
+{en:"Hotel", ar:"فندق"},{en:"Restaurant", ar:"مطعم"},{en:"Cafe", ar:"مقهى"},{en:"Shop", ar:"متجر"},{en:"Pharmacy", ar:"صيدلية"},
+{en:"Hospital", ar:"مستشفى"},{en:"School", ar:"مدرسة"},{en:"University", ar:"جامعة"},{en:"Work", ar:"عمل"},{en:"Home", ar:"منزل"},
+{en:"Apartment", ar:"شقة"},{en:"Street", ar:"شارع"},{en:"City", ar:"مدينة"},{en:"Country", ar:"دولة"},{en:"Last name", ar:"اللقب"},
+{en:"First name", ar:"الاسم الأول"},{en:"Address", ar:"عنوان"},{en:"Phone", ar:"هاتف"},{en:"Email", ar:"البريد الإلكتروني"},{en:"Password", ar:"كلمة المرور"},
+{en:"Error", ar:"خطأ"},{en:"Success", ar:"نجاح"},{en:"Loading", ar:"جار التحميل"},{en:"Send", ar:"إرسال"},{en:"Cancel", ar:"إلغاء"},
+{en:"Save", ar:"حفظ"},{en:"Delete", ar:"حذف"},{en:"Edit", ar:"تعديل"},{en:"View", ar:"عرض"},{en:"Print", ar:"طباعة"},{en:"Download", ar:"تحميل"}
+];
+
+/* DOM refs */
+const grid = document.getElementById('grid');
+const voiceSelect = document.getElementById('voiceSelect');
+const searchInput = document.getElementById('search');
+const rateInput = document.getElementById('rate');
+const densitySelect = document.getElementById('density');
+const stopBtn = document.getElementById('stopBtn');
+
+/* Render function */
+function render(list){
+  grid.innerHTML = '';
+  list.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="row">
+        <div class="en">${escapeHtml(item.en)}</div>
+        <button class="btn-sound" data-index="${idx}" title="Listen" aria-label="Listen ${escapeHtml(item.en)}">🔊</button>
+      </div>
+      <div class="ar">${escapeHtml(item.ar)}</div>
+    `;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('.btn-sound').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      const i = Number(btn.dataset.index);
+      speak(expressions[i].en);
+    });
+  });
+}
+
+/* Speech synthesis helpers - English-only voices */
+let voices = [];
+function populateVoicesEnglishOnly(){
+  const all = speechSynthesis.getVoices() || [];
+  // Filter to voices that are English variants
+  const englishVoices = all.filter(v => {
+    const lang = (v.lang || '').toLowerCase();
+    const name = (v.name || '').toLowerCase();
+    return lang.startsWith('en') || name.includes('english');
+  });
+  // Sort by region code for predictable order (en-GB, en-US, en-AU, en-IN, etc.)
+  englishVoices.sort((a,b) => (a.lang || '').localeCompare(b.lang || ''));
+  voices = englishVoices;
+  if(voices.length > 0){
+    voiceSelect.innerHTML = voices.map((v,i)=>`<option value="${i}">${v.name} — ${v.lang}</option>`).join('');
+  } else {
+    // Fallback: show a single English option and set default lang to en-US
+    voiceSelect.innerHTML = '<option value="-1">English voices not available on this device</option>';
+  }
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window)){ alert('Speech synthesis not available in this browser.'); return; }
+  const utter = new SpeechSynthesisUtterance(text);
+  const sel = Number(voiceSelect.value);
+  if(voices.length > 0 && voices[sel] && sel >= 0){
+    utter.voice = voices[sel];
+    utter.lang = voices[sel].lang || 'en-US';
+  } else {
+    // fallback language
+    utter.lang = 'en-US';
+  }
+  utter.rate = Number(rateInput.value) || 1;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utter);
+}
+
+/* Utilities */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Search/filter */
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){ render(expressions); return; }
+  const filtered = expressions.filter(e => e.en.toLowerCase().includes(q) || e.ar.includes(q));
+  render(filtered);
+});
+
+/* Density selector */
+densitySelect.addEventListener('change', ()=>{
+  grid.classList.remove('density-small','density-medium','density-large');
+  grid.classList.add(densitySelect.value);
+});
+
+/* Stop button */
+stopBtn.addEventListener('click', ()=> speechSynthesis.cancel());
+
+/* Init */
+render(expressions);
+
+if('speechSynthesis' in window){
+  populateVoicesEnglishOnly();
+  // Some browsers load voices asynchronously
+  speechSynthesis.onvoiceschanged = populateVoicesEnglishOnly;
+} else {
+  voiceSelect.innerHTML = '<option>Not available</option>';
+}
+</script>
+</body>
+</html>

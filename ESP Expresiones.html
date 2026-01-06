@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Expresiones cortas en español — Ampliado (300)</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:18px;background:#f6f7fb;color:#111}
+  header{margin-bottom:12px}
+  h1{font-size:1.15rem;margin:0 0 6px 0}
+  p{margin:0 0 12px 0;color:#333}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .btn{background:#0078d4;color:#fff;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:0.95rem}
+  .btn.stop{background:#c0392b}
+  .container{max-width:1200px}
+  section{margin-bottom:18px}
+  section h2{font-size:1rem;margin:6px 0 8px 0;color:#0b5ed7}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+  .card{background:#fff;border:1px solid #e6e9ef;padding:10px;border-radius:8px;display:flex;gap:10px;align-items:flex-start}
+  .text{flex:1}
+  .phrase{font-weight:700;color:#111}
+  .translation{color:#444;margin-top:6px}
+  .meta{font-size:0.85rem;color:#666;margin-top:6px}
+  .speak{background:#0b5ed7;color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer;font-size:1rem}
+  footer{margin-top:18px;color:#555;font-size:0.9rem}
+</style>
+</head>
+<body>
+<header class="container">
+  <h1>Expresiones cortas en español — Ampliado (300)</h1>
+  <p>Haz clic en 🔊 para escuchar la pronunciación en español de España. Traducciones al árabe incluidas. Haz clic en el título de una categoría para reproducir ese grupo.</p>
+  <div class="controls">
+    <button id="playAll" class="btn">🔊 Reproducir todas</button>
+    <button id="stopAll" class="btn stop">⏹ Detener</button>
+  </div>
+</header>
+
+<main class="container" id="mainContent"></main>
+
+<script>
+/* 300 expresiones cortas (2–6 palabras) con traducción al árabe y categoría */
+const expressions = [
+  /* SALUDOS (20) */
+  {es:"Hola, ¿qué tal?", ar:"مرحباً، كيف حالك؟", meta:"Saludos"},
+  {es:"Buenos días a todos", ar:"صباح الخير للجميع", meta:"Saludos"},
+  {es:"Muy buenas, ¿qué tal?", ar:"مرحباً، كيف الحال؟", meta:"Saludos"},
+  {es:"Encantado de conocerte", ar:"سعيد بلقائك", meta:"Saludos"},
+  {es:"Un placer verte", ar:"من دواعي سروري رؤيتك", meta:"Saludos"},
+  {es:"¡Qué gusto verte!", ar:"يا لها من سعادة رؤيتك!", meta:"Saludos"},
+  {es:"Hola, ¿cómo te va?", ar:"مرحباً، كيف تسير أمورك؟", meta:"Saludos"},
+  {es:"Bienvenido de nuevo", ar:"مرحباً بعودتك", meta:"Saludos"},
+  {es:"Hola, buenos días", ar:"مرحباً، صباح الخير", meta:"Saludos"},
+  {es:"Buenas tardes, ¿qué tal?", ar:"مساء الخير، كيف الحال؟", meta:"Saludos"},
+  {es:"¡Hola a todos!", ar:"مرحباً بالجميع!", meta:"Saludos"},
+  {es:"Saludos cordiales", ar:"تحياتي الحارة", meta:"Saludos"},
+  {es:"Mucho gusto en conocerte", ar:"سعدت بلقائك", meta:"Saludos"},
+  {es:"Hola, ¿qué hay de nuevo?", ar:"مرحباً، ما الجديد؟", meta:"Saludos"},
+  {es:"Qué alegría verte hoy", ar:"يا لها من فرحة رؤيتك اليوم", meta:"Saludos"},
+  {es:"Hola, ¿todo bien?", ar:"مرحباً، كل شيء بخير؟", meta:"Saludos"},
+  {es:"Bienvenido a casa", ar:"مرحباً بعودتك إلى المنزل", meta:"Saludos"},
+  {es:"Hola, buen día", ar:"مرحباً، يوم سعيد", meta:"Saludos"},
+  {es:"Encantado de verte", ar:"سعيد برؤيتك", meta:"Saludos"},
+  {es:"Hola, ¿cómo amaneciste?", ar:"مرحباً، كيف استيقظت؟", meta:"Saludos"},
+
+  /* DESPEDIDAS (20) */
+  {es:"Adiós, hasta luego", ar:"وداعاً، إلى اللقاء", meta:"Despedidas"},
+  {es:"Nos vemos mañana", ar:"أراك غداً", meta:"Despedidas"},
+  {es:"Que tengas buen día", ar:"أتمنى لك يوماً سعيداً", meta:"Despedidas"},
+  {es:"Hasta la próxima vez", ar:"إلى المرة القادمة", meta:"Despedidas"},
+  {es:"Cuídate mucho, adiós", ar:"اعتنِ بنفسك كثيراً، وداعاً", meta:"Despedidas"},
+  {es:"Hasta pronto, amigo", ar:"إلى اللقاء قريباً يا صديقي", meta:"Despedidas"},
+  {es:"Me voy, hasta luego", ar:"سأذهب الآن، إلى اللقاء", meta:"Despedidas"},
+  {es:"Que descanses bien", ar:"أتمنى لك نوماً هنيئاً", meta:"Despedidas"},
+  {es:"Hasta mañana, cuídate", ar:"إلى الغد، اعتنِ بنفسك", meta:"Despedidas"},
+  {es:"Nos vemos en breve", ar:"نلتقي قريباً", meta:"Despedidas"},
+  {es:"Hasta entonces, adiós", ar:"إلى ذلك الحين، وداعاً", meta:"Despedidas"},
+  {es:"Que te vaya bien", ar:"أتمنى لك التوفيق", meta:"Despedidas"},
+  {es:"Hasta pronto, nos hablamos", ar:"إلى اللقاء قريباً، سنتحدث", meta:"Despedidas"},
+  {es:"Adiós y buena suerte", ar:"وداعاً وحظاً سعيداً", meta:"Despedidas"},
+  {es:"Nos vemos más tarde", ar:"نلتقي لاحقاً", meta:"Despedidas"},
+  {es:"Que pases buena tarde", ar:"أتمنى لك مساءً جيداً", meta:"Despedidas"},
+  {es:"Hasta la vista", ar:"إلى اللقاء", meta:"Despedidas"},
+  {es:"Cuídate y hasta pronto", ar:"اعتنِ بنفسك وإلى اللقاء", meta:"Despedidas"},
+  {es:"Adiós, que descanses", ar:"وداعاً، أتمنى لك الراحة", meta:"Despedidas"},
+  {es:"Nos vemos en seguida", ar:"نلتقي حالاً", meta:"Despedidas"},
+
+  /* AGRADECIMIENTOS Y DISCULPAS (20) */
+  {es:"Muchas gracias por todo", ar:"شكراً جزيلاً على كل شيء", meta:"Agradecimiento"},
+  {es:"Gracias, muy amable", ar:"شكراً، هذا لطف منك", meta:"Agradecimiento"},
+  {es:"Te lo agradezco mucho", ar:"أشكرك كثيراً", meta:"Agradecimiento"},
+  {es:"Mil gracias de verdad", ar:"ألف شكر حقاً", meta:"Agradecimiento"},
+  {es:"Gracias por tu ayuda", ar:"شكراً لمساعدتك", meta:"Agradecimiento"},
+  {es:"No hay de qué", ar:"لا داعي للشكر", meta:"Agradecimiento"},
+  {es:"Perdona, fue sin querer", ar:"عذراً، لم أقصد ذلك", meta:"Disculpas"},
+  {es:"Lo siento mucho", ar:"أنا آسف جداً", meta:"Disculpas"},
+  {es:"Disculpa la molestia", ar:"أعتذر عن الإزعاج", meta:"Disculpas"},
+  {es:"Perdón por el retraso", ar:"عذراً على التأخير", meta:"Disculpas"},
+  {es:"Gracias por tu paciencia", ar:"شكراً لصبرك", meta:"Agradecimiento"},
+  {es:"Perdona, no entendí", ar:"عذراً، لم أفهم", meta:"Disculpas"},
+  {es:"Gracias por todo", ar:"شكراً على كل شيء", meta:"Agradecimiento"},
+  {es:"Lo siento de verdad", ar:"أنا آسف حقاً", meta:"Disculpas"},
+  {es:"Gracias por venir", ar:"شكراً لقدومك", meta:"Agradecimiento"},
+  {es:"Perdona, fue mi error", ar:"عذراً، كان خطأي", meta:"Disculpas"},
+  {es:"Gracias por avisar", ar:"شكراً على الإخبار", meta:"Agradecimiento"},
+  {es:"Disculpa, un momento", ar:"عذراً، لحظة", meta:"Disculpas"},
+  {es:"Gracias por tu tiempo", ar:"شكراً لوقتك", meta:"Agradecimiento"},
+  {es:"Perdón por las molestias", ar:"عذراً على الإزعاج", meta:"Disculpas"},
+
+  /* PREGUNTAS COMUNES (30) */
+  {es:"¿Dónde está el baño?", ar:"أين الحمام؟", meta:"Peticiones"},
+  {es:"¿Cuánto cuesta esto?", ar:"كم ثمن هذا؟", meta:"Peticiones"},
+  {es:"¿Me puedes ayudar?", ar:"هل يمكنك مساعدتي؟", meta:"Peticiones"},
+  {es:"¿Qué hora es?", ar:"كم الساعة؟", meta:"Peticiones"},
+  {es:"¿Dónde está la estación?", ar:"أين المحطة؟", meta:"Peticiones"},
+  {es:"¿Aceptan tarjeta aquí?", ar:"هل تقبلون البطاقة هنا؟", meta:"Peticiones"},
+  {es:"¿Puedo probarlo?", ar:"هل يمكنني تجربته؟", meta:"Peticiones"},
+  {es:"¿A qué hora abre?", ar:"متى يفتح؟", meta:"Peticiones"},
+  {es:"¿Hay descuento disponible?", ar:"هل هناك خصم متاح؟", meta:"Peticiones"},
+  {es:"¿Me lo puedes decir?", ar:"هل يمكنك أن تخبرني؟", meta:"Peticiones"},
+  {es:"¿Dónde está la salida?", ar:"أين المخرج؟", meta:"Peticiones"},
+  {es:"¿Cómo se llega allí?", ar:"كيف أصل إلى هناك؟", meta:"Peticiones"},
+  {es:"¿Puedo pagar con tarjeta?", ar:"هل يمكنني الدفع بالبطاقة؟", meta:"Peticiones"},
+  {es:"¿Hay wifi aquí?", ar:"هل هناك واي فاي هنا؟", meta:"Peticiones"},
+  {es:"¿Me trae la cuenta?", ar:"هل تجلب لي الفاتورة؟", meta:"Peticiones"},
+  {es:"¿Dónde puedo aparcar?", ar:"أين يمكنني الوقوف؟", meta:"Peticiones"},
+  {es:"¿Está lejos de aquí?", ar:"هل هو بعيد من هنا؟", meta:"Peticiones"},
+  {es:"¿Puedo hacer una reserva?", ar:"هل يمكنني إجراء حجز؟", meta:"Peticiones"},
+  {es:"¿Hay menú del día?", ar:"هل هناك قائمة اليوم؟", meta:"Peticiones"},
+  {es:"¿Me lo envías por correo?", ar:"هل سترسله لي بالبريد؟", meta:"Peticiones"},
+  {es:"¿Puedo hablar con usted?", ar:"هل يمكنني التحدث معك؟", meta:"Peticiones"},
+  {es:"¿Dónde recojo esto?", ar:"أين أستلم هذا؟", meta:"Peticiones"},
+  {es:"¿Hay servicio a domicilio?", ar:"هل هناك خدمة توصيل؟", meta:"Peticiones"},
+  {es:"¿Puedo cambiarlo?", ar:"هل يمكنني تغييره؟", meta:"Peticiones"},
+  {es:"¿Me lo puedes explicar?", ar:"هل يمكنك أن تشرح لي؟", meta:"Peticiones"},
+  {es:"¿Dónde está la oficina?", ar:"أين المكتب؟", meta:"Peticiones"},
+  {es:"¿Hay plazas libres?", ar:"هل هناك أماكن شاغرة؟", meta:"Peticiones"},
+  {es:"¿Puedo entrar ahora?", ar:"هل يمكنني الدخول الآن؟", meta:"Peticiones"},
+  {es:"¿Me lo puedes mostrar?", ar:"هل يمكنك أن تريني ذلك؟", meta:"Peticiones"},
+
+  /* DIRECCIONES Y TRANSPORTE (20) */
+  {es:"Gira a la derecha", ar:"انعطف يميناً", meta:"Direcciones"},
+  {es:"Sigue todo recto", ar:"استمر مباشرة", meta:"Direcciones"},
+  {es:"Cruza la calle aquí", ar:"اعبر الشارع هنا", meta:"Direcciones"},
+  {es:"Toma la segunda calle", ar:"خذ الشارع الثاني", meta:"Direcciones"},
+  {es:"La parada está cerca", ar:"الموقف قريب", meta:"Direcciones"},
+  {es:"Baja en la próxima", ar:"انزل في القادمة", meta:"Direcciones"},
+  {es:"Sube por esa calle", ar:"اصعد عبر ذلك الشارع", meta:"Direcciones"},
+  {es:"Toma el autobús 5", ar:"استقل الحافلة رقم 5", meta:"Direcciones"},
+  {es:"¿Dónde está la estación?", ar:"أين المحطة؟", meta:"Direcciones"},
+  {es:"Sigue las señales", ar:"اتبع الإشارات", meta:"Direcciones"},
+  {es:"Coge el metro aquí", ar:"استقل المترو هنا", meta:"Direcciones"},
+  {es:"La salida está allí", ar:"المخرج هناك", meta:"Direcciones"},
+  {es:"¿Cuánto tarda el tren?", ar:"كم يستغرق القطار؟", meta:"Direcciones"},
+  {es:"¿Dónde está el andén?", ar:"أين الرصيف؟", meta:"Direcciones"},
+  {es:"Toma la línea azul", ar:"خذ الخط الأزرق", meta:"Direcciones"},
+  {es:"El taxi está fuera", ar:"سيارة الأجرة بالخارج", meta:"Direcciones"},
+  {es:"¿Dónde recojo el equipaje?", ar:"أين أستلم الأمتعة؟", meta:"Direcciones"},
+  {es:"Sigue por esa avenida", ar:"استمر في ذلك الجادة", meta:"Direcciones"},
+  {es:"La estación queda lejos", ar:"المحطة بعيدة", meta:"Direcciones"},
+  {es:"¿Hay servicio nocturno?", ar:"هل هناك خدمة ليلية؟", meta:"Direcciones"},
+
+  /* COMER Y BEBER (20) */
+  {es:"Tengo hambre ahora", ar:"أنا جائع الآن", meta:"Comer"},
+  {es:"¿Vamos a comer?", ar:"هل نذهب لتناول الطعام؟", meta:"Comer"},
+  {es:"Quiero algo ligero", ar:"أريد شيئاً خفيفاً", meta:"Comer"},
+  {es:"¿Qué recomiendas hoy?", ar:"ماذا توصي اليوم؟", meta:"Comer"},
+  {es:"La cuenta, por favor", ar:"الفاتورة من فضلك", meta:"Comer"},
+  {es:"Una mesa para dos", ar:"طاولة لشخصين", meta:"Comer"},
+  {es:"Sin azúcar, por favor", ar:"بدون سكر من فضلك", meta:"Comer"},
+  {es:"Agua sin gas, por favor", ar:"ماء بدون غاز من فضلك", meta:"Comer"},
+  {es:"¿Tienen menú vegetariano?", ar:"هل لديكم قائمة نباتية؟", meta:"Comer"},
+  {es:"¿Está incluido el servicio?", ar:"هل الخدمة مشمولة؟", meta:"Comer"},
+  {es:"Quisiera un café solo", ar:"أريد قهوة سادة", meta:"Comer"},
+  {es:"¿Puede traer pan?", ar:"هل يمكنك إحضار خبز؟", meta:"Comer"},
+  {es:"¿Tiene opciones sin gluten?", ar:"هل لديكم خيارات خالية من الغلوتين؟", meta:"Comer"},
+  {es:"Quiero postre, por favor", ar:"أريد حلوى، من فضلك", meta:"Comer"},
+  {es:"¿Me trae la carta?", ar:"هل تجلب لي القائمة؟", meta:"Comer"},
+  {es:"¿Algo para picar?", ar:"شيء للتسالي؟", meta:"Comer"},
+  {es:"¿Puede recomendar un plato?", ar:"هل يمكنك أن توصي بطبق؟", meta:"Comer"},
+  {es:"Quiero pagar en efectivo", ar:"أريد الدفع نقداً", meta:"Comer"},
+  {es:"¿Hay menú infantil?", ar:"هل هناك قائمة للأطفال؟", meta:"Comer"},
+  {es:"¿Tienen platos del día?", ar:"هل لديكم أطباق اليوم؟", meta:"Comer"},
+
+  /* COMPRAS (20) */
+  {es:"¿Tienen esto en otro color?", ar:"هل لديكم هذا بلون آخر؟", meta:"Compras"},
+  {es:"¿Puedo pagar en efectivo?", ar:"هل يمكنني الدفع نقداً؟", meta:"Compras"},
+  {es:"Lo quiero llevar", ar:"أريد شراءه", meta:"Compras"},
+  {es:"¿Me lo envuelven?", ar:"هل يمكنكم تغليفه لي؟", meta:"Compras"},
+  {es:"¿Aceptan devoluciones?", ar:"هل تقبلون الإرجاع؟", meta:"Compras"},
+  {es:"Busco una talla mediana", ar:"أبحث عن مقاس متوسط", meta:"Compras"},
+  {es:"¿Dónde está el probador?", ar:"أين غرفة القياس؟", meta:"Compras"},
+  {es:"¿Hay oferta hoy?", ar:"هل هناك عرض اليوم؟", meta:"Compras"},
+  {es:"¿Puedo reservarlo?", ar:"هل يمكنني حجزه؟", meta:"Compras"},
+  {es:"¿Tiene garantía incluida?", ar:"هل توجد ضمانة مرفقة؟", meta:"Compras"},
+  {es:"¿Me lo puedes cambiar?", ar:"هل يمكنك تغييره لي؟", meta:"Compras"},
+  {es:"¿Dónde está caja?", ar:"أين الصندوق؟", meta:"Compras"},
+  {es:"¿Puedo probar esto?", ar:"هل يمكنني تجربة هذا؟", meta:"Compras"},
+  {es:"¿Hay stock disponible?", ar:"هل هناك مخزون متاح؟", meta:"Compras"},
+  {es:"¿Me lo puedes enviar?", ar:"هل يمكنك إرساله لي؟", meta:"Compras"},
+  {es:"¿Cuál es el precio final?", ar:"ما هو السعر النهائي؟", meta:"Compras"},
+  {es:"¿Tienen tarjeta regalo?", ar:"هل لديكم بطاقة هدية؟", meta:"Compras"},
+  {es:"¿Puedo pagar a plazos?", ar:"هل يمكنني الدفع بالتقسيط؟", meta:"Compras"},
+  {es:"¿Dónde está la sección?", ar:"أين القسم؟", meta:"Compras"},
+  {es:"¿Me lo guardan?", ar:"هل تحتفظون به لي؟", meta:"Compras"},
+
+  /* SALUD Y BIENESTAR (20) */
+  {es:"Me siento un poco mal", ar:"أشعر ببعض التعب", meta:"Salud"},
+  {es:"Necesito ver al médico", ar:"أحتاج لرؤية الطبيب", meta:"Salud"},
+  {es:"¿Dónde está la farmacia?", ar:"أين الصيدلية؟", meta:"Salud"},
+  {es:"Tengo dolor de cabeza", ar:"أعاني من صداع", meta:"Salud"},
+  {es:"¿Tienes algo para la tos?", ar:"هل لديك شيء للسعال؟", meta:"Salud"},
+  {es:"Necesito descansar hoy", ar:"أحتاج للراحة اليوم", meta:"Salud"},
+  {es:"Estoy mejor, gracias", ar:"أنا أفضل الآن، شكراً", meta:"Salud"},
+  {es:"¿Puedo tomar esto?", ar:"هل يمكنني تناول هذا؟", meta:"Salud"},
+  {es:"¿Hay un hospital cerca?", ar:"هل هناك مستشفى قريب؟", meta:"Salud"},
+  {es:"Llama a una ambulancia", ar:"اتصل بالإسعاف", meta:"Salud"},
+  {es:"Tengo fiebre alta", ar:"لدي حمى عالية", meta:"Salud"},
+  {es:"Necesito una receta", ar:"أحتاج وصفة طبية", meta:"Salud"},
+  {es:"¿Dónde está el dentista?", ar:"أين طبيب الأسنان؟", meta:"Salud"},
+  {es:"Me siento mareado ahora", ar:"أشعر بدوار الآن", meta:"Salud"},
+  {es:"¿Puedo ver al especialista?", ar:"هل يمكنني رؤية الأخصائي؟", meta:"Salud"},
+  {es:"Necesito una cita", ar:"أحتاج إلى موعد", meta:"Salud"},
+  {es:"¿Hay servicio de urgencias?", ar:"هل هناك خدمة طوارئ؟", meta:"Salud"},
+  {es:"¿Puedo tomar un descanso?", ar:"هل يمكنني أخذ استراحة؟", meta:"Salud"},
+  {es:"Tengo alergia estacional", ar:"لدي حساسية موسمية", meta:"Salud"},
+  {es:"Necesito ayuda médica", ar:"أحتاج إلى مساعدة طبية", meta:"Salud"},
+
+  /* EMOCIONES Y SENSACIONES (30) */
+  {es:"Estoy muy contento", ar:"أنا سعيد جداً", meta:"Emociones"},
+  {es:"Me siento un poco triste", ar:"أشعر ببعض الحزن", meta:"Emociones"},
+  {es:"Estoy un poco nervioso", ar:"أنا متوتر قليلاً", meta:"Emociones"},
+  {es:"Me siento muy cansado", ar:"أشعر بتعب شديد", meta:"Emociones"},
+  {es:"Estoy sorprendido por esto", ar:"أنا مندهش من هذا", meta:"Emociones"},
+  {es:"Me siento tranquilo ahora", ar:"أشعر بالهدوء الآن", meta:"Emociones"},
+  {es:"Estoy agradecido contigo", ar:"أنا ممتن لك", meta:"Emociones"},
+  {es:"Me siento con energía", ar:"أشعر بالنشاط", meta:"Emociones"},
+  {es:"Estoy un poco preocupado", ar:"أنا قلق قليلاً", meta:"Emociones"},
+  {es:"Me siento muy ilusionado", ar:"أنا متحمس جداً", meta:"Emociones"},
+  {es:"Estoy algo confundido", ar:"أنا مرتبك قليلاً", meta:"Emociones"},
+  {es:"Me siento aliviado ahora", ar:"أشعر بالارتياح الآن", meta:"Emociones"},
+  {es:"Estoy muy orgulloso", ar:"أنا فخور جداً", meta:"Emociones"},
+  {es:"Me siento avergonzado", ar:"أشعر بالإحراج", meta:"Emociones"},
+  {es:"Estoy lleno de esperanza", ar:"أنا مملوء بالأمل", meta:"Emociones"},
+  {es:"Me siento inspirado hoy", ar:"أشعر بالإلهام اليوم", meta:"Emociones"},
+  {es:"Estoy algo desanimado", ar:"أنا محبط قليلاً", meta:"Emociones"},
+  {es:"Me siento relajado ahora", ar:"أشعر بالاسترخاء الآن", meta:"Emociones"},
+  {es:"Estoy emocionado por esto", ar:"أنا متحمس لهذا", meta:"Emociones"},
+  {es:"Me siento inseguro ahora", ar:"أشعر بعدم الأمان الآن", meta:"Emociones"},
+  {es:"Estoy con mucha ilusión", ar:"أنا متحمس للغاية", meta:"Emociones"},
+  {es:"Me siento nostálgico hoy", ar:"أشعر بالحنين اليوم", meta:"Emociones"},
+  {es:"Estoy con la moral alta", ar:"معنويتي عالية", meta:"Emociones"},
+  {es:"Me siento frustrado ahora", ar:"أشعر بالإحباط الآن", meta:"Emociones"},
+  {es:"Estoy con ganas de reír", ar:"أرغب في الضحك", meta:"Emociones"},
+  {es:"Me siento muy agradecido", ar:"أنا ممتن جداً", meta:"Emociones"},
+  {es:"Estoy con miedo leve", ar:"أشعر بخوف طفيف", meta:"Emociones"},
+  {es:"Me siento con paz", ar:"أشعر بالسلام", meta:"Emociones"},
+  {es:"Estoy con mucha energía", ar:"أنا مليء بالطاقة", meta:"Emociones"},
+
+  /* RELACIONES Y SOCIAL (20) */
+  {es:"¿Quieres venir conmigo?", ar:"هل تريد أن تأتي معي؟", meta:"Social"},
+  {es:"¿Te apetece salir?", ar:"هل ترغب في الخروج؟", meta:"Social"},
+  {es:"Quedamos a las ocho", ar:"نلتقي في الساعة الثامنة", meta:"Social"},
+  {es:"Te llamo más tarde", ar:"سأتصل بك لاحقاً", meta:"Social"},
+  {es:"¿Nos vemos mañana?", ar:"هل نلتقي غداً؟", meta:"Social"},
+  {es:"Gracias por la invitación", ar:"شكراً على الدعوة", meta:"Social"},
+  {es:"Fue un placer conocerte", ar:"سعدت بلقائك", meta:"Social"},
+  {es:"Cuenta conmigo siempre", ar:"اعتمد عليّ دائماً", meta:"Social"},
+  {es:"Hablamos pronto, ¿vale?", ar:"سنتحدث قريباً، حسناً؟", meta:"Social"},
+  {es:"Te echo de menos", ar:"أفتقدك", meta:"Social"},
+  {es:"¿Quieres unirte hoy?", ar:"هل تريد الانضمام اليوم؟", meta:"Social"},
+  {es:"Nos vemos en la fiesta", ar:"نلتقي في الحفلة", meta:"Social"},
+  {es:"Gracias por acompañarme", ar:"شكراً لمرافقتي", meta:"Social"},
+  {es:"¿Te apetece un café?", ar:"هل ترغب في فنجان قهوة؟", meta:"Social"},
+  {es:"¿Vienes con nosotros?", ar:"هل تأتي معنا؟", meta:"Social"},
+  {es:"Te invito la próxima vez", ar:"أدعوك في المرة القادمة", meta:"Social"},
+  {es:"¿Quieres que te acompañe?", ar:"هل تريد أن أرافقك؟", meta:"Social"},
+  {es:"Nos vemos en la plaza", ar:"نلتقي في الساحة", meta:"Social"},
+  {es:"Gracias por tu amistad", ar:"شكراً لصداقتك", meta:"Social"},
+  {es:"¿Te apetece cenar?", ar:"هل ترغب في العشاء؟", meta:"Social"},
+
+  /* TRABAJO Y ESTUDIO (20) */
+  {es:"Tengo una reunión ahora", ar:"لدي اجتماع الآن", meta:"Trabajo"},
+  {es:"Necesito entregar esto", ar:"أحتاج لتسليم هذا", meta:"Trabajo"},
+  {es:"¿Puedes revisar esto?", ar:"هل يمكنك مراجعة هذا؟", meta:"Trabajo"},
+  {es:"Voy a estudiar ahora", ar:"سأدرس الآن", meta:"Estudio"},
+  {es:"¿Tienes tiempo libre?", ar:"هل لديك وقت فراغ؟", meta:"Trabajo"},
+  {es:"Trabajo desde casa hoy", ar:"أعمل من المنزل اليوم", meta:"Trabajo"},
+  {es:"Necesito más información", ar:"أحتاج لمزيد من المعلومات", meta:"Trabajo"},
+  {es:"¿Podemos hablar luego?", ar:"هل يمكننا التحدث لاحقاً؟", meta:"Trabajo"},
+  {es:"He terminado la tarea", ar:"أنهيت المهمة", meta:"Estudio"},
+  {es:"¿Me envías el archivo?", ar:"هل ترسل لي الملف؟", meta:"Trabajo"},
+  {es:"¿Cuál es la fecha límite?", ar:"ما هو الموعد النهائي؟", meta:"Trabajo"},
+  {es:"Necesito apoyo técnico", ar:"أحتاج دعم فني", meta:"Trabajo"},
+  {es:"Voy a preparar la presentación", ar:"سأجهز العرض", meta:"Trabajo"},
+  {es:"¿Puedes compartir el enlace?", ar:"هل يمكنك مشاركة الرابط؟", meta:"Trabajo"},
+  {es:"Tengo que estudiar hoy", ar:"يجب أن أدرس اليوم", meta:"Estudio"},
+  {es:"¿Quién está disponible ahora?", ar:"من متاح الآن؟", meta:"Trabajo"},
+  {es:"Necesito feedback urgente", ar:"أحتاج ملاحظات عاجلة", meta:"Trabajo"},
+  {es:"He enviado el informe", ar:"أرسلت التقرير", meta:"Trabajo"},
+  {es:"¿Puedes confirmar recepción?", ar:"هل يمكنك تأكيد الاستلام؟", meta:"Trabajo"},
+  {es:"Voy a tomar notas", ar:"سأدون ملاحظات", meta:"Estudio"},
+
+  /* CORTESÍAS Y RESPUESTAS (20) */
+  {es:"Por favor, un momento", ar:"من فضلك، لحظة", meta:"Cortesía"},
+  {es:"Con permiso, gracias", ar:"مع الإذن، شكراً", meta:"Cortesía"},
+  {es:"Claro, sin problema", ar:"بالتأكيد، لا مشكلة", meta:"Cortesía"},
+  {es:"Por supuesto, adelante", ar:"بالطبع، تفضل", meta:"Cortesía"},
+  {es:"No te preocupes", ar:"لا تقلق", meta:"Cortesía"},
+  {es:"Con gusto te ayudo", ar:"سأساعدك بسرور", meta:"Cortesía"},
+  {es:"Disculpa la espera", ar:"أعتذر عن الانتظار", meta:"Cortesía"},
+  {es:"Gracias por esperar", ar:"شكراً لانتظارك", meta:"Cortesía"},
+  {es:"Es un placer ayudar", ar:"من دواعي سروري المساعدة", meta:"Cortesía"},
+  {es:"Por favor, pase adelante", ar:"من فضلك، تفضل", meta:"Cortesía"},
+  {es:"Con mucho gusto", ar:"بكل سرور", meta:"Cortesía"},
+  {es:"Gracias por su tiempo", ar:"شكراً لوقتك", meta:"Cortesía"},
+  {es:"No hay problema", ar:"لا توجد مشكلة", meta:"Cortesía"},
+  {es:"A su servicio", ar:"في خدمتك", meta:"Cortesía"},
+  {es:"Gracias por su atención", ar:"شكراً لاهتمامك", meta:"Cortesía"},
+  {es:"Por favor, siéntese", ar:"من فضلك، اجلس", meta:"Cortesía"},
+  {es:"Con permiso, paso", ar:"مع الإذن، أمر", meta:"Cortesía"},
+  {es:"Gracias por su ayuda", ar:"شكراً لمساعدتك", meta:"Cortesía"},
+  {es:"No se preocupe", ar:"لا تقلق", meta:"Cortesía"},
+  {es:"Que tenga buen día", ar:"أتمنى لك يوماً سعيداً", meta:"Cortesía"},
+
+  /* TIEMPO Y FECHAS (20) */
+  {es:"Hoy hace buen tiempo", ar:"الطقس جيد اليوم", meta:"Tiempo"},
+  {es:"Hace mucho calor hoy", ar:"الجو حار جداً اليوم", meta:"Tiempo"},
+  {es:"Hace bastante frío", ar:"الجو بارد إلى حد ما", meta:"Tiempo"},
+  {es:"¿Qué día es hoy?", ar:"ما هو اليوم؟", meta:"Tiempo"},
+  {es:"Nos vemos el lunes", ar:"نلتقي يوم الاثنين", meta:"Tiempo"},
+  {es:"El evento es mañana", ar:"الفعالية غداً", meta:"Tiempo"},
+  {es:"Dentro de una semana", ar:"خلال أسبوع", meta:"Tiempo"},
+  {es:"En unos minutos", ar:"بعد دقائق", meta:"Tiempo"},
+  {es:"A primera hora", ar:"في الصباح الباكر", meta:"Tiempo"},
+  {es:"A última hora", ar:"في نهاية اليوم", meta:"Tiempo"},
+  {es:"Hoy por la tarde", ar:"اليوم بعد الظهر", meta:"Tiempo"},
+  {es:"Esta noche salgo", ar:"سأخرج الليلة", meta:"Tiempo"},
+  {es:"Mañana por la mañana", ar:"غداً صباحاً", meta:"Tiempo"},
+  {es:"El próximo mes", ar:"الشهر القادم", meta:"Tiempo"},
+  {es:"Dentro de poco", ar:"قريباً", meta:"Tiempo"},
+  {es:"En la próxima semana", ar:"في الأسبوع القادم", meta:"Tiempo"},
+  {es:"A mediodía", ar:"في منتصف النهار", meta:"Tiempo"},
+  {es:"A primera vista", ar:"من النظرة الأولى", meta:"Tiempo"},
+  {es:"En breve regreso", ar:"سأعود قريباً", meta:"Tiempo"},
+  {es:"Hoy es mi cumpleaños", ar:"اليوم عيد ميلادي", meta:"Tiempo"},
+
+  /* EMERGENCIAS Y SEGURIDAD (20) */
+  {es:"Necesito ayuda urgente", ar:"أحتاج مساعدة عاجلة", meta:"Emergencias"},
+  {es:"Llama a la policía", ar:"اتصل بالشرطة", meta:"Emergencias"},
+  {es:"Hay un incendio aquí", ar:"هناك حريق هنا", meta:"Emergencias"},
+  {es:"Aléjate de la zona", ar:"ابتعد عن المنطقة", meta:"Emergencias"},
+  {es:"Necesito un médico", ar:"أحتاج إلى طبيب", meta:"Emergencias"},
+  {es:"¿Está todo bien?", ar:"هل كل شيء على ما يرام؟", meta:"Emergencias"},
+  {es:"Mantén la calma", ar:"حافظ على هدوئك", meta:"Emergencias"},
+  {es:"Sigue las instrucciones", ar:"اتبع التعليمات", meta:"Emergencias"},
+  {es:"Cierra la puerta", ar:"أغلق الباب", meta:"Emergencias"},
+  {es:"Evacúen el edificio", ar:"أخلوا المبنى", meta:"Emergencias"},
+  {es:"Necesito un desfibrilador", ar:"أحتاج إلى جهاز مزيل الرجفان", meta:"Emergencias"},
+  {es:"Hay una fuga de gas", ar:"هناك تسرب غاز", meta:"Emergencias"},
+  {es:"No toque eso", ar:"لا تلمس ذلك", meta:"Emergencias"},
+  {es:"Busquen ayuda médica", ar:"ابحثوا عن مساعدة طبية", meta:"Emergencias"},
+  {es:"Cuidado con el suelo", ar:"احذر من الأرض", meta:"Emergencias"},
+  {es:"Apaga el fuego", ar:"أطفئ النار", meta:"Emergencias"},
+  {es:"Lleva a los niños fuera", ar:"أخرج الأطفال إلى الخارج", meta:"Emergencias"},
+  {es:"Bloquea la puerta", ar:"أغلق الباب بالقفل", meta:"Emergencias"},
+  {es:"Alerta a los vecinos", ar:"نبه الجيران", meta:"Emergencias"},
+  {es:"Sigue la salida de emergencia", ar:"اتبع مخرج الطوارئ", meta:"Emergencias"},
+
+  /* VARIOS ÚTILES (20) */
+  {es:"Un momento, por favor", ar:"لحظة من فضلك", meta:"Varios"},
+  {es:"No entiendo bien", ar:"لا أفهم جيداً", meta:"Varios"},
+  {es:"Repite, por favor", ar:"كرر من فضلك", meta:"Varios"},
+  {es:"Más despacio, por favor", ar:"ببطء أكثر من فضلك", meta:"Varios"},
+  {es:"¿Puedes escribirlo?", ar:"هل يمكنك كتابته؟", meta:"Varios"},
+  {es:"¿Cómo se dice?", ar:"كيف يُقال؟", meta:"Varios"},
+  {es:"¿Puedes mostrarme?", ar:"هل يمكنك أن تريني؟", meta:"Varios"},
+  {es:"No tengo idea", ar:"لا فكرة لدي", meta:"Varios"},
+  {es:"Eso suena bien", ar:"هذا يبدو جيداً", meta:"Varios"},
+  {es:"Estoy de acuerdo", ar:"أنا موافق", meta:"Varios"},
+  {es:"No es problema", ar:"ليس مشكلة", meta:"Varios"},
+  {es:"Eso me interesa", ar:"هذا يهمني", meta:"Varios"},
+  {es:"No lo sabía", ar:"لم أكن أعلم", meta:"Varios"},
+  {es:"Me lo apunto", ar:"سأدون ذلك", meta:"Varios"},
+  {es:"Te lo confirmo luego", ar:"سأؤكد لك لاحقاً", meta:"Varios"},
+  {es:"Eso es suficiente", ar:"هذا يكفي", meta:"Varios"},
+  {es:"No importa ahora", ar:"لا يهم الآن", meta:"Varios"},
+  {es:"Me parece bien", ar:"يبدو لي جيداً", meta:"Varios"},
+  {es:"Lo intentaré mañana", ar:"سأحاول غداً", meta:"Varios"},
+  {es:"Gracias por todo", ar:"شكراً على كل شيء", meta:"Varios"}
+];
+
+/* Agrupar por categoría */
+const groups = {};
+expressions.forEach(e => {
+  const cat = e.meta || "Otros";
+  if (!groups[cat]) groups[cat] = [];
+  groups[cat].push(e);
+});
+
+/* Crear secciones dinámicamente */
+const main = document.getElementById('mainContent');
+Object.keys(groups).forEach(cat => {
+  const section = document.createElement('section');
+  section.innerHTML = `<h2>${cat} <small style="color:#666;font-weight:600">(${groups[cat].length})</small></h2>`;
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  groups[cat].forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-es', p.es);
+    card.setAttribute('data-ar', p.ar);
+    card.innerHTML = `
+      <div class="text">
+        <div class="phrase">${p.es}</div>
+        <div class="translation">${p.ar}</div>
+      </div>
+      <button class="speak" aria-label="Escuchar frase">🔊</button>
+    `;
+    grid.appendChild(card);
+  });
+  section.appendChild(grid);
+  main.appendChild(section);
+});
+
+/* Síntesis de voz (es-ES) */
+function speakText(text) {
+  if (!('speechSynthesis' in window)) { alert('Tu navegador no soporta SpeechSynthesis.'); return; }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'es-ES';
+  utter.rate = 0.98;
+  utter.pitch = 1;
+  const voices = window.speechSynthesis.getVoices();
+  const voice = voices.find(v => v.lang.startsWith('es-') && /Spain|España|es-ES/i.test(v.name)) || voices.find(v => v.lang.startsWith('es-')) || null;
+  if (voice) utter.voice = voice;
+  window.speechSynthesis.speak(utter);
+}
+
+/* Eventos para botones individuales */
+document.querySelectorAll('.speak').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const card = btn.closest('.card');
+    const text = card.getAttribute('data-es');
+    speakText(text);
+  });
+});
+
+/* Reproducir todas las frases (todas las secciones) */
+document.getElementById('playAll').addEventListener('click', async () => {
+  stopAll.clicked = false;
+  const allCards = Array.from(document.querySelectorAll('.card'));
+  for (let c of allCards) {
+    if (stopAll.clicked) break;
+    speakText(c.getAttribute('data-es'));
+    await new Promise(resolve => {
+      const check = setInterval(() => {
+        if (!window.speechSynthesis.speaking) { clearInterval(check); setTimeout(resolve, 220); }
+      }, 100);
+    });
+  }
+  stopAll.clicked = false;
+});
+
+/* Detener todo */
+const stopAll = document.getElementById('stopAll');
+stopAll.addEventListener('click', () => {
+  stopAll.clicked = true;
+  window.speechSynthesis.cancel();
+});
+
+/* Reproducir grupo al hacer clic en su título */
+document.querySelectorAll('section h2').forEach(h2 => {
+  h2.style.cursor = 'pointer';
+  h2.addEventListener('click', async () => {
+    stopAll.clicked = false;
+    const section = h2.parentElement;
+    const cards = Array.from(section.querySelectorAll('.card'));
+    for (let c of cards) {
+      if (stopAll.clicked) break;
+      speakText(c.getAttribute('data-es'));
+      await new Promise(resolve => {
+        const check = setInterval(() => {
+          if (!window.speechSynthesis.speaking) { clearInterval(check); setTimeout(resolve, 220); }
+        }, 100);
+      });
+    }
+    stopAll.clicked = false;
+  });
+});
+
+/* refrescar voces si cambian */
+if (typeof speechSynthesis !== 'undefined') speechSynthesis.onvoiceschanged = () => {};
+</script>
+
+<footer class="container">Contenido: 300 expresiones cortas en español castellano con traducción al árabe. Úsalo para practicar pronunciación, entonación y comunicación cotidiana.</footer>
+</body>
+</html>

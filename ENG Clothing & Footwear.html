@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Clothing Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg:#f7f7f9; --card:#fff; --text:#111; --muted:#556; --accent:#1f6feb; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(0,0,0,0.06); --chip:#eef6ff;
+      --tile-min:160px; --tile-padding:10px; --word-size:0.98rem; --trans-size:0.86rem; --btn-size:44px;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#0b0d10; --card:#0f1317; --text:#e6eef8; --muted:#9aa6b2; --accent:#4ea1ff;
+        --accent-contrast:#07101a; --border:#1f2429; --shadow:0 2px 8px rgba(0,0,0,0.45); --chip:#12202b;
+      }
+    }
+
+    /* Dense mode variables */
+    .dense {
+      --tile-min:120px;
+      --tile-padding:8px;
+      --word-size:0.92rem;
+      --trans-size:0.78rem;
+      --btn-size:36px;
+    }
+
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:0 0 8px;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:0.95rem;outline:none;}
+    main{margin-top:12px;}
+    .category{margin:12px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:var(--chip);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--tile-padding);display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;box-shadow:var(--shadow);min-height:48px;}
+    .word{font-size:var(--word-size);font-weight:600;line-height:1.15;}
+    .translation{font-size:var(--trans-size);color:var(--muted);margin-top:4px;display:block;line-height:1.1;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:8px 12px;border-radius:999px;font-size:0.9rem;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow);}
+    .speak-btn:active{transform:translateY(1px);filter:brightness(0.96);}
+    .footer{margin:14px 0 30px;color:var(--muted);text-align:center;font-size:0.92rem;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .grid{gap:6px;} .item{padding:6px;} .word{font-size:0.98rem;} .speak-btn{padding:8px 10px;font-size:0.95rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap" role="application" aria-label="Clothing vocabulary with Arabic translations and pronunciation">
+    <header>
+      <h1>Clothing Vocabulary — English with Arabic translations</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter terms (English or Arabic)..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);white-space:nowrap;">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite">
+      <!-- categories injected here -->
+    </main>
+
+    <div class="footer">
+      Tip: Pronunciations use your device's speech synthesis voices. If a voice is missing, try switching the accent or device.
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // DATA: Clothing vocabulary grouped with Arabic translations
+    // Categories: Tops, Bottoms, Outerwear, Underwear & Loungewear, Footwear, Accessories, Fabrics & Materials,
+    // Fastenings & Details, Care & Maintenance, Workwear & Uniforms, Sportswear, Traditional & Cultural, Children's clothing, Seasonal items
+    // =========================
+    const DATA = {
+      "Tops": [
+        {en:"t-shirt", ar:"قميص تي شيرت"},
+        {en:"shirt", ar:"قميص"},
+        {en:"blouse", ar:"بلوزة"},
+        {en:"polo shirt", ar:"قميص بولو"},
+        {en:"tank top", ar:"قميص بدون أكمام"},
+        {en:"sweater", ar:"سترة صوفية"},
+        {en:"jumper", ar:"جمبر / سويتر"},
+        {en:"cardigan", ar:"كارديغان"},
+        {en:"hoodie", ar:"هودي (سترة بغطاء رأس)"},
+        {en:"vest", ar:"صدرية / فانيلة"},
+        {en:"tunic", ar:"تونيك"},
+        {en:"crop top", ar:"توب قصير"},
+        {en:"camisole", ar:"قميص داخلي نسائي"},
+        {en:"henley", ar:"قميص هينلي"},
+        {en:"sweatshirt", ar:"سويت شيرت"},
+        {en:"dress shirt", ar:"قميص رسمي"},
+        {en:"button-up", ar:"قميص بأزرار"},
+        {en:"peplum top", ar:"توب ببلوم"},
+        {en:"tube top", ar:"توب أنبوبي"},
+        {en:"off-shoulder top", ar:"توب مكشوف الكتفين"}
+      ],
+
+      "Bottoms": [
+        {en:"jeans", ar:"جينز"},
+        {en:"trousers", ar:"سروال"},
+        {en:"pants", ar:"بنطال"},
+        {en:"shorts", ar:"شورت"},
+        {en:"skirt", ar:"تنورة"},
+        {en:"mini skirt", ar:"تنورة قصيرة"},
+        {en:"midi skirt", ar:"تنورة متوسطة الطول"},
+        {en:"maxi skirt", ar:"تنورة طويلة"},
+        {en:"leggings", ar:"ليجنز"},
+        {en:"joggers", ar:"بنطال رياضي"},
+        {en:"cargo pants", ar:"بنطال كارغو"},
+        {en:"chinos", ar:"شينو (قماش قطني)"},
+        {en:"culottes", ar:"كولوتس (سروال يشبه التنورة)"},
+        {en:"palazzo pants", ar:"بنطال بالازو"},
+        {en:"capri pants", ar:"بنطال كابري"},
+        {en:"dress pants", ar:"بنطال رسمي"},
+        {en:"sweatpants", ar:"بنطال رياضي"},
+        {en:"overalls", ar:"أوفرول / مريول"},
+        {en:"skort", ar:"تنورة-شورت"},
+        {en:"tights", ar:"جوارب ضيقة / تايتس"}
+      ],
+
+      "Outerwear": [
+        {en:"jacket", ar:"سترة"},
+        {en:"coat", ar:"معطف"},
+        {en:"parka", ar:"باركا (معطف ثقيل)"},
+        {en:"trench coat", ar:"معطف ترنش"},
+        {en:"blazer", ar:"بليزر"},
+        {en:"pea coat", ar:"معطف بي كوت"},
+        {en:"windbreaker", ar:"جاكيت مقاوم للرياح"},
+        {en:"raincoat", ar:"معطف مطر"},
+        {en:"puffer jacket", ar:"جاكيت مبطن"},
+        {en:"anorak", ar:"أنوراك"},
+        {en:"duster", ar:"معطف طويل خفيف"},
+        {en:"overcoat", ar:"معطف خارجي"},
+        {en:"fleece", ar:"جاكيت فليس"},
+        {en:"shearling coat", ar:"معطف فرو صناعي"},
+        {en:"cape", ar:"عباءة قصيرة / كيب"},
+        {en:"poncho", ar:"بونشو"},
+        {en:"motorcycle jacket", ar:"جاكيت دراجات نارية"},
+        {en:"quilted jacket", ar:"جاكيت مبطن"},
+        {en:"softshell jacket", ar:"جاكيت سوفتشيل"},
+        {en:"peacoat", ar:"معطف بحري (بي كوت)"}
+      ],
+
+      "Underwear & Loungewear": [
+        {en:"underwear", ar:"ملابس داخلية"},
+        {en:"bra", ar:"حمالة صدر"},
+        {en:"briefs", ar:"سروال داخلي (بريفز)"},
+        {en:"boxers", ar:"بوكسر"},
+        {en:"boxer briefs", ar:"بوكسر بريفز"},
+        {en:"panties", ar:"سروال داخلي نسائي"},
+        {en:"camisole", ar:"قميص داخلي"},
+        {en:"slip", ar:"فستان داخلي (سليب)"},
+        {en:"thermals", ar:"ملابس حرارية داخلية"},
+        {en:"pyjamas / pajamas", ar:"بيجاما"},
+        {en:"robe", ar:"روب"},
+        {en:"loungewear", ar:"ملابس مريحة للمنزل"},
+        {en:"onesie", ar:"أونزي (قطعة واحدة)"},
+        {en:"boxer shorts", ar:"شورت بوكسر"},
+        {en:"sports bra", ar:"حمالة صدر رياضية"},
+        {en:"bralette", ar:"برا ليت (حمالة خفيفة)"},
+        {en:"slip dress", ar:"فستان داخلي طويل"},
+        {en:"chemise", ar:"قميص نوم"},
+        {en:"thermal underwear", ar:"ملابس داخلية حرارية"},
+        {en:"corset", ar:"كورسيه"}
+      ],
+
+      "Footwear": [
+        {en:"shoes", ar:"أحذية"},
+        {en:"sneakers", ar:"حذاء رياضي"},
+        {en:"trainers", ar:"حذاء تدريب"},
+        {en:"boots", ar:"جزمة / بوت"},
+        {en:"ankle boots", ar:"بوت للكاحل"},
+        {en:"chelsea boots", ar:"بوت تشيلسي"},
+        {en:"work boots", ar:"أحذية عمل"},
+        {en:"sandals", ar:"صنادل"},
+        {en:"flip-flops", ar:"شبشب (فليب فلوب)"},
+        {en:"heels", ar:"كعب عالي"},
+        {en:"pumps", ar:"حذاء بكعب نسائي"},
+        {en:"loafers", ar:"لوفرز"},
+        {en:"oxfords", ar:"أوكسفورد (حذاء رسمي)"},
+        {en:"derby shoes", ar:"حذاء ديربي"},
+        {en:"moccasins", ar:"موكاسين"},
+        {en:"espadrilles", ar:"إسبادريل"},
+        {en:"clogs", ar:"كلوغ (حذاء خشبي)"},
+        {en:"slippers", ar:"شبشب منزلي"},
+        {en:"wellington boots", ar:"حذاء مطري (ويلينغتون)"},
+        {en:"hiking boots", ar:"حذاء تسلق/مشي"}
+      ],
+
+      "Accessories": [
+        {en:"hat", ar:"قبعة"},
+        {en:"cap", ar:"كاب"},
+        {en:"beanie", ar:"قبعة صوفية"},
+        {en:"scarf", ar:"وشاح"},
+        {en:"gloves", ar:"قفازات"},
+        {en:"belt", ar:"حزام"},
+        {en:"tie", ar:"ربطة عنق"},
+        {en:"bow tie", ar:"ربطة عنق فراشة"},
+        {en:"pocket square", ar:"منديل جيب"},
+        {en:"sunglasses", ar:"نظارات شمسية"},
+        {en:"watch", ar:"ساعة"},
+        {en:"bracelet", ar:"سوار"},
+        {en:"necklace", ar:"قلادة"},
+        {en:"earrings", ar:"أقراط"},
+        {en:"ring", ar:"خاتم"},
+        {en:"handbag", ar:"حقيبة يد"},
+        {en:"backpack", ar:"حقيبة ظهر"},
+        {en:"wallet", ar:"محفظة"},
+        {en:"umbrella", ar:"مظلة"},
+        {en:"hairband", ar:"رباط شعر"}
+      ],
+
+      "Fabrics & Materials": [
+        {en:"cotton", ar:"قطن"},
+        {en:"linen", ar:"كتان"},
+        {en:"silk", ar:"حرير"},
+        {en:"wool", ar:"صوف"},
+        {en:"cashmere", ar:"كشمير"},
+        {en:"polyester", ar:"بوليستر"},
+        {en:"nylon", ar:"نايلون"},
+        {en:"rayon", ar:"رايون"},
+        {en:"viscose", ar:"فسكوز"},
+        {en:"denim", ar:"دينيم"},
+        {en:"leather", ar:"جلد"},
+        {en:"suede", ar:"شامواه"},
+        {en:"faux leather", ar:"جلد صناعي"},
+        {en:"lace", ar:"دانتيل"},
+        {en:"velvet", ar:"مخمل"},
+        {en:"corduroy", ar:"قماش كورديوروي"},
+        {en:"jersey", ar:"قماش جيرسي"},
+        {en:"tweed", ar:"تويد"},
+        {en:"microfiber", ar:"مايكروفايبر"},
+        {en:"mesh", ar:"شبك"}
+      ],
+
+      "Fastenings & Details": [
+        {en:"button", ar:"زر"},
+        {en:"zip / zipper", ar:"سحّاب / سحاب"},
+        {en:"snap", ar:"زر ضغط"},
+        {en:"hook and eye", ar:"خطاف وحلقة"},
+        {en:"velcro", ar:"فيلكرو"},
+        {en:"drawstring", ar:"حبل شد"},
+        {en:"elastic", ar:"مطاط"},
+        {en:"buckle", ar:"مشبك"},
+        {en:"lace-up", ar:"رباط (للتربط)"},
+        {en:"pleat", ar:"طية"},
+        {en:"ruffle", ar:"كشكش"},
+        {en:"hem", ar:"حاشية"},
+        {en:"cuff", ar:"كم"},
+        {en:"collar", ar:"ياقة"},
+        {en:"lapel", ar:"طية الصدر"},
+        {en:"pocket", ar:"جيب"},
+        {en:"lining", ar:"بطانة"},
+        {en:"zipper pull", ar:"سحب السحّاب"},
+        {en:"grommet", ar:"عين معدنية"},
+        {en:"epaulette", ar:"كتيفة (زخرفة الكتف)"}
+      ],
+
+      "Care & Maintenance": [
+        {en:"wash", ar:"غسل"},
+        {en:"hand wash", ar:"غسل يدوي"},
+        {en:"machine wash", ar:"غسل بالغسالة"},
+        {en:"dry clean", ar:"تنظيف جاف"},
+        {en:"iron", ar:"كي"},
+        {en:"steam", ar:"بخار"},
+        {en:"tumble dry", ar:"تجفيف في النشافة"},
+        {en:"air dry", ar:"تجفيف بالهواء"},
+        {en:"bleach", ar:"مبيض"},
+        {en:"delicate cycle", ar:"دورة لطيفة"},
+        {en:"stain remover", ar:"مزيل البقع"},
+        {en:"fabric softener", ar:"منعم أقمشة"},
+        {en:"mothballs", ar:"كرات النمل (لحماية الملابس)"},
+        {en:"lint roller", ar:"أسطوانة إزالة الوبر"},
+        {en:"seam repair", ar:"إصلاح درز"},
+        {en:"alteration", ar:"تعديل قياس"},
+        {en:"drying rack", ar:"حامل تجفيف"},
+        {en:"garment bag", ar:"كيس ملابس"},
+        {en:"pressing cloth", ar:"قماش كي"},
+        {en:"shoe polish", ar:"ملمع أحذية"}
+      ],
+
+      "Workwear & Uniforms": [
+        {en:"suit", ar:"بدلة"},
+        {en:"business suit", ar:"بدلة عمل"},
+        {en:"blazer", ar:"بليزر"},
+        {en:"uniform", ar:"زي رسمي / يونيفورم"},
+        {en:"lab coat", ar:"معطف مختبر"},
+        {en:"chef's jacket", ar:"جاكيت الشيف"},
+        {en:"coveralls", ar:"ملابس واقية كاملة"},
+        {en:"safety vest", ar:"سترة أمان"},
+        {en:"hi-vis jacket", ar:"جاكيت عالي الرؤية"},
+        {en:"work boots", ar:"أحذية عمل"},
+        {en:"apron", ar:"مريول / مئزر"},
+        {en:"scrubs", ar:"ملابس طبية (سكرابز)"},
+        {en:"police uniform", ar:"زي الشرطة"},
+        {en:"military uniform", ar:"زي عسكري"},
+        {en:"business casual", ar:"ملابس عمل غير رسمية"},
+        {en:"labourer's gear", ar:"معدات العامل"},
+        {en:"firefighter suit", ar:"بدلة إطفاء"},
+        {en:"safety harness", ar:"حزام أمان"},
+        {en:"reflective tape", ar:"شريط عاكس"}
+      ],
+
+      "Sportswear & Activewear": [
+        {en:"sportswear", ar:"ملابس رياضية"},
+        {en:"activewear", ar:"ملابس نشاط"},
+        {en:"tracksuit", ar:"طقم رياضي"},
+        {en:"leggings", ar:"ليجنز"},
+        {en:"sports bra", ar:"حمالة صدر رياضية"},
+        {en:"compression wear", ar:"ملابس ضغط"},
+        {en:"swimwear", ar:"ملابس سباحة"},
+        {en:"rash guard", ar:"حماية من الاحتكاك (راش جارد)"},
+        {en:"boardshorts", ar:"شورت ركوب الأمواج"},
+        {en:"cycling shorts", ar:"شورت ركوب الدراجات"},
+        {en:"running shoes", ar:"حذاء جري"},
+        {en:"cleats", ar:"أحذية مسامير (للرياضة)"},
+        {en:"gym shorts", ar:"شورت صالة الألعاب"},
+        {en:"hoodie", ar:"هودي"},
+        {en:"windbreaker", ar:"جاكيت مقاوم للرياح"},
+        {en:"base layer", ar:"طبقة أساسية"},
+        {en:"sports jacket", ar:"جاكيت رياضي"},
+        {en:"swim cap", ar:"قبعة سباحة"},
+        {en:"goggles", ar:"نظارات سباحة"},
+        {en:"wetsuit", ar:"بدلة غوص"}
+      ],
+
+      "Traditional & Cultural": [
+        {en:"sari", ar:"ساري"},
+        {en:"kimono", ar:"كيمونو"},
+        {en:"hanbok", ar:"هانبوك"},
+        {en:"dashiki", ar:"داشيكي"},
+        {en:"thobe / thawb", ar:"ثوب"},
+        {en:"abaya", ar:"عباءة"},
+        {en:"kaftan", ar:"قفطان"},
+        {en:"kilt", ar:"كيلت"},
+        {en:"dirndl", ar:"ديرندل"},
+        {en:"cheongsam / qipao", ar:"تشونغسام / تشيباو"},
+        {en:"poncho", ar:"بونشو"},
+        {en:"sarong", ar:"سارونج"},
+        {en:"tuxedo", ar:"توكسيدو"},
+        {en:"keffiyeh", ar:"كوفية"},
+        {en:"fez", ar:"طربوش"},
+        {en:"turban", ar:"عمامة"},
+        {en:"boubou", ar:"بوبو"},
+        {en:"shemagh", ar:"شماغ"},
+        {en:"vest (traditional)", ar:"صديرية تقليدية"},
+        {en:"shawl", ar:"شال"}
+      ],
+
+      "Children's Clothing": [
+        {en:"onesie", ar:"أونزي للأطفال"},
+        {en:"romper", ar:"رومبر"},
+        {en:"baby grows", ar:"ملابس رضيع"},
+        {en:"bib", ar:"مريلة"},
+        {en:"booties", ar:"حذاء رضيع"},
+        {en:"play suit", ar:"بدلة لعب"},
+        {en:"school uniform", ar:"زي المدرسة"},
+        {en:"children's pyjamas", ar:"بيجاما للأطفال"},
+        {en:"kids jacket", ar:"جاكيت أطفال"},
+        {en:"kids sneakers", ar:"حذاء رياضي للأطفال"},
+        {en:"sun hat", ar:"قبعة شمس للأطفال"},
+        {en:"swim diaper", ar:"حفاضة سباحة"},
+        {en:"sleepsuit", ar:"بدلة نوم"},
+        {en:"pinafore", ar:"فستان مريول"},
+        {en:"baby blanket", ar:"بطانية طفل"},
+        {en:"school bag", ar:"حقيبة مدرسية"},
+        {en:"children's gloves", ar:"قفازات أطفال"},
+        {en:"children's scarf", ar:"وشاح أطفال"},
+        {en:"children's socks", ar:"جوارب أطفال"},
+        {en:"children's hat", ar:"قبعة أطفال"}
+      ],
+
+      "Seasonal Items": [
+        {en:"swimsuit", ar:"مايوه / بدلة سباحة"},
+        {en:"beachwear", ar:"ملابس شاطئ"},
+        {en:"sun hat", ar:"قبعة شمس"},
+        {en:"sunglasses", ar:"نظارات شمسية"},
+        {en:"raincoat", ar:"معطف مطر"},
+        {en:"umbrella", ar:"مظلة"},
+        {en:"wool hat", ar:"قبعة صوف"},
+        {en:"scarf", ar:"وشاح"},
+        {en:"gloves", ar:"قفازات"},
+        {en:"thermal wear", ar:"ملابس حرارية"},
+        {en:"snow boots", ar:"أحذية ثلج"},
+        {en:"earmuffs", ar:"واقيات أذن"},
+        {en:"sunglasses", ar:"نظارات شمسية"},
+        {en:"flip-flops", ar:"شبشب"},
+        {en:"beanie", ar:"قبعة صوفية"},
+        {en:"parka", ar:"معطف ثقيل"},
+        {en:"swim trunks", ar:"شورت سباحة"},
+        {en:"boardshorts", ar:"شورت ركوب الأمواج"},
+        {en:"sun dress", ar:"فستان صيفي"},
+        {en:"thermal socks", ar:"جوارب حرارية"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // speech synthesis
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if (preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // initial render (start in dense mode)
+    appEl.classList.add('dense');
+    renderCategories();
+
+    // ensure voices loaded
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // accessibility: Enter focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak-btn');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>

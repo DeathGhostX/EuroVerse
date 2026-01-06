@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Natural Catastrophes Vocabulary — English with Arabic translations</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <style>
+    :root{
+      --bg:#f7f7f9; --card:#fff; --text:#111; --muted:#556; --accent:#d9534f; --accent-contrast:#fff;
+      --border:#e6e9ee; --shadow:0 2px 8px rgba(0,0,0,0.06); --chip:#fff0f0;
+      --tile-min:140px; --tile-padding:10px; --word-size:0.98rem; --trans-size:0.82rem; --btn-size:40px;
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#0b0d10; --card:#0f1317; --text:#e6eef8; --muted:#9aa6b2; --accent:#ff6b6b;
+        --accent-contrast:#07101a; --border:#1f2429; --shadow:0 2px 8px rgba(0,0,0,0.45); --chip:#2a0f0f;
+      }
+    }
+
+    /* Dense mode variables */
+    .dense {
+      --tile-min:110px;
+      --tile-padding:8px;
+      --word-size:0.9rem;
+      --trans-size:0.74rem;
+      --btn-size:34px;
+    }
+
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px;}
+    header{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--border);z-index:20;}
+    h1{font-size:1.05rem;margin:0 0 8px;text-align:center;}
+    .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;}
+    .control{display:flex;gap:8px;align-items:center;background:var(--card);padding:8px;border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);}
+    label{font-size:0.88rem;color:var(--muted);white-space:nowrap;}
+    select,input[type="search"]{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:0.95rem;outline:none;}
+    main{margin-top:12px;}
+    .category{margin:12px 0;padding-top:8px;border-top:1px solid var(--border);}
+    .category-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+    .category-title{font-weight:700;font-size:0.98rem;}
+    .chip{background:var(--chip);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:0.88rem;border:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));gap:8px;}
+    .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:var(--tile-padding);display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;box-shadow:var(--shadow);min-height:48px;}
+    .word{font-size:var(--word-size);font-weight:700;line-height:1.12;}
+    .translation{font-size:var(--trans-size);color:var(--muted);margin-top:4px;display:block;line-height:1.12;}
+    .speak-btn{background:var(--accent);color:var(--accent-contrast);border:none;padding:6px 10px;border-radius:999px;font-size:0.9rem;cursor:pointer;min-width:var(--btn-size);min-height:var(--btn-size);display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow);}
+    .speak-btn:active{transform:translateY(1px);filter:brightness(0.96);}
+    .footer{margin:14px 0 30px;color:var(--muted);text-align:center;font-size:0.92rem;}
+    .density-toggle{display:flex;gap:8px;align-items:center;}
+    .density-toggle button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;}
+    @media (max-width:900px){.controls{grid-template-columns:1fr 1fr;}}
+    @media (max-width:560px){.controls{grid-template-columns:1fr;} .grid{gap:6px;} .item{padding:6px;} .word{font-size:0.96rem;} .speak-btn{padding:8px 10px;font-size:0.9rem;}}
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap dense" role="application" aria-label="Natural catastrophes vocabulary with Arabic translations and pronunciation">
+    <header>
+      <h1>Natural Catastrophes & Cataclysms — English with Arabic translations (expanded)</h1>
+      <div class="controls" role="region" aria-label="Controls">
+        <div class="control">
+          <label for="accent">Accent</label>
+          <select id="accent" aria-label="Accent selector">
+            <option value="en-GB">British</option>
+            <option value="en-US">American</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Filter terms (English or Arabic)..." aria-label="Search vocabulary" />
+        </div>
+
+        <div class="control" style="justify-content:flex-end;">
+          <div class="density-toggle" aria-hidden="false">
+            <label style="font-size:0.88rem;color:var(--muted);white-space:nowrap;">Density</label>
+            <button id="normalBtn" title="Normal density">Normal</button>
+            <button id="denseBtn" title="Dense view">Dense</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="categories" aria-live="polite"></main>
+
+    <div class="footer">
+      Tip: Pronunciations use your device's speech synthesis voices. Switch accent if a voice is unavailable.
+    </div>
+  </div>
+
+  <script>
+    // Expanded dataset — many more items per group
+    const DATA = {
+      "Major Event Types": [
+        {en:"earthquake", ar:"زلزال"},
+        {en:"aftershock", ar:"هزة ارتدادية"},
+        {en:"foreshock", ar:"هزة سابقة"},
+        {en:"tsunami", ar:"تسونامي"},
+        {en:"coastal tsunami", ar:"تسونامي ساحلي"},
+        {en:"seiche", ar:"موجة داخلية (سيش)"},
+        {en:"volcanic eruption", ar:"ثوران بركاني"},
+        {en:"explosive eruption", ar:"ثوران انفجاري"},
+        {en:"effusive eruption", ar:"ثوران انسيابي"},
+        {en:"pyroclastic flow", ar:"تدفق بركاني حراري"},
+        {en:"ashfall", ar:"هطول الرماد"},
+        {en:"tephra fall", ar:"سقوط التفرا"},
+        {en:"lahar", ar:"انهيار طيني بركاني (لاهاَر)"},
+        {en:"lava flow", ar:"تدفق الحمم"},
+        {en:"fumarole", ar:"فتحة بخار بركاني"},
+        {en:"landslide", ar:"انهيار أرضي"},
+        {en:"rockfall", ar:"سقوط صخور"},
+        {en:"debris flow", ar:"تدفق حطام"},
+        {en:"slump", ar:"انزلاق كتلي"},
+        {en:"avalanche", ar:"انهيار ثلجي"},
+        {en:"snow avalanche", ar:"انهيار ثلجي"},
+        {en:"ice avalanche", ar:"انهيار جليدي"},
+        {en:"glacial outburst flood (jökulhlaup)", ar:"فيض جليدي مفاجئ"},
+        {en:"flood", ar:"فيضان"},
+        {en:"flash flood", ar:"فيضان مفاجئ"},
+        {en:"riverine flood", ar:"فيضان نهري"},
+        {en:"urban flooding", ar:"فيضان حضري"},
+        {en:"coastal flooding", ar:"فيضان ساحلي"},
+        {en:"storm surge", ar:"موجة عاتية"},
+        {en:"hurricane", ar:"إعصار"},
+        {en:"cyclone", ar:"إعصار مداري"},
+        {en:"typhoon", ar:"تايفون"},
+        {en:"tornado", ar:"تورنادو / إعصار قمعي"},
+        {en:"derecho", ar:"ديريشو (عاصفة رياح خطية)"},
+        {en:"severe thunderstorm", ar:"عاصفة رعدية شديدة"},
+        {en:"hailstorm", ar:"عاصفة برد"},
+        {en:"microburst", ar:"هبّة هوائية صغيرة"},
+        {en:"dust storm", ar:"عاصفة ترابية"},
+        {en:"sandstorm", ar:"عاصفة رملية"},
+        {en:"heatwave", ar:"موجة حر"},
+        {en:"cold wave", ar:"موجة برد"},
+        {en:"blizzard", ar:"عاصفة ثلجية"},
+        {en:"drought", ar:"جفاف"},
+        {en:"wildfire", ar:"حريق بري"},
+        {en:"peat fire", ar:"حريق الخث"},
+        {en:"grassfire", ar:"حريق عشبي"},
+        {en:"urban fire", ar:"حريق حضري"},
+        {en:"industrial fire", ar:"حريق صناعي"},
+        {en:"sinkhole", ar:"حفرة غائرة"},
+        {en:"land subsidence", ar:"هبوط أرضي"},
+        {en:"meteoroid impact", ar:"اصطدام نيزك"},
+        {en:"space weather event", ar:"حدث طقس فضائي"},
+        {en:"geomagnetic storm", ar:"عاصفة مغناطيسية أرضية"}
+      ],
+
+      "Geological & Tectonic Terms": [
+        {en:"fault", ar:"صدع"},
+        {en:"strike-slip fault", ar:"صدع انزلاقي"},
+        {en:"normal fault", ar:"صدع عادي"},
+        {en:"reverse fault", ar:"صدع عكسي"},
+        {en:"thrust fault", ar:"صدع دفع"},
+        {en:"plate boundary", ar:"حدود الصفائح"},
+        {en:"subduction zone", ar:"منطقة غوص الصفائح"},
+        {en:"mid-ocean ridge", ar:"حافة وسط المحيط"},
+        {en:"transform boundary", ar:"حدود تحويلية"},
+        {en:"magnitude", ar:"مقدار (قوة الزلزال)"},
+        {en:"moment magnitude (Mw)", ar:"مقياس العزم (Mw)"},
+        {en:"epicenter", ar:"مركز الزلزال"},
+        {en:"hypocenter / focus", ar:"بؤرة الزلزال"},
+        {en:"seismic wave", ar:"موجة زلزالية"},
+        {en:"P-wave", ar:"موجة P (ابتدائية)"},
+        {en:"S-wave", ar:"موجة S (ثانوية)"},
+        {en:"surface wave", ar:"موجة سطحية"},
+        {en:"seismograph", ar:"مقياس الزلازل"},
+        {en:"seismometer", ar:"جهاز قياس الزلازل"},
+        {en:"seismic network", ar:"شبكة زلزالية"},
+        {en:"seismic hazard", ar:"خطر زلزالي"},
+        {en:"liquefaction", ar:"تسييل التربة"},
+        {en:"soil amplification", ar:"تكبير التربة للموجات"},
+        {en:"ground rupture", ar:"تمزق الأرض"},
+        {en:"isostatic rebound", ar:"ارتداد توازن القشرة"},
+        {en:"magma chamber", ar:"حجرة الصهارة"},
+        {en:"volcanic vent", ar:"فتحة بركانية"},
+        {en:"caldera", ar:"كالديرا"},
+        {en:"shield volcano", ar:"بركان درعي"},
+        {en:"stratovolcano", ar:"بركان طبقي"},
+        {en:"cinder cone", ar:"مخروط رماد"},
+        {en:"dike", ar:"شق صخري (دايك)"},
+        {en:"sill", ar:"سِلّ (طبقة صخرية)"},
+        {en:"pyroclast", ar:"حطام بركاني"},
+        {en:"tephra", ar:"تفرا"},
+        {en:"volcanic tremor", ar:"اهتزاز بركاني مستمر"},
+        {en:"gas emission", ar:"انبعاث غازات"},
+        {en:"ground deformation", ar:"تشوه الأرض"},
+        {en:"tiltmeter", ar:"مقياس الميل"},
+        {en:"GPS monitoring", ar:"مراقبة بنظام تحديد المواقع"},
+        {en:"infrasound", ar:"تحت صوتي"},
+        {en:"volcano observatory", ar:"مرصد بركاني"}
+      ],
+
+      "Hydrological & Meteorological Terms": [
+        {en:"precipitation", ar:"هطول"},
+        {en:"rainfall intensity", ar:"شدة هطول الأمطار"},
+        {en:"rain gauge", ar:"مقياس هطول"},
+        {en:"river gauge", ar:"مقياس نهر"},
+        {en:"runoff", ar:"جريان سطحي"},
+        {en:"infiltration", ar:"تسرب التربة"},
+        {en:"saturation", ar:"تشبع"},
+        {en:"flash flood", ar:"فيضان مفاجئ"},
+        {en:"storm surge", ar:"موجة عاتية"},
+        {en:"coastal inundation", ar:"غمر ساحلي"},
+        {en:"storm cell", ar:"خلية عاصفة"},
+        {en:"convective storm", ar:"عاصفة الحمل الحراري"},
+        {en:"tropical cyclone", ar:"إعصار مداري"},
+        {en:"eye wall", ar:"جدار العين"},
+        {en:"eyewall replacement", ar:"استبدال جدار العين"},
+        {en:"barometric pressure", ar:"ضغط جوي"},
+        {en:"wind shear", ar:"قص الرياح"},
+        {en:"gust front", ar:"جبهة هبوب الرياح"},
+        {en:"squall line", ar:"خط عواصف"},
+        {en:"microburst", ar:"هبّة هوائية صغيرة"},
+        {en:"derecho", ar:"ديريشو"},
+        {en:"hail", ar:"برد"},
+        {en:"hailstone", ar:"حبة برد"},
+        {en:"blizzard", ar:"عاصفة ثلجية"},
+        {en:"lake-effect snow", ar:"ثلوج تأثير البحيرة"},
+        {en:"ice storm", ar:"عاصفة جليدية"},
+        {en:"freezing rain", ar:"مطر متجمد"},
+        {en:"sleet", ar:"مطر ثلجي"},
+        {en:"heatwave", ar:"موجة حر"},
+        {en:"urban heat island", ar:"تأثير الجزيرة الحرارية"},
+        {en:"drought", ar:"جفاف"},
+        {en:"soil moisture deficit", ar:"عجز رطوبة التربة"},
+        {en:"evapotranspiration", ar:"تبخر ونقل النبات"},
+        {en:"atmospheric river", ar:"نهر جوي"},
+        {en:"monsoon", ar:"موسم الأمطار"},
+        {en:"cold front", ar:"جبهة باردة"},
+        {en:"warm front", ar:"جبهة دافئة"},
+        {en:"occluded front", ar:"جبهة مغطاة"},
+        {en:"pressure gradient", ar:"انحدار الضغط"},
+        {en:"weather radar", ar:"رادار الطقس"},
+        {en:"satellite imagery", ar:"صور الأقمار الصناعية"},
+        {en:"nowcasting", ar:"التنبؤ الفوري"}
+      ],
+
+      "Climatological & Long-term Hazards": [
+        {en:"sea level rise", ar:"ارتفاع مستوى سطح البحر"},
+        {en:"coastal erosion", ar:"تآكل ساحلي"},
+        {en:"saltwater intrusion", ar:"تغلغل مياه مالحة"},
+        {en:"glacial retreat", ar:"تراجع الأنهار الجليدية"},
+        {en:"permafrost thaw", ar:"ذوبان التربة المتجمدة"},
+        {en:"permafrost collapse", ar:"انهيار التربة المتجمدة"},
+        {en:"desertification", ar:"تصحر"},
+        {en:"aridification", ar:"جفاف تدريجي"},
+        {en:"salinization", ar:"تمليح التربة"},
+        {en:"ecosystem shift", ar:"تحول النظام البيئي"},
+        {en:"coral bleaching", ar:"تبييض الشعاب المرجانية"},
+        {en:"ocean acidification", ar:"تحمض المحيطات"},
+        {en:"heat stress", ar:"إجهاد حراري"},
+        {en:"drought-induced famine", ar:"مجاعة ناتجة عن الجفاف"},
+        {en:"long-term drought", ar:"جفاف طويل الأمد"},
+        {en:"climate variability", ar:"تقلب مناخي"},
+        {en:"extreme precipitation", ar:"هطول متطرف"},
+        {en:"compound event", ar:"حدث مركب"},
+        {en:"multi-hazard event", ar:"حدث متعدد المخاطر"},
+        {en:"systemic risk", ar:"مخاطر نظامية"},
+        {en:"migration pressure", ar:"ضغط هجرة بسبب المناخ"},
+        {en:"water scarcity", ar:"ندرة المياه"},
+        {en:"food insecurity", ar:"انعدام الأمن الغذائي"},
+        {en:"coastal inundation", ar:"غمر ساحلي دائم"},
+        {en:"permanent inundation", ar:"غمر دائم"},
+        {en:"land degradation", ar:"تدهور الأراضي"},
+        {en:"biodiversity loss", ar:"فقدان التنوع البيولوجي"},
+        {en:"urban heat island intensification", ar:"تكثيف تأثير الجزيرة الحرارية"},
+        {en:"climate tipping point", ar:"نقطة تحول مناخية"},
+        {en:"long-term sea-level projection", ar:"توقعات ارتفاع مستوى البحر طويلة الأمد"}
+      ],
+
+      "Biological & Health Hazards": [
+        {en:"pandemic", ar:"جائحة"},
+        {en:"epidemic", ar:"وباء"},
+        {en:"zoonotic disease", ar:"مرض حيواني المنشأ"},
+        {en:"vector-borne disease", ar:"مرض ناقل بواسطة الحشرات"},
+        {en:"waterborne disease", ar:"مرض منقول بالمياه"},
+        {en:"foodborne illness", ar:"مرض منقول بالغذاء"},
+        {en:"contamination", ar:"تلوث"},
+        {en:"toxic bloom (algae)", ar:"ازدهار طحالب سام"},
+        {en:"mass displacement", ar:"نزوح جماعي"},
+        {en:"malnutrition", ar:"سوء تغذية"},
+        {en:"secondary infections", ar:"عدوى ثانوية"},
+        {en:"sanitation failure", ar:"فشل الصرف الصحي"},
+        {en:"wastewater contamination", ar:"تلوث مياه الصرف"},
+        {en:"vector control", ar:"مكافحة النواقل"},
+        {en:"public health emergency", ar:"حالة طوارئ صحية عامة"},
+        {en:"mental health impact", ar:"تأثير على الصحة النفسية"},
+        {en:"disease surveillance", ar:"مراقبة الأمراض"},
+        {en:"vaccination campaign", ar:"حملة تطعيم"},
+        {en:"antimicrobial resistance", ar:"مقاومة مضادات الميكروبات"},
+        {en:"zoonosis monitoring", ar:"مراقبة الأمراض الحيوانية المنشأ"},
+        {en:"food insecurity", ar:"انعدام الأمن الغذائي"},
+        {en:"vector habitat expansion", ar:"توسع مواطن النواقل"},
+        {en:"water quality degradation", ar:"تدهور جودة المياه"},
+        {en:"waste management breakdown", ar:"انهيار إدارة النفايات"},
+        {en:"shelter-related disease", ar:"أمراض مرتبطة بالملاجئ"}
+      ],
+
+      "Space & Extraterrestrial Hazards": [
+        {en:"meteor impact", ar:"اصطدام نيزك"},
+        {en:"bolide", ar:"نيازك ساطع (بوليد)"},
+        {en:"airburst", ar:"انفجار جوي"},
+        {en:"asteroid", ar:"كويكب"},
+        {en:"comet", ar:"مذنب"},
+        {en:"near-Earth object (NEO)", ar:"جسم قريب من الأرض"},
+        {en:"impact winter", ar:"شتاء اصطدامي"},
+        {en:"solar flare", ar:"وهج شمسي"},
+        {en:"coronal mass ejection (CME)", ar:"انبعاث كتلي تاجي"},
+        {en:"geomagnetic storm", ar:"عاصفة مغناطيسية"},
+        {en:"space weather", ar:"طقس فضائي"},
+        {en:"satellite damage", ar:"أضرار بالأقمار الصناعية"},
+        {en:"ionospheric disturbance", ar:"اضطراب الأيونوسفير"},
+        {en:"radiation spike", ar:"ارتفاع الإشعاع"},
+        {en:"GPS disruption", ar:"تعطّل نظام تحديد المواقع"},
+        {en:"power grid vulnerability", ar:"قابلية شبكة الكهرباء للتأثر"},
+        {en:"atmospheric entry", ar:"دخول الغلاف الجوي"},
+        {en:"impact crater", ar:"حفرة اصطدام"},
+        {en:"bolide fragmentation", ar:"تفكك بوليد"},
+        {en:"space debris re-entry", ar:"عودة حطام فضائي"}
+      ],
+
+      "Secondary & Cascading Hazards": [
+        {en:"fire following earthquake", ar:"حريق بعد الزلزال"},
+        {en:"chemical spill", ar:"انسكاب كيميائي"},
+        {en:"hazardous material release", ar:"انبعاث مواد خطرة"},
+        {en:"infrastructure collapse", ar:"انهيار البنية التحتية"},
+        {en:"power outage", ar:"انقطاع التيار الكهربائي"},
+        {en:"water supply disruption", ar:"انقطاع إمدادات المياه"},
+        {en:"telecom outage", ar:"انقطاع الاتصالات"},
+        {en:"transport disruption", ar:"تعطّل النقل"},
+        {en:"fuel shortage", ar:"نقص الوقود"},
+        {en:"supply chain breakdown", ar:"انهيار سلسلة الإمداد"},
+        {en:"public order disruption", ar:"تعطّل النظام العام"},
+        {en:"disease outbreak", ar:"تفشي مرض"},
+        {en:"contamination of food supply", ar:"تلوث إمدادات الغذاء"},
+        {en:"land subsidence", ar:"هبوط أرضي"},
+        {en:"soil liquefaction", ar:"تسييل التربة"},
+        {en:"dam breach", ar:"انهيار سد"},
+        {en:"road washout", ar:"انغمار الطريق"},
+        {en:"bridge failure", ar:"فشل جسر"},
+        {en:"port closure", ar:"إغلاق ميناء"},
+        {en:"airport closure", ar:"إغلاق مطار"},
+        {en:"shelter overcrowding", ar:"ازدحام الملاجئ"},
+        {en:"waste accumulation", ar:"تراكم النفايات"},
+        {en:"secondary fires", ar:"حرائق ثانوية"},
+        {en:"explosion risk", ar:"خطر انفجار"},
+        {en:"structural instability", ar:"عدم استقرار هيكلي"}
+      ],
+
+      "Infrastructure & Built Environment Impacts": [
+        {en:"building collapse", ar:"انهيار مبنى"},
+        {en:"partial collapse", ar:"انهيار جزئي"},
+        {en:"structural damage", ar:"أضرار هيكلية"},
+        {en:"foundation failure", ar:"فشل الأساس"},
+        {en:"bridge failure", ar:"فشل جسر"},
+        {en:"road washout", ar:"تآكل/انغمار الطريق"},
+        {en:"rail track buckling", ar:"انحناء مسار السكة الحديد"},
+        {en:"airport runway damage", ar:"أضرار مدرج المطار"},
+        {en:"port damage", ar:"أضرار الميناء"},
+        {en:"sewer overflow", ar:"فيضان المجاري"},
+        {en:"water treatment failure", ar:"فشل محطة معالجة المياه"},
+        {en:"power substation damage", ar:"أضرار محطة تحويل كهرباء"},
+        {en:"fuel depot damage", ar:"أضرار مستودع وقود"},
+        {en:"telecom mast collapse", ar:"انهيار برج اتصالات"},
+        {en:"pipeline rupture", ar:"تمزق خط أنابيب"},
+        {en:"dam breach", ar:"انهيار سد"},
+        {en:"levee failure", ar:"فشل السد الترابي"},
+        {en:"slope failure affecting roads", ar:"انهيار منحدر يؤثر على الطرق"},
+        {en:"building inundation", ar:"غمر مبنى بالمياه"},
+        {en:"contaminated shelter", ar:"ملجأ ملوث"},
+        {en:"critical infrastructure outage", ar:"انقطاع بنية تحتية حيوية"},
+        {en:"wastewater treatment damage", ar:"أضرار معالجة مياه الصرف"},
+        {en:"hazardous facility damage", ar:"أضرار منشأة خطرة"},
+        {en:"emergency services access blocked", ar:"حجب وصول خدمات الطوارئ"}
+      ],
+
+      "Preparedness & Mitigation": [
+        {en:"early warning system", ar:"نظام الإنذار المبكر"},
+        {en:"evacuation plan", ar:"خطة إخلاء"},
+        {en:"evacuation route", ar:"مسار إخلاء"},
+        {en:"shelter location", ar:"موقع ملجأ"},
+        {en:"hazard mapping", ar:"رسم خرائط المخاطر"},
+        {en:"risk assessment", ar:"تقييم المخاطر"},
+        {en:"vulnerability assessment", ar:"تقييم الضعف"},
+        {en:"community drills", ar:"تدريبات مجتمعية"},
+        {en:"building codes", ar:"قوانين البناء"},
+        {en:"seismic retrofit", ar:"تقوية زلزالية"},
+        {en:"floodproofing", ar:"حماية من الفيضانات"},
+        {en:"levee construction", ar:"بناء سدا ترابيا"},
+        {en:"seawall", ar:"جدار بحري"},
+        {en:"retention basin", ar:"حوض احتجاز"},
+        {en:"stormwater management", ar:"إدارة مياه الأمطار"},
+        {en:"slope stabilization", ar:"تثبيت المنحدرات"},
+        {en:"reforestation", ar:"إعادة التشجير"},
+        {en:"land-use planning", ar:"تخطيط استخدام الأراضي"},
+        {en:"floodplain zoning", ar:"تخطيط مناطق الفيضانات"},
+        {en:"insurance", ar:"تأمين ضد الكوارث"},
+        {en:"emergency kit", ar:"عدة طوارئ"},
+        {en:"community resilience plan", ar:"خطة مرونة مجتمعية"},
+        {en:"critical infrastructure protection", ar:"حماية البنية التحتية الحيوية"},
+        {en:"redundant systems", ar:"أنظمة احتياطية"},
+        {en:"backup power", ar:"طاقة احتياطية"},
+        {en:"water supply contingency", ar:"خطة طوارئ إمدادات المياه"},
+        {en:"public awareness campaign", ar:"حملة توعية عامة"},
+        {en:"school safety plan", ar:"خطة سلامة المدارس"},
+        {en:"hospital surge capacity", ar:"قدرة استيعاب المستشفيات للزيادة الطارئة"},
+        {en:"evacuation simulation", ar:"محاكاة إخلاء"}
+      ],
+
+      "Response & Recovery": [
+        {en:"search and rescue (SAR)", ar:"البحث والإنقاذ"},
+        {en:"first responders", ar:"المستجيبون الأوائل"},
+        {en:"incident command system (ICS)", ar:"نظام قيادة الحوادث"},
+        {en:"emergency operations center (EOC)", ar:"مركز عمليات الطوارئ"},
+        {en:"humanitarian aid", ar:"مساعدات إنسانية"},
+        {en:"temporary shelter", ar:"مأوى مؤقت"},
+        {en:"mass casualty management", ar:"إدارة الإصابات الجماعية"},
+        {en:"damage assessment", ar:"تقييم الأضرار"},
+        {en:"rapid needs assessment", ar:"تقييم الاحتياجات السريع"},
+        {en:"logistics", ar:"اللوجستيات"},
+        {en:"debris removal", ar:"إزالة الحطام"},
+        {en:"water trucking", ar:"توصيل المياه بالشاحنات"},
+        {en:"cash transfer", ar:"نقل نقدي"},
+        {en:"shelter repair", ar:"إصلاح الملاجئ"},
+        {en:"reconstruction", ar:"إعادة الإعمار"},
+        {en:"psychosocial support", ar:"دعم نفسي اجتماعي"},
+        {en:"public health response", ar:"استجابة الصحة العامة"},
+        {en:"vaccination campaign", ar:"حملة تطعيم"},
+        {en:"waste management in emergencies", ar:"إدارة النفايات في الطوارئ"},
+        {en:"temporary power solutions", ar:"حلول طاقة مؤقتة"},
+        {en:"supply chain restoration", ar:"استعادة سلسلة الإمداد"},
+        {en:"livelihood support", ar:"دعم سبل العيش"},
+        {en:"education continuity", ar:"استمرارية التعليم"},
+        {en:"return-to-home planning", ar:"خطة العودة إلى المنازل"},
+        {en:"build back better", ar:"إعادة البناء بشكل أفضل"}
+      ],
+
+      "Monitoring & Detection": [
+        {en:"seismometer", ar:"مقياس الزلازل"},
+        {en:"seismic network", ar:"شبكة زلزالية"},
+        {en:"tiltmeter", ar:"مقياس الميل"},
+        {en:"GPS monitoring", ar:"مراقبة بنظام تحديد المواقع"},
+        {en:"infrasound sensor", ar:"مستشعر تحت صوتي"},
+        {en:"satellite remote sensing", ar:"استشعار عن بعد بالأقمار الصناعية"},
+        {en:"radar", ar:"رادار"},
+        {en:"weather radar", ar:"رادار الطقس"},
+        {en:"river gauge", ar:"مقياس نهر"},
+        {en:"rain gauge", ar:"مقياس هطول"},
+        {en:"tsunami buoy", ar:"طفاية تسونامي"},
+        {en:"tide gauge", ar:"مقياس المد والجزر"},
+        {en:"air quality monitor", ar:"مراقب جودة الهواء"},
+        {en:"soil moisture sensor", ar:"مستشعر رطوبة التربة"},
+        {en:"drought index", ar:"مؤشر الجفاف"},
+        {en:"fire detection system", ar:"نظام كشف الحرائق"},
+        {en:"thermal anomaly detection", ar:"كشف الشذوذ الحراري"},
+        {en:"volcano observatory", ar:"مرصد بركاني"},
+        {en:"early warning alert", ar:"تنبيه إنذار مبكر"},
+        {en:"nowcasting", ar:"التنبؤ الفوري"},
+        {en:"crowdsourced reports", ar:"تقارير من الجمهور"},
+        {en:"satellite SAR (radar)", ar:"رادار تصويري فضائي"},
+        {en:"LIDAR mapping", ar:"رسم خرائط ليدار"},
+        {en:"drone reconnaissance", ar:"استطلاع بطائرات بدون طيار"},
+        {en:"real-time telemetry", ar:"قياسات عن بعد في الوقت الحقيقي"}
+      ],
+
+      "Key Concepts & Terms": [
+        {en:"hazard", ar:"خطر"},
+        {en:"vulnerability", ar:"قابلية التأثر"},
+        {en:"exposure", ar:"تعرض"},
+        {en:"risk", ar:"مخاطرة"},
+        {en:"resilience", ar:"مرونة"},
+        {en:"capacity", ar:"قدرة"},
+        {en:"mitigation", ar:"تخفيف"},
+        {en:"adaptation", ar:"تكيّف"},
+        {en:"preparedness", ar:"الاستعداد"},
+        {en:"response", ar:"استجابة"},
+        {en:"recovery", ar:"تعافي"},
+        {en:"loss and damage", ar:"خسائر وأضرار"},
+        {en:"cascade effect", ar:"تأثير متسلسل"},
+        {en:"compound event", ar:"حدث مركب"},
+        {en:"black swan event", ar:"حدث نادر"},
+        {en:"contingency plan", ar:"خطة طوارئ"},
+        {en:"scenario planning", ar:"تخطيط السيناريوهات"},
+        {en:"multi-hazard", ar:"متعدد المخاطر"},
+        {en:"systemic risk", ar:"مخاطر نظامية"},
+        {en:"critical threshold", ar:"عتبة حرجة"},
+        {en:"return period", ar:"فترة العودة"},
+        {en:"probabilistic risk", ar:"مخاطرة احتمالية"},
+        {en:"deterministic scenario", ar:"سيناريو حتمي"},
+        {en:"risk transfer", ar:"نقل المخاطر"},
+        {en:"residual risk", ar:"مخاطرة متبقية"},
+        {en:"adaptive capacity", ar:"قدرة التكيّف"},
+        {en:"social vulnerability", ar:"الضعف الاجتماعي"},
+        {en:"economic exposure", ar:"التعرض الاقتصادي"},
+        {en:"critical infrastructure", ar:"بنية تحتية حيوية"}
+      ]
+    };
+
+    // UI elements
+    const categoriesEl = document.getElementById('categories');
+    const accentEl = document.getElementById('accent');
+    const searchEl = document.getElementById('search');
+    const normalBtn = document.getElementById('normalBtn');
+    const denseBtn = document.getElementById('denseBtn');
+    const appEl = document.getElementById('app');
+
+    // create item element
+    function createItem(obj) {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.setAttribute('role','listitem');
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.textContent = obj.en;
+
+      const trans = document.createElement('span');
+      trans.className = 'translation';
+      trans.textContent = obj.ar;
+
+      left.appendChild(word);
+      left.appendChild(trans);
+
+      const btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Speak ${obj.en}`);
+      btn.innerHTML = '🔊';
+
+      btn.addEventListener('click', () => speak(obj.en));
+
+      item.appendChild(left);
+      item.appendChild(btn);
+      return item;
+    }
+
+    // render categories
+    function renderCategories(filterText = '') {
+      categoriesEl.innerHTML = '';
+      const q = filterText.trim().toLowerCase();
+
+      Object.entries(DATA).forEach(([category, items]) => {
+        const filtered = q ? items.filter(it => it.en.toLowerCase().includes(q) || it.ar.toLowerCase().includes(q)) : items;
+        if (filtered.length === 0) return;
+
+        const section = document.createElement('section');
+        section.className = 'category';
+        section.setAttribute('aria-label', category);
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${filtered.length} items`;
+
+        header.appendChild(title);
+        header.appendChild(chip);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.setAttribute('role','list');
+
+        filtered.forEach(obj => grid.appendChild(createItem(obj)));
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        categoriesEl.appendChild(section);
+      });
+    }
+
+    // speech synthesis
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech synthesis not supported in this browser.');
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = accentEl.value;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang === accentEl.value) || voices.find(v => v.lang.startsWith(accentEl.value.split('-')[0]));
+      if (preferred) utter.voice = preferred;
+
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // density controls
+    normalBtn.addEventListener('click', () => {
+      appEl.classList.remove('dense');
+      renderCategories(searchEl.value);
+    });
+    denseBtn.addEventListener('click', () => {
+      appEl.classList.add('dense');
+      renderCategories(searchEl.value);
+    });
+
+    // search
+    searchEl.addEventListener('input', () => renderCategories(searchEl.value));
+
+    // initial render
+    renderCategories();
+
+    // ensure voices loaded
+    window.speechSynthesis.onvoiceschanged = () => { /* no-op */ };
+
+    // accessibility: Enter focuses first speak button
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstBtn = document.querySelector('.speak-btn');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
+  </script>
+</body>
+</html>
